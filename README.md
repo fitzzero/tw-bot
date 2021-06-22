@@ -1,0 +1,2 @@
+# discoelo
+Discord ELO Bot
