@@ -8,5 +8,4 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
-  semi: [2, 'never'],
 }
