@@ -7,7 +7,7 @@ const dbConnection = process.env.ELODB
 const client = new Discord.Client()
 
 client.on('ready', () => {
-  logger({ prefix: 'success', message: 'Client Started' })
+  logger({ prefix: 'success', message: `${client.user?.username} Ready` })
   if (dbConnection) connect(dbConnection)
   else {
     logger({ prefix: 'alert', message: 'Database Connection String Missing' })
