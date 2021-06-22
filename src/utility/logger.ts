@@ -1,8 +1,14 @@
 export interface LoggerProps {
   message: string
-  alert?: boolean
+  prefix?: 'none' | 'alert' | 'success'
 }
 
-export const logger = ({ message }: LoggerProps): void => {
-  console.log(message)
+const prefixIcons = {
+  alert: '⚠ ',
+  success: '✔ ',
+  none: '',
+}
+
+export const logger = ({ message, prefix = 'none' }: LoggerProps): void => {
+  console.log(`${prefixIcons[prefix]}${message}`)
 }
