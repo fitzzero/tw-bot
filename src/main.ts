@@ -8,10 +8,10 @@ const client = new Discord.Client()
 
 client.on('ready', () => {
   logger({ prefix: 'success', message: 'Client Started' })
-  if (dbConnection) {
-    connect(dbConnection)
-  } else
+  if (dbConnection) connect(dbConnection)
+  else {
     logger({ prefix: 'alert', message: 'Database Connection String Missing' })
+  }
 })
 
 client.login(token)
