@@ -12,9 +12,9 @@ Discord ELO Bot
 
 - Invite Bot with scopes: [2416273472](https://discord.com/oauth2/authorize?client_id=856749429163556874&scope=bot&permissions=2416273472)
 
-- Add environment variable:
-  Variable: `discoelo`
-  Value: [Bot Token]
+- Add environment variables:
+  `WRTOKEN` : [Bot Token]
+  `WRDB` : [MongoDB Connection String]
 
 # Documentation
 

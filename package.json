@@ -1,12 +1,14 @@
 {
-  "name": "discoelo",
+  "name": "war-room",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:loganfishel/discoelo.git",
+  "repository": "",
   "author": "loganfishel@gmail.com",
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "axios": "^0.22.0",
+    "cross-fetch": "^3.1.4",
     "discord.js": "^12.5.3",
     "mongoose": "^5.12.14",
     "nodemon": "^2.0.7",
