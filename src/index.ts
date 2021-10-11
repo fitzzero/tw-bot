@@ -7,18 +7,7 @@ const token = process.env.WRTOKEN
 const dbConnection = process.env.WRDB
 const discord = new Discord.Client()
 
-interface Status {
-  discord: boolean
-  database: boolean
-}
-
-const status: Status = {
-  discord: false,
-  database: false,
-}
-
 discord.on('ready', () => {
-  status.discord = true
   logger({
     prefix: 'success',
     message: `Discord: Connected as ${discord.user?.username}`,
@@ -26,7 +15,6 @@ discord.on('ready', () => {
 })
 
 connection.on('open', () => {
-  status.database = true
   logger({ prefix: 'success', message: 'Database: Connected' })
   startLoop()
 })

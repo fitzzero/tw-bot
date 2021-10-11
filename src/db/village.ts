@@ -1,25 +1,48 @@
 import { Schema, model } from 'mongoose'
-import { Village } from '../types/village'
+import { Village, VillageHistoric } from '../types/village'
+import { logger } from '../utility/logger'
 
 const schemaOptions = {
   toJSON: { virtuals: true },
 }
 
-const villageSchema = new Schema<Village>(
+export const villageSchema = new Schema<Village>(
   {
-    id: { type: Number, required: true },
+    _id: { type: Number, required: true },
     name: String,
     x: { type: Number, required: true },
     y: { type: Number, required: true },
     player: Number,
     points: Number,
     rank: Number,
+    lastSync: Date,
+    history: [Object],
   },
   schemaOptions
 )
 
 const VillageModel = model<Village>('Village', villageSchema)
 
-export const updateOrCreate = async (village: Village): Promise<Village> => {
-  return village
+export const updateOrCreateVillage = async (
+  data: VillageHistoric
+): Promise<void> => {
+  try {
+    let village = await VillageModel.findById(data._id)
+    if (!village) {
+      village = new VillageModel(data)
+    } else {
+      village.name = data.name
+      village.x = data.x
+      village.y = data.y
+      village.player = data.player
+      village.rank = data.rank
+      village.lastSync = data.lastSync
+      village.history.unshift(data)
+    }
+    village.save()
+    return
+  } catch (err) {
+    logger({ prefix: 'alert', message: `${err}` })
+    return
+  }
 }

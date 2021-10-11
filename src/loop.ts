@@ -1,7 +1,7 @@
 import { syncWorld } from './tw'
 import { logger } from './utility/logger'
 
-export const startLoop = async () => {
+export const startLoop = (): void => {
   logger({ prefix: 'success', message: 'Loop: Started' })
   syncWorld(55)
 }
