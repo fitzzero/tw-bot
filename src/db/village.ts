@@ -1,28 +1,22 @@
 import { Schema, model } from 'mongoose'
+import { Village } from '../types/village'
 
 const schemaOptions = {
   toJSON: { virtuals: true },
 }
 
-export interface Village {
-  id: number
-  name: string
-  x: number
-  y: number
-  player: number
-  points: number
-  rank: number
-}
-
-const villageSchema = new Schema<Village>({
-  id: { type: Number, required: true },
-  name: String,
-  x: { type: Number, required: true },
-  y: { type: Number, required: true },
-  player: Number,
-  points: Number,
-  rank: Number,
-})
+const villageSchema = new Schema<Village>(
+  {
+    id: { type: Number, required: true },
+    name: String,
+    x: { type: Number, required: true },
+    y: { type: Number, required: true },
+    player: Number,
+    points: Number,
+    rank: Number,
+  },
+  schemaOptions
+)
 
 const VillageModel = model<Village>('Village', villageSchema)
 

@@ -20,7 +20,7 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "start": "node dist/tsc/main.js",
+    "start": "node dist/tsc/index.js",
     "start:dev": "nodemon"
   },
   "devDependencies": {
@@ -31,6 +31,6 @@
     "eslint": "^7.29.0",
     "jest": "^27.0.4",
     "ts-jest": "^27.0.3",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.2.1"
   }
 }
