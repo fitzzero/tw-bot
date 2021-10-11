@@ -2,6 +2,7 @@ import moment from 'moment'
 import { Schema, model } from 'mongoose'
 import { World } from '../types/world'
 import { logger } from '../utility/logger'
+import { withinLastHour } from '../utility/time'
 import { villageSchema } from './village'
 
 const schemaOptions = {
@@ -11,8 +12,9 @@ const schemaOptions = {
 export const worldSchema = new Schema<World>(
   {
     _id: { type: Number, required: true },
-    lastSync: Date,
     villages: [villageSchema],
+    lastSync: Date,
+    inSync: Boolean,
   },
   schemaOptions
 )
@@ -26,8 +28,9 @@ export const updateOrCreateWorld = async (
   try {
     let world = await WorldModel.findById(worldId)
     if (!world) {
-      world = new WorldModel({ _id: worldId, lastSync })
+      world = new WorldModel({ _id: worldId, lastSync, inSync: false })
     } else {
+      world.inSync = withinLastHour(moment(world.lastSync))
       world.lastSync = lastSync
     }
     logger({ prefix: 'success', message: `TW: Loaded world ${world.id}` })
