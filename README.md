@@ -1,6 +1,6 @@
-# discoelo
+# war-room bot
 
-Discord ELO Bot
+War Room Bot
 
 # Req
 
