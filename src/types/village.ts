@@ -1,16 +1,19 @@
+import { Document } from 'mongoose'
 import { Moment } from 'moment'
 
-export interface Village extends VillageHistoric {
-  history: VillageHistoric[]
+export type Village = VillageData & Document
+
+export interface VillageHistoric extends Omit<VillageData, '_id'> {
+  villageId: string
 }
 
-export interface VillageHistoric {
-  _id: number
+export interface VillageData {
+  _id: string
   name: string
   x: number
   y: number
   player: number
   points: number
-  rank: number
+  rank: number | null
   lastSync: Moment
 }

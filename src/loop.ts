@@ -1,4 +1,4 @@
-import { syncWorld } from './tw'
+import { syncWorld } from './tw/world'
 import { logger } from './utility/logger'
 
 export const startLoop = (): void => {

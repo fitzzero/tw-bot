@@ -1,9 +1,19 @@
-import mongoose from 'mongoose'
+import mongoose, { connection } from 'mongoose'
 import { logger } from '../utility/logger'
+const dbConnection: string | undefined = process.env.WRDB
 
-export const connectDb = async (connectionString: string): Promise<void> => {
+export const connectDb = async (world: number): Promise<void> => {
+  if (!dbConnection) {
+    logger({ prefix: 'alert', message: 'No Env Variable for DB Found' })
+    return
+  }
+  if (connection?.readyState && connection.readyState > 0) {
+    connection.close()
+  }
+  const parameters = `w${world}?retryWrites=true&w=majority`
+  const uri = dbConnection + parameters
   mongoose
-    .connect(connectionString, {
+    .connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
