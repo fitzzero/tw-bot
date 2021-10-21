@@ -46,7 +46,7 @@ export const updateOrCreateTribe = async (
       tribe.odd = tribeData.odd
       tribe.lastSync = tribeData.lastSync
     }
-    tribe.save()
+    await tribe.save()
     return tribe
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

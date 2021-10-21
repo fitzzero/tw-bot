@@ -10,5 +10,5 @@ export const startLoop = (): void => {
 
 const loop = (): void => {
   logger({ prefix: 'success', message: 'Loop: Starting Update' })
-  syncWorld(1)
+  syncWorld(55)
 }

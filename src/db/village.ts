@@ -38,7 +38,7 @@ export const updateOrCreateVillage = async (
       village.rank = villageData.rank
       village.lastSync = villageData.lastSync
     }
-    village.save()
+    await village.save()
     return village
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

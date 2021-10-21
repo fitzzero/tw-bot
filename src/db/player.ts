@@ -44,7 +44,7 @@ export const updateOrCreatePlayer = async (
       player.odd = playerData.odd
       player.ods = playerData.ods
     }
-    player.save()
+    await player.save()
     return player
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
