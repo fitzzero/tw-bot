@@ -15,6 +15,7 @@ export const worldSchema = new Schema<World>(
     villages: [villageSchema],
     lastSync: Date,
     inSync: Boolean,
+    testData: Boolean,
   },
   schemaOptions
 )
@@ -28,7 +29,12 @@ export const updateOrCreateWorld = async (
   try {
     let world = await WorldModel.findById(worldId)
     if (!world) {
-      world = new WorldModel({ _id: worldId, lastSync, inSync: false })
+      world = new WorldModel({
+        _id: worldId,
+        lastSync,
+        inSync: false,
+        testData: worldId == 1 ? true : false,
+      })
     } else {
       world.inSync = withinLastHour(moment(world.lastSync))
       world.lastSync = lastSync

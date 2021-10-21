@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch'
+import path from 'path'
 import { updateOrCreatePlayer } from '../db/player'
 import { addPlayerHistory } from '../db/playerHistory'
 import { PlayerData } from '../types/player'
@@ -7,10 +8,11 @@ import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
 export const loadPlayers = async (world: World): Promise<void> => {
+  let api = `https://us${world._id}.tribalwars.us/map/player.txt`
+  if (world.testData) api = path.resolve('./test-data/player.txt')
+
   try {
-    const response = await fetch(
-      `https://us${world._id}.tribalwars.us/map/player.txt`
-    )
+    const response = await fetch(api)
     if (response.status >= 400) {
       throw new Error(`TW Server: ${response.status}`)
     }

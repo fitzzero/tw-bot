@@ -5,4 +5,5 @@ export interface World extends Document {
   _id: number
   lastSync: Moment
   inSync: boolean
+  testData: boolean
 }

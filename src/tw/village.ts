@@ -7,10 +7,11 @@ import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
 export const loadVillages = async (world: World): Promise<void> => {
+  let api = `https://us${world._id}.tribalwars.us/map/village.txt`
+  if (world.testData) api = './test-data/village.txt'
+
   try {
-    const response = await fetch(
-      `https://us${world._id}.tribalwars.us/map/village.txt`
-    )
+    const response = await fetch(api)
     if (response.status >= 400) {
       throw new Error(`TW Server: ${response.status}`)
     }
