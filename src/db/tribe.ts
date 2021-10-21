@@ -16,6 +16,9 @@ export const tribeSchema = new Schema<Tribe>(
     points: Number,
     pointsAll: Number,
     rank: Number,
+    od: Number,
+    oda: Number,
+    odd: Number,
     lastSync: Date,
   },
   schemaOptions
@@ -38,6 +41,9 @@ export const updateOrCreateTribe = async (
       tribe.points = tribeData.points
       tribe.allPoints = tribeData.allPoints
       tribe.rank = tribeData.rank
+      tribe.od = tribeData.od
+      tribe.oda = tribeData.oda
+      tribe.odd = tribeData.odd
       tribe.lastSync = tribeData.lastSync
     }
     tribe.save()

@@ -16,5 +16,8 @@ export interface TribeData {
   points: number
   allPoints: number
   rank: number | null
+  od: number
+  oda: number
+  odd: number
   lastSync: Moment
 }

@@ -14,5 +14,9 @@ export interface PlayerData {
   villages: number
   points: number
   rank: number | null
+  od: number
+  oda: number
+  odd: number
+  ods: number
   lastSync: Moment
 }

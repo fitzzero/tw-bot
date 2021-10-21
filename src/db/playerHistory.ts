@@ -15,6 +15,10 @@ export const playerHistoricSchema = new Schema<PlayerHistoric>(
     villages: Number,
     points: Number,
     rank: Number,
+    od: Number,
+    oda: Number,
+    odd: Number,
+    ods: Number,
     lastSync: Date,
   },
   schemaOptions

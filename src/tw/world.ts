@@ -1,9 +1,9 @@
 import { connectDb } from '../db/connect'
 import { updateOrCreateWorld } from '../db/world'
 import { logger } from '../utility/logger'
-import { loadPlayers } from './player'
-import { loadTribes } from './tribe'
-import { loadVillages } from './village'
+import { syncPlayers } from './player'
+import { syncTribes } from './tribe'
+import { syncVillages } from './village'
 
 export const syncWorld = async (worldId: number): Promise<void> => {
   await connectDb(worldId)
@@ -17,7 +17,7 @@ export const syncWorld = async (worldId: number): Promise<void> => {
     logger({ prefix: 'alert', message: 'TW: Updated recently, skipping sync' })
     return
   }
-  loadPlayers(world)
-  loadVillages(world)
-  loadTribes(world)
+  syncPlayers(world)
+  syncVillages(world)
+  syncTribes(world)
 }

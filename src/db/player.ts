@@ -14,6 +14,10 @@ export const playerSchema = new Schema<Player>(
     villages: Number,
     points: Number,
     rank: Number,
+    od: Number,
+    oda: Number,
+    odd: Number,
+    ods: Number,
     lastSync: Date,
   },
   schemaOptions
@@ -35,6 +39,10 @@ export const updateOrCreatePlayer = async (
       player.points = playerData.points
       player.rank = playerData.rank
       player.lastSync = playerData.lastSync
+      player.od = playerData.od
+      player.oda = playerData.oda
+      player.odd = playerData.odd
+      player.ods = playerData.ods
     }
     player.save()
     return player
