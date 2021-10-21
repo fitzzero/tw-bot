@@ -8,8 +8,9 @@ import { logger } from '../utility/logger'
 
 export const loadVillages = async (world: World): Promise<void> => {
   let api = `https://us${world._id}.tribalwars.us/map/village.txt`
-  if (world.testData) api = './test-data/village.txt'
-
+  if (world.testData) {
+    api = 'https://fitzzero.sirv.com/tribalwars/example-data/village.txt'
+  }
   try {
     const response = await fetch(api)
     if (response.status >= 400) {
@@ -45,7 +46,9 @@ export const loadVillages = async (world: World): Promise<void> => {
           return
         }
         await updateOrCreateVillage(villageData)
-        await addVillageHistory(villageData)
+        if (!world.inSync) {
+          await addVillageHistory(villageData)
+        }
       })
     )
     logger({

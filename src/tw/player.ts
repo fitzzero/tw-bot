@@ -1,5 +1,4 @@
 import fetch from 'cross-fetch'
-import path from 'path'
 import { updateOrCreatePlayer } from '../db/player'
 import { addPlayerHistory } from '../db/playerHistory'
 import { PlayerData } from '../types/player'
@@ -9,7 +8,9 @@ import { logger } from '../utility/logger'
 
 export const loadPlayers = async (world: World): Promise<void> => {
   let api = `https://us${world._id}.tribalwars.us/map/player.txt`
-  if (world.testData) api = path.resolve('./test-data/player.txt')
+  if (world.testData) {
+    api = 'https://fitzzero.sirv.com/tribalwars/example-data/player.txt'
+  }
 
   try {
     const response = await fetch(api)
@@ -45,7 +46,9 @@ export const loadPlayers = async (world: World): Promise<void> => {
           return
         }
         await updateOrCreatePlayer(playerData)
-        await addPlayerHistory(playerData)
+        if (!world.inSync) {
+          await addPlayerHistory(playerData)
+        }
       })
     )
     logger({
