@@ -9,12 +9,16 @@ const schemaOptions = {
 export const tribeHistoricSchema = new Schema<TribeHistoric>(
   {
     _id: { type: String, required: true },
-    playerId: String,
+    tribeId: String,
     name: String,
     tribe: String,
     villages: Number,
     points: Number,
     rank: Number,
+    od: Number,
+    oda: Number,
+    odd: Number,
+    ods: Number,
     lastSync: Date,
   },
   schemaOptions
