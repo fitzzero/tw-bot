@@ -13,7 +13,7 @@ export const syncWorld = async (worldId: number): Promise<void> => {
     logger({ prefix: 'alert', message: 'Database: Failed to load world' })
     return
   }
-  if (world.inSync && !world.testData) {
+  if (world.inSync) {
     logger({ prefix: 'alert', message: 'TW: Updated recently, skipping sync' })
     return
   }
