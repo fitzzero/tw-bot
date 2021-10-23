@@ -12,6 +12,7 @@ const schemaOptions = {
 export const worldSchema = new Schema<World>(
   {
     _id: { type: Number, required: true },
+    name: String,
     villages: [villageSchema],
     lastSync: Date,
     inSync: Boolean,
@@ -31,6 +32,7 @@ export const updateOrCreateWorld = async (
     if (!world) {
       world = new WorldModel({
         _id: worldId,
+        name: `w${worldId}`,
         lastSync,
         inSync: false,
         testData: worldId == 1 ? true : false,
@@ -38,6 +40,8 @@ export const updateOrCreateWorld = async (
     } else {
       world.inSync = withinLastHour(moment(world.lastSync))
       world.lastSync = lastSync
+      // Migrations
+      if (!world?.name) world.name = `w${worldId}`
     }
     logger({ prefix: 'success', message: `Database: Loaded w${world.id}` })
     world.save()
