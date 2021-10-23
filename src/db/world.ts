@@ -39,7 +39,7 @@ export const updateOrCreateWorld = async (
       world.inSync = withinLastHour(moment(world.lastSync))
       world.lastSync = lastSync
     }
-    logger({ prefix: 'success', message: `TW: Loaded world ${world.id}` })
+    logger({ prefix: 'success', message: `Database: Loaded w${world.id}` })
     world.save()
     return world
   } catch (err) {

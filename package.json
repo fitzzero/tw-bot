@@ -13,6 +13,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.12.14",
     "nodemon": "^2.0.7",
+    "todoist": "^0.5.1",
     "typescript": "^4.3.4"
   },
   "scripts": {

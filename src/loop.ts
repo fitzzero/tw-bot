@@ -1,5 +1,8 @@
 import { activeWorlds } from './config'
-import { syncWorld } from './tw/world'
+import { connectDb } from './db/connect'
+import { updateOrCreateWorld } from './db/world'
+import { syncProject } from './todoist/project'
+import { syncTw } from './tw/tribalWars'
 import { logger } from './utility/logger'
 
 export const startLoop = (dev?: boolean): void => {
@@ -8,13 +11,25 @@ export const startLoop = (dev?: boolean): void => {
   loop(worlds)
   setInterval(function () {
     loop(worlds)
-  }, 60 * 60 * 1000) // 60 * 60 * 1000 milsec
+  }, 60 * 1000) // 60 * 1000 milsec
 }
 
-const loop = (worlds: number[]): void => {
+const loop = async (worlds: number[]): Promise<void> => {
   logger({ prefix: 'success', message: 'Loop: Starting Update' })
 
-  worlds.forEach(world => {
-    syncWorld(world)
+  worlds.forEach(worldId => {
+    syncWorld(worldId)
   })
+}
+
+const syncWorld = async (worldId: number): Promise<void> => {
+  await connectDb(worldId)
+
+  const world = await updateOrCreateWorld(worldId)
+  if (!world) {
+    logger({ prefix: 'alert', message: 'Database: Failed to load world' })
+    return
+  }
+  syncTw(world)
+  syncProject(world)
 }

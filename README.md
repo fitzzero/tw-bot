@@ -15,6 +15,7 @@ War Room Bot
 - Add environment variables:
   `WRTOKEN` : [Bot Token]
   `WRDB` : [MongoDB Connection String]
+  `WRTODOIST`: [Todoist API Key]
 
 # Documentation
 
