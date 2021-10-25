@@ -1,15 +1,20 @@
+import { LoopFn } from '../loop'
 import { World } from '../types/world'
 import { logger } from '../utility/logger'
 import { syncPlayers } from './player'
 import { syncTribes } from './tribe'
 import { syncVillages } from './village'
 
-export const syncTw = async (world: World): Promise<void> => {
+export interface TwProps {
+  world: World
+}
+
+export const syncTw: LoopFn = async ({ world }) => {
   if (world.inSync) {
     logger({ prefix: 'alert', message: 'TW: Updated recently, skipping sync' })
     return
   }
-  syncPlayers(world)
-  syncVillages(world)
-  syncTribes(world)
+  syncPlayers({ world })
+  syncVillages({ world })
+  syncTribes({ world })
 }

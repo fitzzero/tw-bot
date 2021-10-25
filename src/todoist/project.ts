@@ -1,9 +1,16 @@
-import { World } from '../types/world'
+import { Project } from 'todoist/dist/v8-types'
+import { LoopFn } from '../loop'
 import { logger } from '../utility/logger'
 import { todoist } from './connect'
 import { syncItems } from './items'
 
-export const syncProject = async (world: World): Promise<void> => {
+export interface ProjectFnProps {
+  project: Project
+}
+
+export type ProjectFn = (props: ProjectFnProps) => Promise<void>
+
+export const syncProject: LoopFn = async ({ world }) => {
   if (!todoist) {
     logger({ prefix: 'alert', message: 'Todoist: Error connecting' })
     return
@@ -21,7 +28,7 @@ export const syncProject = async (world: World): Promise<void> => {
     return
   }
 
-  await syncItems(project)
+  await syncItems({ project })
 
   logger({
     prefix: 'success',

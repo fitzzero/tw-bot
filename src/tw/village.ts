@@ -1,12 +1,13 @@
 import fetch from 'cross-fetch'
 import { updateOrCreateVillage } from '../db/village'
 import { addVillageHistory } from '../db/villageHistory'
+import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncVillages = async (world: World): Promise<void> => {
+export const syncVillages: LoopFn = async ({ world }) => {
   try {
     const villages = await fetchVillages(world)
 

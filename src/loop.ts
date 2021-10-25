@@ -3,7 +3,14 @@ import { connectDb } from './db/connect'
 import { updateOrCreateWorld } from './db/world'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
+import { World } from './types/world'
 import { logger } from './utility/logger'
+
+export interface LoopFnProps {
+  world: World
+}
+
+export type LoopFn = (props: LoopFnProps) => Promise<void>
 
 export const startLoop = (dev?: boolean): void => {
   const worlds = dev ? [1] : activeWorlds
@@ -30,6 +37,6 @@ const syncWorld = async (worldId: number): Promise<void> => {
     logger({ prefix: 'alert', message: 'Database: Failed to load world' })
     return
   }
-  syncTw(world)
-  syncProject(world)
+  syncTw({ world })
+  syncProject({ world })
 }

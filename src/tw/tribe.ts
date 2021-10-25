@@ -1,12 +1,13 @@
 import fetch from 'cross-fetch'
 import { updateOrCreateTribe } from '../db/tribe'
 import { addTribeHistory } from '../db/tribeHistoric'
+import { LoopFn } from '../loop'
 import { TribeData } from '../types/tribe'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncTribes = async (world: World): Promise<void> => {
+export const syncTribes: LoopFn = async ({ world }) => {
   try {
     // Data: id, name, tag, members, villages, points, all_points, rank
     const tribes = await fetchTribes(world)
