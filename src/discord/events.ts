@@ -8,4 +8,12 @@ export const DiscordEvents = (): void => {
       message: `Discord: Connected as ${discord.user?.username}`,
     })
   })
+
+  discord.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return
+    if (interaction.commandName === 'ping') {
+      logger({ prefix: 'success', message: 'Created Command' })
+      await interaction.reply('Pong!')
+    }
+  })
 }

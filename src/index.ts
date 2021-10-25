@@ -14,5 +14,5 @@ DatabaseEvents()
 DiscordEvents()
 
 /* Start Services */
-startDiscord()
+startDiscord(!!isDev)
 startLoop(!!isDev)
