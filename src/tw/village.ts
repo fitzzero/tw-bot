@@ -14,11 +14,15 @@ export const syncVillages: LoopFn = async ({ world }) => {
     await Promise.all(
       villages.map(async data => {
         if (data[0] === '' || data[0] === null) return
+        const x = parseInt(data[2])
+        const y = parseInt(data[3])
+
         const villageData: VillageData = {
           _id: `${data[2]}|${data[3]}`,
           name: data[1],
-          x: parseInt(data[2]),
-          y: parseInt(data[3]),
+          x,
+          y,
+          k: Math.floor(x / 100) * 10 + Math.floor(y / 100),
           player: parseInt(data[4]),
           points: parseInt(data[5]),
           rank: parseInt(data[6]) || null,
