@@ -11,7 +11,10 @@ export interface TwProps {
 
 export const syncTw: LoopFn = async ({ world }) => {
   if (world.inSync) {
-    logger({ prefix: 'alert', message: 'TW: Updated recently, skipping sync' })
+    logger({
+      prefix: 'success',
+      message: 'TW: Updated recently, skipping sync',
+    })
     return
   }
   syncPlayers({ world })

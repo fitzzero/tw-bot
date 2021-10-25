@@ -36,6 +36,8 @@ export const updateOrCreateVillage = async (
       village.points = villageData.points
       village.rank = villageData.rank
       village.lastSync = villageData.lastSync
+      // Migrations
+      village.k = villageData.k
     }
     await village.save()
     return village

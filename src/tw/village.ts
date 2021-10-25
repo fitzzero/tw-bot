@@ -22,7 +22,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
           name: data[1],
           x,
           y,
-          k: Math.floor(x / 100) * 10 + Math.floor(y / 100),
+          k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
           player: parseInt(data[4]),
           points: parseInt(data[5]),
           rank: parseInt(data[6]) || null,

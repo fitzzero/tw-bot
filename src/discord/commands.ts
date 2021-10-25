@@ -7,6 +7,7 @@ import { logger } from '../utility/logger'
 import { ping } from './ping'
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Interaction } from 'discord.js'
+import { todo } from './todo'
 
 const token = process.env.WRTOKEN
 
@@ -19,7 +20,7 @@ export interface Command {
   controller: CommandFn
 }
 
-export const activeCommands = [ping]
+export const activeCommands = [ping, todo]
 
 type Props = {
   dev?: boolean
