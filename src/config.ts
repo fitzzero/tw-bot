@@ -1,12 +1,9 @@
-import { Snowflake } from 'discord.js'
+import { DiscordConfig } from './types/config'
 
-export const activeWorlds = [55]
+export const isDev = !!process.argv[2]
 
-interface DiscordConfig {
-  client: Snowflake
-  guild: Snowflake
-  testGuild: Snowflake
-}
+export const testWorldId = 1
+export const prodWorldId = 55
 
 export const discordConfig: DiscordConfig = {
   client: '896860363541348413',

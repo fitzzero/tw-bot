@@ -27,7 +27,11 @@ const controller: CommandFn = async interaction => {
     return
   }
 
-  await todoist?.items.add({ content: what, due: { string: when } })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const newItem = await todoist?.items.add({
+    content: what,
+    due: { string: when } as any,
+  })
 
   await interaction.reply(`Created ${what}`)
 }

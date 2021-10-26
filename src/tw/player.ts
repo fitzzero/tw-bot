@@ -73,7 +73,7 @@ const fetchPlayers = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} players`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${players?.length} players...`,
   })
   return players

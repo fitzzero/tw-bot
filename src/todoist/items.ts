@@ -15,5 +15,4 @@ export const syncItems: ProjectFn = async ({ project }) => {
       return true
     } else return false
   })
-  console.log('found items: ', items.length)
 }

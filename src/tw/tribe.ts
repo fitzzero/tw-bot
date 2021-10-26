@@ -72,7 +72,7 @@ export const fetchTribes = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} tribes`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${tribes?.length} tribes...`,
   })
 

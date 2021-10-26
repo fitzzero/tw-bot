@@ -61,7 +61,7 @@ const fetchVillages = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} villages`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${villages?.length} villages...`,
   })
 

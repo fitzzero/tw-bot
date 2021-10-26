@@ -2,7 +2,7 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { discordConfig } from '../config'
-import { VoidFn } from '../types/methods'
+import { VoidFnProps } from '../types/methods'
 import { logger } from '../utility/logger'
 import { ping } from './ping'
 import { SlashCommandBuilder } from '@discordjs/builders'
@@ -26,7 +26,7 @@ type Props = {
   dev?: boolean
 }
 
-export const registerCommands: VoidFn<Props> = async ({ dev }) => {
+export const registerCommands: VoidFnProps<Props> = async ({ dev }) => {
   try {
     const guild = dev ? discordConfig.testGuild : discordConfig.guild
 

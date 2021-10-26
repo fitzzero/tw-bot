@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Schema, model } from 'mongoose'
+import { isDev } from '../config'
 import { World } from '../types/world'
 import { logger } from '../utility/logger'
 import { withinLastHour } from '../utility/time'
@@ -25,7 +26,7 @@ const WorldModel = model<World>('World', worldSchema)
 
 export const updateOrCreateWorld = async (
   worldId: number
-): Promise<World | null> => {
+): Promise<World | undefined> => {
   const lastSync = moment()
   try {
     let world = await WorldModel.findById(worldId)
@@ -35,7 +36,7 @@ export const updateOrCreateWorld = async (
         name: `w${worldId}`,
         lastSync,
         inSync: false,
-        testData: worldId == 1 ? true : false,
+        testData: !!isDev,
       })
     } else {
       world.inSync = withinLastHour(moment(world.lastSync))
@@ -48,6 +49,6 @@ export const updateOrCreateWorld = async (
     return world
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
-    return null
+    return
   }
 }
