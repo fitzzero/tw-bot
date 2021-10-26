@@ -1,20 +1,53 @@
-import { activeWorlds } from './config'
-import { syncWorld } from './tw/world'
+import moment from 'moment'
+import { isDev, testWorldId, prodWorldId } from './config'
+import { connectDb } from './db/connect'
+import { updateLastSync, updateOrCreateWorld } from './db/world'
+import { syncProject } from './todoist/project'
+import { syncTw } from './tw/tribalWars'
+import { VoidFn } from './types/methods'
+import { World } from './types/world'
 import { logger } from './utility/logger'
+import { withinLastHour } from './utility/time'
 
-export const startLoop = (dev?: boolean): void => {
-  const worlds = dev ? [1] : activeWorlds
+const worldId = isDev ? testWorldId : prodWorldId
+let worldInMemory: World | undefined = undefined
 
-  loop(worlds)
-  setInterval(function () {
-    loop(worlds)
-  }, 60 * 60 * 1000) // 60 * 60 * 1000 milsec
+export interface LoopFnProps {
+  world: World
 }
 
-const loop = (worlds: number[]): void => {
-  logger({ prefix: 'success', message: 'Loop: Starting Update' })
+export type LoopFn = (props: LoopFnProps) => Promise<void>
 
-  worlds.forEach(world => {
-    syncWorld(world)
-  })
+export const startLoop: VoidFn = async () => {
+  // Load world
+  connectDb(worldId)
+  worldInMemory = await updateOrCreateWorld(worldId)
+  if (!worldInMemory) {
+    logger({ prefix: 'alert', message: `Database: Error loading w${worldId}` })
+    return
+  }
+
+  loop()
+  setInterval(function () {
+    loop()
+  }, 60 * 1000) // 60 * 1000 milsec
+}
+
+const loop: VoidFn = async () => {
+  if (!worldInMemory) return
+  logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
+  const lastSync = moment(worldInMemory.lastSync)
+
+  // Sync Todoist Projects
+  syncProject({ world: worldInMemory })
+
+  // Sync TW if it's been more than hour since last sync
+  if (!withinLastHour(lastSync) || !worldInMemory.lastSync) {
+    const newSync = moment()
+    updateLastSync({ worldId: worldId })
+    worldInMemory.lastSync = newSync
+    syncTw({ world: worldInMemory })
+  } else {
+    logger({ prefix: 'success', message: 'TW: In Sync (Skipped)' })
+  }
 }

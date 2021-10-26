@@ -1,8 +1,9 @@
 import moment from 'moment'
 import { Schema, model } from 'mongoose'
+import { isDev } from '../config'
+import { VoidFnProps } from '../types/methods'
 import { World } from '../types/world'
 import { logger } from '../utility/logger'
-import { withinLastHour } from '../utility/time'
 import { villageSchema } from './village'
 
 const schemaOptions = {
@@ -12,9 +13,9 @@ const schemaOptions = {
 export const worldSchema = new Schema<World>(
   {
     _id: { type: Number, required: true },
+    name: String,
     villages: [villageSchema],
     lastSync: Date,
-    inSync: Boolean,
     testData: Boolean,
   },
   schemaOptions
@@ -24,26 +25,41 @@ const WorldModel = model<World>('World', worldSchema)
 
 export const updateOrCreateWorld = async (
   worldId: number
-): Promise<World | null> => {
-  const lastSync = moment()
+): Promise<World | undefined> => {
   try {
     let world = await WorldModel.findById(worldId)
     if (!world) {
       world = new WorldModel({
         _id: worldId,
-        lastSync,
-        inSync: false,
-        testData: worldId == 1 ? true : false,
+        name: `w${worldId}`,
+        testData: !!isDev,
       })
     } else {
-      world.inSync = withinLastHour(moment(world.lastSync))
-      world.lastSync = lastSync
+      // Migrations
+      if (!world?.name) world.name = `w${worldId}`
     }
-    logger({ prefix: 'success', message: `TW: Loaded world ${world.id}` })
-    world.save()
+    logger({ prefix: 'success', message: `Database: Loaded w${world.id}` })
+    await world.save()
     return world
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
-    return null
+    return
   }
+}
+
+export const updateLastSync: VoidFnProps<{ worldId: number }> = async ({
+  worldId,
+}) => {
+  const world = await WorldModel.findById(worldId)
+  if (!world) {
+    logger({
+      prefix: 'alert',
+      message: `Database: Failed to update lastSync for w${worldId}`,
+    })
+    return
+  }
+  const lastSync = moment()
+  world.lastSync = lastSync
+  world.save()
+  return
 }

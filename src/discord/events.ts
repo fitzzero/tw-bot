@@ -1,4 +1,5 @@
 import { logger } from '../utility/logger'
+import { activeCommands } from './commands'
 import { discord } from './connect'
 
 export const DiscordEvents = (): void => {
@@ -6,6 +7,15 @@ export const DiscordEvents = (): void => {
     logger({
       prefix: 'success',
       message: `Discord: Connected as ${discord.user?.username}`,
+    })
+  })
+
+  discord.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return
+    activeCommands.forEach(command => {
+      if (interaction.commandName === command.documentation.name) {
+        command.controller(interaction)
+      }
     })
   })
 }

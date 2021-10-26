@@ -1,12 +1,13 @@
 import fetch from 'cross-fetch'
 import { updateOrCreateTribe } from '../db/tribe'
 import { addTribeHistory } from '../db/tribeHistoric'
+import { LoopFn } from '../loop'
 import { TribeData } from '../types/tribe'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncTribes = async (world: World): Promise<void> => {
+export const syncTribes: LoopFn = async ({ world }) => {
   try {
     // Data: id, name, tag, members, villages, points, all_points, rank
     const tribes = await fetchTribes(world)
@@ -42,14 +43,12 @@ export const syncTribes = async (world: World): Promise<void> => {
           return
         }
         await updateOrCreateTribe(tribeData)
-        if (!world.inSync) {
-          await addTribeHistory(tribeData)
-        }
+        await addTribeHistory(tribeData)
       })
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${tribes?.length} tribes for world ${world._id}`,
+      message: `TW: Synced ${tribes?.length} tribes for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
@@ -71,7 +70,7 @@ export const fetchTribes = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} tribes`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${tribes?.length} tribes...`,
   })
 

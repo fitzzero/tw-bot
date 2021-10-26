@@ -12,6 +12,7 @@ export const villageSchema = new Schema<Village>(
     name: String,
     x: { type: Number, required: true },
     y: { type: Number, required: true },
+    k: Number,
     player: Number,
     points: Number,
     rank: Number,
@@ -31,12 +32,12 @@ export const updateOrCreateVillage = async (
       village = new VillageModel(villageData)
     } else {
       village.name = villageData.name
-      village.x = villageData.x
-      village.y = villageData.y
       village.player = villageData.player
       village.points = villageData.points
       village.rank = villageData.rank
       village.lastSync = villageData.lastSync
+      // Migrations
+      village.k = villageData.k
     }
     await village.save()
     return village

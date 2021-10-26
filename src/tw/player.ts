@@ -1,12 +1,13 @@
 import fetch from 'cross-fetch'
 import { updateOrCreatePlayer } from '../db/player'
 import { addPlayerHistory } from '../db/playerHistory'
+import { LoopFn } from '../loop'
 import { PlayerData } from '../types/player'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncPlayers = async (world: World): Promise<void> => {
+export const syncPlayers: LoopFn = async ({ world }) => {
   try {
     // Data: id, name, ally, villages, points, rank
     const players = await fetchPlayers(world)
@@ -43,14 +44,12 @@ export const syncPlayers = async (world: World): Promise<void> => {
           return
         }
         await updateOrCreatePlayer(playerData)
-        if (!world.inSync) {
-          await addPlayerHistory(playerData)
-        }
+        await addPlayerHistory(playerData)
       })
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${players?.length} players for world ${world._id}`,
+      message: `TW: Synced ${players?.length} players for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
@@ -72,7 +71,7 @@ const fetchPlayers = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} players`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${players?.length} players...`,
   })
   return players

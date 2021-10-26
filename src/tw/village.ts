@@ -1,23 +1,28 @@
 import fetch from 'cross-fetch'
 import { updateOrCreateVillage } from '../db/village'
 import { addVillageHistory } from '../db/villageHistory'
+import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncVillages = async (world: World): Promise<void> => {
+export const syncVillages: LoopFn = async ({ world }) => {
   try {
     const villages = await fetchVillages(world)
 
     await Promise.all(
       villages.map(async data => {
         if (data[0] === '' || data[0] === null) return
+        const x = parseInt(data[2])
+        const y = parseInt(data[3])
+
         const villageData: VillageData = {
           _id: `${data[2]}|${data[3]}`,
           name: data[1],
-          x: parseInt(data[2]),
-          y: parseInt(data[3]),
+          x,
+          y,
+          k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
           player: parseInt(data[4]),
           points: parseInt(data[5]),
           rank: parseInt(data[6]) || null,
@@ -27,14 +32,12 @@ export const syncVillages = async (world: World): Promise<void> => {
           return
         }
         await updateOrCreateVillage(villageData)
-        if (!world.inSync) {
-          await addVillageHistory(villageData)
-        }
+        await addVillageHistory(villageData)
       })
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${villages?.length} villages for world ${world._id}`,
+      message: `TW: Synced ${villages?.length} villages for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
@@ -56,7 +59,7 @@ const fetchVillages = async (world: World): Promise<string[][]> => {
     throw new Error(`TW: Error loading world ${world._id} villages`)
   }
   logger({
-    prefix: 'success',
+    prefix: 'start',
     message: `TW: Loading ${villages?.length} villages...`,
   })
 

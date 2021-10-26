@@ -12,6 +12,7 @@ export interface VillageData {
   name: string
   x: number
   y: number
+  k: number
   player: number
   points: number
   rank: number | null
