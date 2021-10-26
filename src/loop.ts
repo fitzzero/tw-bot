@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { isDev, testWorldId, prodWorldId } from './config'
+import { worldId } from './config'
 import { connectDb } from './db/connect'
 import { updateLastSync, updateOrCreateWorld } from './db/world'
 import { syncProject } from './todoist/project'
@@ -9,7 +9,6 @@ import { World } from './types/world'
 import { logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
 
-const worldId = isDev ? testWorldId : prodWorldId
 let worldInMemory: World | undefined = undefined
 
 export interface LoopFnProps {

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
-import {
-  discordConfig,
-  discordDevCommands,
-  discordProdCommands,
-  isDev,
-} from '../config'
+import { discordConfig } from '../config'
 import { VoidFn } from '../types/methods'
 import { logger } from '../utility/logger'
 import { SlashCommandBuilder } from '@discordjs/builders'
@@ -23,12 +18,10 @@ export interface Command {
   controller: CommandFn
 }
 
-export const activeCommands = isDev ? discordDevCommands : discordProdCommands
+export const activeCommands = discordConfig.commands
 
 export const registerCommands: VoidFn = async () => {
   try {
-    const guild = isDev ? discordConfig.testGuild : discordConfig.guild
-
     const commandDocumentation = activeCommands.map(
       command => command.documentation
     )
@@ -36,7 +29,7 @@ export const registerCommands: VoidFn = async () => {
     await rest.put(
       Routes.applicationGuildCommands(
         discordConfig.client as any,
-        guild as any
+        discordConfig.guild.id as any
       ),
       { body: commandDocumentation }
     )

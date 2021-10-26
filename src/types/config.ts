@@ -1,7 +1,10 @@
-import { Snowflake } from 'discord.js'
+import { Command } from '../discord/commands'
 
 export interface DiscordConfig {
-  client: Snowflake
-  guild: Snowflake
-  testGuild: Snowflake
+  client: string
+  commands: Command[]
+  guild: {
+    id: string
+    todo: string
+  }
 }

@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
+import { Item } from 'todoist/dist/v8-types'
 import { todoist } from '../todoist/connect'
 import { getActiveProject } from '../todoist/project'
 import { Command, CommandFn } from './commands'
@@ -29,14 +30,17 @@ const controller: CommandFn = async interaction => {
     return
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const newItem = await todoist?.items.add({
+  const newItem = (await todoist?.items.add({
     content: what,
     project_id: project?.id,
+    // Problem with 'todoist' Type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     due: { string: when } as any,
-  })
+  })) as Item
 
-  await interaction.reply(`Created ${what}`)
+  await interaction.reply(
+    `Created ${newItem?.content} at ${newItem?.due?.date.toString()}`
+  )
 }
 
 export const todo: Command = {

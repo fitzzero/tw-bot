@@ -4,15 +4,24 @@ import { DiscordConfig } from './types/config'
 
 export const isDev = !!process.argv[2]
 
-export const testWorldId = 1
-export const prodWorldId = 55
+export const worldId = isDev ? 1 : 55
 
-export const discordConfig: DiscordConfig = {
+export const devDiscordConfig = {
   client: '896860363541348413',
-  guild: '855057085719642134',
-  testGuild: '620484161974566922',
+  commands: [ping, todo],
+  guild: {
+    id: '620484161974566922',
+    todo: '',
+  },
 }
 
-export const discordDevCommands = [ping, todo]
+export const prodDiscordConfig: DiscordConfig = {
+  client: '896860363541348413',
+  commands: [],
+  guild: {
+    id: '855057085719642134',
+    todo: '',
+  },
+}
 
-export const discordProdCommands = []
+export const discordConfig = isDev ? devDiscordConfig : prodDiscordConfig
