@@ -1,5 +1,4 @@
 import moment from 'moment'
-import { Moment } from 'moment'
 import { Schema, model } from 'mongoose'
 import { isDev } from '../config'
 import { VoidFnProps } from '../types/methods'
