@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { isDev, testWorldId, prodWorldId } from './config'
 import { connectDb } from './db/connect'
-import { updateOrCreateWorld } from './db/world'
+import { updateLastSync, updateOrCreateWorld } from './db/world'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
 import { VoidFn } from './types/methods'
@@ -9,6 +9,7 @@ import { World } from './types/world'
 import { logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
 
+const worldId = isDev ? testWorldId : prodWorldId
 let worldInMemory: World | undefined = undefined
 
 export interface LoopFnProps {
@@ -19,7 +20,6 @@ export type LoopFn = (props: LoopFnProps) => Promise<void>
 
 export const startLoop: VoidFn = async () => {
   // Load world
-  const worldId = isDev ? testWorldId : prodWorldId
   connectDb(worldId)
   worldInMemory = await updateOrCreateWorld(worldId)
   if (!worldInMemory) {
@@ -42,14 +42,12 @@ const loop: VoidFn = async () => {
   syncProject({ world: worldInMemory })
 
   // Sync TW if it's been more than hour since last sync
-  if (!withinLastHour(lastSync)) {
-    worldInMemory.lastSync = moment()
-    await worldInMemory.save().then(() => {
-      logger({
-        prefix: 'success',
-        message: `Saved ${worldInMemory?.name} lastSync`,
-      })
-    })
+  if (!withinLastHour(lastSync) || !worldInMemory.lastSync) {
+    const newSync = moment()
+    updateLastSync({ worldId: worldId })
+    worldInMemory.lastSync = newSync
     syncTw({ world: worldInMemory })
+  } else {
+    logger({ prefix: 'success', message: 'TW: In Sync (Skipped)' })
   }
 }

@@ -49,7 +49,7 @@ export const syncPlayers: LoopFn = async ({ world }) => {
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${players?.length} players for world ${world._id}`,
+      message: `TW: Synced ${players?.length} players for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

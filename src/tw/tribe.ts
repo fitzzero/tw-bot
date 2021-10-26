@@ -48,7 +48,7 @@ export const syncTribes: LoopFn = async ({ world }) => {
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${tribes?.length} tribes for world ${world._id}`,
+      message: `TW: Synced ${tribes?.length} tribes for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

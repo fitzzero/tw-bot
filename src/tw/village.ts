@@ -37,7 +37,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
     )
     logger({
       prefix: 'success',
-      message: `TW: Synced ${villages?.length} villages for world ${world._id}`,
+      message: `TW: Synced ${villages?.length} villages for ${world.name}`,
     })
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
