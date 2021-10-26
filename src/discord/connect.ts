@@ -5,9 +5,9 @@ import { registerCommands } from './commands'
 const token = process.env.WRTOKEN
 const discordClient = new Client({ intents: [Intents.FLAGS.GUILDS] } as any)
 
-export const startDiscord = (dev?: boolean): void => {
+export const startDiscord = (): void => {
   discordClient.login(token)
-  registerCommands({ dev })
+  registerCommands()
 }
 
 export const discord = discordClient

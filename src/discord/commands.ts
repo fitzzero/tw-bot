@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
-import { discordConfig } from '../config'
-import { VoidFnProps } from '../types/methods'
+import {
+  discordConfig,
+  discordDevCommands,
+  discordProdCommands,
+  isDev,
+} from '../config'
+import { VoidFn } from '../types/methods'
 import { logger } from '../utility/logger'
-import { ping } from './ping'
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Interaction } from 'discord.js'
-import { todo } from './todo'
 
 const token = process.env.WRTOKEN
 
@@ -20,15 +23,11 @@ export interface Command {
   controller: CommandFn
 }
 
-export const activeCommands = [ping, todo]
+export const activeCommands = isDev ? discordDevCommands : discordProdCommands
 
-type Props = {
-  dev?: boolean
-}
-
-export const registerCommands: VoidFnProps<Props> = async ({ dev }) => {
+export const registerCommands: VoidFn = async () => {
   try {
-    const guild = dev ? discordConfig.testGuild : discordConfig.guild
+    const guild = isDev ? discordConfig.testGuild : discordConfig.guild
 
     const commandDocumentation = activeCommands.map(
       command => command.documentation

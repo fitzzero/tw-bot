@@ -1,3 +1,5 @@
+import { ping } from './discord/ping'
+import { todo } from './discord/todo'
 import { DiscordConfig } from './types/config'
 
 export const isDev = !!process.argv[2]
@@ -10,3 +12,7 @@ export const discordConfig: DiscordConfig = {
   guild: '855057085719642134',
   testGuild: '620484161974566922',
 }
+
+export const discordDevCommands = [ping, todo]
+
+export const discordProdCommands = []

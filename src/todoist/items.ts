@@ -1,4 +1,5 @@
 import moment from 'moment-timezone'
+import { logger } from '../utility/logger'
 import { withinLastMinute } from '../utility/time'
 import { todoist } from './connect'
 import { ProjectFn } from './project'
@@ -15,4 +16,6 @@ export const syncItems: ProjectFn = async ({ project }) => {
       return true
     } else return false
   })
+
+  logger({ prefix: 'success', message: `Found ${items.length} active tasks` })
 }

@@ -4,6 +4,10 @@ import { logger } from '../utility/logger'
 import { todoist } from './connect'
 import { syncItems } from './items'
 
+let projectInMemory: Project | undefined = undefined
+
+export const getActiveProject = (): Project | undefined => projectInMemory
+
 export interface ProjectFnProps {
   project: Project
 }
@@ -17,10 +21,12 @@ export const syncProject: LoopFn = async ({ world }) => {
   }
   await todoist.sync()
 
-  const project = todoist.projects
-    .get()
-    .find(project => project.name === world.name)
-  if (!project) {
+  if (!projectInMemory) {
+    projectInMemory = todoist.projects
+      .get()
+      .find(project => project.name === world.name)
+  }
+  if (!projectInMemory) {
     logger({
       prefix: 'alert',
       message: `Todoist: Project ${world.name} Not Found`,
@@ -28,7 +34,7 @@ export const syncProject: LoopFn = async ({ world }) => {
     return
   }
 
-  await syncItems({ project })
+  await syncItems({ project: projectInMemory })
 
   logger({
     prefix: 'success',
