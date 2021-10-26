@@ -44,9 +44,7 @@ export const syncPlayers: LoopFn = async ({ world }) => {
           return
         }
         await updateOrCreatePlayer(playerData)
-        if (!world.inSync) {
-          await addPlayerHistory(playerData)
-        }
+        await addPlayerHistory(playerData)
       })
     )
     logger({

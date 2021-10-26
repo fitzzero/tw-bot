@@ -32,9 +32,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
           return
         }
         await updateOrCreateVillage(villageData)
-        if (!world.inSync) {
-          await addVillageHistory(villageData)
-        }
+        await addVillageHistory(villageData)
       })
     )
     logger({

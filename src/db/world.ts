@@ -16,7 +16,6 @@ export const worldSchema = new Schema<World>(
     name: String,
     villages: [villageSchema],
     lastSync: Date,
-    inSync: Boolean,
     testData: Boolean,
   },
   schemaOptions
@@ -35,12 +34,9 @@ export const updateOrCreateWorld = async (
         _id: worldId,
         name: `w${worldId}`,
         lastSync,
-        inSync: false,
         testData: !!isDev,
       })
     } else {
-      world.inSync = withinLastHour(moment(world.lastSync))
-      world.lastSync = lastSync
       // Migrations
       if (!world?.name) world.name = `w${worldId}`
     }

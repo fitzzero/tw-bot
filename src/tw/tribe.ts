@@ -43,9 +43,7 @@ export const syncTribes: LoopFn = async ({ world }) => {
           return
         }
         await updateOrCreateTribe(tribeData)
-        if (!world.inSync) {
-          await addTribeHistory(tribeData)
-        }
+        await addTribeHistory(tribeData)
       })
     )
     logger({
