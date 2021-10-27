@@ -14,7 +14,7 @@ export const DiscordEvents = (): void => {
     if (!interaction.isCommand()) return
     activeCommands.forEach(command => {
       if (interaction.commandName === command.documentation.name) {
-        command.controller(interaction)
+        if (interaction.isCommand()) command.controller(interaction)
       }
     })
   })

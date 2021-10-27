@@ -2,6 +2,8 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { Item } from 'todoist/dist/v8-types'
 import { todoist } from '../todoist/connect'
 import { getActiveProject } from '../todoist/project'
+import { logger } from '../utility/logger'
+import { wait } from '../utility/wait'
 import { Command, CommandFn } from './commands'
 
 const documentation = new SlashCommandBuilder()
@@ -30,17 +32,24 @@ const controller: CommandFn = async interaction => {
     return
   }
 
-  const newItem = (await todoist?.items.add({
-    content: what,
-    project_id: project?.id,
-    // Problem with 'todoist' Type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    due: { string: when } as any,
-  })) as Item
+  try {
+    const newItem = (await todoist?.items.add({
+      content: what,
+      project_id: project?.id,
+      // Problem with 'todoist' Type
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      due: { string: when } as any,
+    })) as Item
 
-  await interaction.reply(
-    `Created ${newItem?.content} at ${newItem?.due?.date.toString()}`
-  )
+    await interaction.reply(
+      `Created ${newItem?.content} at ${newItem?.due?.date.toString()}`
+    )
+  } catch (err) {
+    logger({ prefix: 'alert', message: `Todoist: ${err}` })
+    await interaction.reply('Something went wrong, closing command...')
+    await wait(5000)
+    await interaction.deleteReply()
+  }
 }
 
 export const todo: Command = {
