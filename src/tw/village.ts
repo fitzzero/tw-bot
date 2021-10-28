@@ -1,18 +1,20 @@
 import fetch from 'cross-fetch'
-import { updateOrCreateVillage } from '../db/village'
+import { cleanDeletedVillages, updateOrCreateVillage } from '../db/villageDb'
 import { addVillageHistory } from '../db/villageHistory'
 import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
+import { withinLastDay } from '../utility/time'
 
 export const syncVillages: LoopFn = async ({ world }) => {
   try {
-    const villages = await fetchVillages(world)
+    const villageData = await fetchVillages(world)
+    const villages: VillageData[] = []
 
     await Promise.all(
-      villages.map(async data => {
+      villageData.map(async data => {
         if (data[0] === '' || data[0] === null) return
         const x = parseInt(data[2])
         const y = parseInt(data[3])
@@ -31,14 +33,21 @@ export const syncVillages: LoopFn = async ({ world }) => {
         if (!villageData || !villageData._id) {
           return
         }
-        await updateOrCreateVillage(villageData)
+        await updateOrCreateVillage({ villageData })
         await addVillageHistory(villageData)
+        villages.push(villageData)
       })
     )
     logger({
       prefix: 'success',
       message: `TW: Synced ${villages?.length} villages for ${world.name}`,
     })
+    if (!withinLastDay(world.lastSync)) {
+      if (world.testData) {
+        villageData.shift()
+      }
+      cleanDeletedVillages({ villageData: villages })
+    }
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
   }
