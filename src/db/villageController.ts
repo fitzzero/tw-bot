@@ -97,6 +97,10 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
     if (foundInRange === 1 && testData) {
       village.stats.stale = true
     }
+    if (foundInRange === 2 && testData) {
+      newStats.stale = true
+      village.stats.stale = false
+    }
     const oldStats = village.stats
     foundInRange++
     if (newStats.stale && !oldStats?.stale) {
