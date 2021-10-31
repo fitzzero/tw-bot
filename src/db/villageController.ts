@@ -1,3 +1,4 @@
+import { discordAlert } from '../discord/alert'
 import { getActiveWorld } from '../loop'
 import { VoidFnProps } from '../types/methods'
 import {
@@ -57,15 +58,29 @@ export const removeVillage: VoidFnProps<RemoveVillage> = async ({
   return
 }
 
+let testData = false
 let checkStats = true
 let start: Coordinate | undefined = undefined
 let radius: number | undefined = undefined
+let foundInRange = 0
+
+export const villagesInRange = (): number => foundInRange
 
 const statAlerts = (village: Village, newStats: VillageStats): void => {
+  if (!village.stats) return
   if (checkStats && !start) {
     const world = getActiveWorld()
-    if (!world?.radius || !world?.start) {
+    if (world?.testData) {
+      start = { x: 500, y: 500 }
+      radius = 10
+      testData = true
+      logger({ prefix: 'success', message: `World: Using test stat values` })
+    } else if (!world?.radius || !world?.start) {
       checkStats = false
+      logger({
+        prefix: 'alert',
+        message: `World: No start and radius values, skipping stats`,
+      })
       return
     } else {
       start = world.start
@@ -76,7 +91,29 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
     return
   }
   if (coordinatesInRange(start, radius, { x: village.x, y: village.y })) {
-    console.log('found 1 village in range')
+    if (foundInRange === 0 && testData) {
+      newStats.lastPointDecrease = 0
+    }
+    if (foundInRange === 1 && testData) {
+      village.stats.stale = true
+    }
+    const oldStats = village.stats
+    foundInRange++
+    if (newStats.stale && !oldStats?.stale) {
+      discordAlert({
+        message: `Village: ${village._id} (${village.name}) has gone inactive`,
+      })
+    }
+    if (!newStats.stale && oldStats?.stale) {
+      discordAlert({
+        message: `Village: ${village._id} (${village.name}) no longer inactive`,
+      })
+    }
+    if (newStats.lastPointDecrease === 0 && oldStats.lastPointDecrease > 0) {
+      discordAlert({
+        message: `Village: ${village._id} (${village.name}) has just dropped points`,
+      })
+    }
   }
 
   return
@@ -100,15 +137,13 @@ const stats = (village: Village, newData: VillageData): Village => {
     stale = true
   }
 
-  const newStats: VillageStats = (village.stats = {
+  const newStats: VillageStats = {
     lastPointIncrease,
     lastPointDecrease,
     stale,
-  })
-
-  if (village.stats) {
-    statAlerts(village, newStats)
   }
+
+  statAlerts(village, newStats)
   village.stats = newStats
 
   return village
@@ -126,7 +161,7 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
       village = stats(village, villageData)
       // Updates
       village.name = villageData.name
-      village.player = villageData.player
+      village.playerId = villageData.playerId
       village.points = villageData.points
       village.rank = villageData.rank
       village.lastSync = villageData.lastSync

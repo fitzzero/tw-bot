@@ -2,6 +2,7 @@ import fetch from 'cross-fetch'
 import {
   cleanDeletedVillages,
   updateOrCreateVillage,
+  villagesInRange,
 } from '../db/villageController'
 import { addVillageHistory } from '../db/villageHistory'
 import { LoopFn } from '../loop'
@@ -29,7 +30,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
           x,
           y,
           k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
-          player: parseInt(data[4]),
+          playerId: data[4],
           points: parseInt(data[5]),
           rank: parseInt(data[6]) || null,
           lastSync: world.lastSync,
@@ -42,9 +43,10 @@ export const syncVillages: LoopFn = async ({ world }) => {
         villages.push(villageData)
       })
     )
+    const inRange = villagesInRange()
     logger({
       prefix: 'success',
-      message: `TW: Synced ${villages?.length} villages for ${world.name}`,
+      message: `TW: Synced ${villages?.length} villages for ${world.name} - ${inRange} villages in range`,
     })
     if (!withinLastDay(world.lastSync)) {
       if (world.testData) {

@@ -1,5 +1,6 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
+import { discordAlert } from '../discord/alert'
 import { logger } from '../utility/logger'
 import { withinLastMinute } from '../utility/time'
 import { todoist } from './connect'
@@ -26,4 +27,7 @@ export const syncItems: ProjectFn = async ({ project }) => {
   if (items.length > 0) {
     logger({ prefix: 'success', message: `Found ${items.length} active tasks` })
   }
+  items.forEach(item => {
+    discordAlert({ message: `Todo: ${item?.content}` })
+  })
 }

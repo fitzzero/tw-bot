@@ -13,7 +13,7 @@ export const villageSchema = new Schema<Village>(
     x: { type: Number, required: true },
     y: { type: Number, required: true },
     k: Number,
-    player: Number,
+    playerId: String,
     points: Number,
     rank: Number,
     lastSync: Date,

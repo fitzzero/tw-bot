@@ -14,7 +14,7 @@ export interface VillageData {
   x: number
   y: number
   k: number
-  player: number
+  playerId: string
   points: number
   rank: number | null
   lastSync: Moment
@@ -22,9 +22,9 @@ export interface VillageData {
 }
 
 export interface VillageStats {
-  lastPointDecrease?: number
-  lastPointIncrease?: number
-  stale?: boolean
+  lastPointDecrease: number
+  lastPointIncrease: number
+  stale: boolean
 }
 
 export type GetVillage = (villageId: string) => Promise<Village | null>
