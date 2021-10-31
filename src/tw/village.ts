@@ -44,7 +44,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
     })
     if (!withinLastDay(world.lastSync)) {
       if (world.testData) {
-        villageData.shift()
+        villages.shift()
       }
       cleanDeletedVillages({ villageData: villages })
     }

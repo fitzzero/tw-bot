@@ -56,12 +56,11 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
 export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
   villageData,
 }) => {
+  const allVillages = await VillageModel.find()
   logger({
     prefix: 'start',
-    message: `Database: Looking for old villages...`,
+    message: `Database: Checking ${allVillages.length} villages...`,
   })
-
-  const allVillages = await VillageModel.find()
   let removedCount = 0
 
   await Promise.all(
@@ -69,14 +68,14 @@ export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
       const foundInNewData = villageData.find(data => data._id === village._id)
       if (!foundInNewData) {
         removedCount = removedCount + 1
-        removeVillage({ village })
+        await removeVillage({ village })
       }
     })
   )
 
   logger({
-    prefix: 'start',
-    message: `Database: Removing ${removedCount} old villages`,
+    prefix: 'success',
+    message: `Database: Removed ${removedCount} old villages`,
   })
   return
 }
