@@ -19,7 +19,7 @@ export const devDiscordConfig = {
 
 export const prodDiscordConfig: DiscordConfig = {
   client: '896860363541348413',
-  commands: [],
+  commands: [todo, updateWorld],
   guild: {
     id: '855057085719642134',
     alerts: '891367656907743232',
