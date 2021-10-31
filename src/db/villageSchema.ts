@@ -17,6 +17,11 @@ export const villageSchema = new Schema<Village>(
     points: Number,
     rank: Number,
     lastSync: Date,
+    stats: {
+      lastPointDecrease: Number,
+      lastPointIncrease: Number,
+      stale: Boolean,
+    },
   },
   schemaOptions
 )

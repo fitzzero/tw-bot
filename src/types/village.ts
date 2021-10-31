@@ -18,6 +18,13 @@ export interface VillageData {
   points: number
   rank: number | null
   lastSync: Moment
+  stats?: VillageStats
+}
+
+export interface VillageStats {
+  lastPointDecrease?: number
+  lastPointIncrease?: number
+  stale?: boolean
 }
 
 export type GetVillage = (villageId: string) => Promise<Village | null>

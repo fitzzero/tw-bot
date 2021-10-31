@@ -1,11 +1,17 @@
+import { getActiveWorld } from '../loop'
 import { VoidFnProps } from '../types/methods'
 import {
   BulkUpdateVillage,
   GetVillage,
   RemoveVillage,
   UpdateVillage,
+  Village,
+  VillageData,
+  VillageStats,
 } from '../types/village'
+import { Coordinate } from '../types/world'
 import { logger } from '../utility/logger'
+import { coordinatesInRange } from '../utility/twUtility'
 import { VillageModel } from './villageSchema'
 
 export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
@@ -51,6 +57,63 @@ export const removeVillage: VoidFnProps<RemoveVillage> = async ({
   return
 }
 
+let checkStats = true
+let start: Coordinate | undefined = undefined
+let radius: number | undefined = undefined
+
+const statAlerts = (village: Village, newStats: VillageStats): void => {
+  if (checkStats && !start) {
+    const world = getActiveWorld()
+    if (!world?.radius || !world?.start) {
+      checkStats = false
+      return
+    } else {
+      start = world.start
+      radius = world.radius
+    }
+  }
+  if (!checkStats || !start || !radius) {
+    return
+  }
+  if (coordinatesInRange(start, radius, { x: village.x, y: village.y })) {
+    console.log('found 1 village in range')
+  }
+
+  return
+}
+
+const stats = (village: Village, newData: VillageData): Village => {
+  let lastPointIncrease = village.stats?.lastPointIncrease || 0
+  let lastPointDecrease = village.stats?.lastPointDecrease || 0
+  let stale = false
+  if (village.points === newData.points) {
+    lastPointIncrease++
+    lastPointDecrease++
+  }
+  if (newData.points > village.points) {
+    lastPointIncrease = 0
+  }
+  if (newData.points < village.points) {
+    lastPointDecrease = 0
+  }
+  if (lastPointIncrease > 24) {
+    stale = true
+  }
+
+  const newStats: VillageStats = (village.stats = {
+    lastPointIncrease,
+    lastPointDecrease,
+    stale,
+  })
+
+  if (village.stats) {
+    statAlerts(village, newStats)
+  }
+  village.stats = newStats
+
+  return village
+}
+
 export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
   villageData,
 }) => {
@@ -59,6 +122,9 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
     if (!village) {
       village = new VillageModel(villageData)
     } else {
+      // Stats
+      village = stats(village, villageData)
+      // Updates
       village.name = villageData.name
       village.player = villageData.player
       village.points = villageData.points
@@ -67,9 +133,9 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
       // Migrations
       village.k = villageData.k
       village.number = villageData.number
+      await village.save()
+      return
     }
-    await village.save()
-    return
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
     return
