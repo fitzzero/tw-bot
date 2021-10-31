@@ -4,7 +4,6 @@ import { isDev } from '../config'
 import { VoidFnProps } from '../types/methods'
 import { World } from '../types/world'
 import { logger } from '../utility/logger'
-import { villageSchema } from './village'
 
 const schemaOptions = {
   toJSON: { virtuals: true },
@@ -14,7 +13,6 @@ export const worldSchema = new Schema<World>(
   {
     _id: { type: Number, required: true },
     name: String,
-    villages: [villageSchema],
     lastSync: Date,
     testData: Boolean,
   },

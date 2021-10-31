@@ -34,19 +34,22 @@ export const startLoop: VoidFn = async () => {
 
 const loop: VoidFn = async () => {
   if (!worldInMemory) return
-  logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
-  const lastSync = moment(worldInMemory.lastSync)
+  const lastSync = worldInMemory.lastSync
+    ? moment(worldInMemory.lastSync)
+    : undefined
 
-  // Sync Todoist Projects
-  syncProject({ world: worldInMemory })
+  logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
 
   // Sync TW if it's been more than hour since last sync
-  if (!withinLastHour(lastSync) || !worldInMemory.lastSync) {
+  if (!withinLastHour(lastSync)) {
     const newSync = moment()
+    syncTw({ world: worldInMemory })
     updateLastSync({ worldId: worldId })
     worldInMemory.lastSync = newSync
-    syncTw({ world: worldInMemory })
   } else {
     logger({ prefix: 'success', message: 'TW: In Sync (Skipped)' })
   }
+
+  // Sync Todoist Projects
+  syncProject({ world: worldInMemory })
 }

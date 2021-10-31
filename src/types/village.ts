@@ -18,3 +18,15 @@ export interface VillageData {
   rank: number | null
   lastSync: Moment
 }
+
+export interface UpdateVillage {
+  villageData: VillageData
+}
+
+export interface BulkUpdateVillage {
+  villageData: VillageData[]
+}
+
+export interface RemoveVillage {
+  village: Village
+}
