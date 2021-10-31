@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { Command, CommandFn } from './commands'
+import { Command, CommandFn } from '../commands'
 import { MessageActionRow, MessageButton } from 'discord.js'
-import { wait } from '../utility/wait'
+import { wait } from '../../utility/wait'
 
 const documentation = new SlashCommandBuilder()
   .setName('ping')

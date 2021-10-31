@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getVillage } from '../db/villageController'
-import { patchWorld } from '../db/worldDb'
-import { Coordinate, UpdateWorld } from '../types/world'
-import { Command, CommandFn } from './commands'
+import { getVillage } from '../../db/villageController'
+import { patchWorld } from '../../db/worldDb'
+import { Coordinate, UpdateWorld } from '../../types/world'
+import { Command, CommandFn } from '../commands'
 
 const documentation = new SlashCommandBuilder()
   .setName('updateworld')
