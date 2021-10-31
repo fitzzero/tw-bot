@@ -4,7 +4,7 @@ import { DiscordConfig } from './types/config'
 
 export const isDev = !!process.argv[2]
 
-export const worldId = isDev ? 1 : 55
+export const worldId = isDev ? 1 : 56
 
 export const devDiscordConfig = {
   client: '896860363541348413',
