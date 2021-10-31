@@ -13,7 +13,7 @@ export interface DiscordAlertProps {
 export const getChannel = async (): Promise<void> => {
   try {
     const guild = await getActiveGuild()
-    const channelId = discordConfig.guild.alerts
+    const channelId = discordConfig().guild.alerts
     const someChannel = await guild?.channels.fetch(channelId)
     if (someChannel?.isText) {
       channel = someChannel as TextChannel

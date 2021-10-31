@@ -18,18 +18,18 @@ export interface Command {
   controller: CommandFn
 }
 
-export const activeCommands = discordConfig.commands
+export const activeCommands = (): Command[] => discordConfig().commands
 
 export const registerCommands: VoidFn = async () => {
   try {
-    const commandDocumentation = activeCommands.map(
+    const commandDocumentation = activeCommands().map(
       command => command.documentation
     )
 
     await rest.put(
       Routes.applicationGuildCommands(
-        discordConfig.client as any,
-        discordConfig.guild.id as any
+        discordConfig().client as any,
+        discordConfig().guild.id as any
       ),
       { body: commandDocumentation }
     )

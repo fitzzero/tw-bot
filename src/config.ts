@@ -26,4 +26,7 @@ export const prodDiscordConfig: DiscordConfig = {
   },
 }
 
-export const discordConfig = isDev ? devDiscordConfig : prodDiscordConfig
+export const discordConfig = (): DiscordConfig => {
+  const config = isDev ? devDiscordConfig : prodDiscordConfig
+  return config
+}
