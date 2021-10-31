@@ -11,7 +11,7 @@ export const devDiscordConfig = {
   commands: [ping, todo],
   guild: {
     id: '620484161974566922',
-    todo: '',
+    alerts: '620484161974566922',
   },
 }
 
@@ -20,7 +20,7 @@ export const prodDiscordConfig: DiscordConfig = {
   commands: [],
   guild: {
     id: '855057085719642134',
-    todo: '',
+    alerts: '891367656907743232',
   },
 }
 

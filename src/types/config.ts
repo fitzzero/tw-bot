@@ -5,6 +5,6 @@ export interface DiscordConfig {
   commands: Command[]
   guild: {
     id: string
-    todo: string
+    alerts: string
   }
 }
