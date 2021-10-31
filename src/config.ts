@@ -22,7 +22,7 @@ export const prodDiscordConfig: DiscordConfig = {
   commands: [todo, updateWorld],
   guild: {
     id: '855057085719642134',
-    alerts: '891367656907743232',
+    alerts: '904407658558275636',
   },
 }
 

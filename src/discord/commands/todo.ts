@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
+import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
@@ -41,8 +42,10 @@ const controller: CommandFn = async interaction => {
       due: { string: when } as any,
     })) as Item
 
+    const due = moment.tz(newItem?.due?.date, 'America/New_York').unix()
+
     await interaction.reply(
-      `Created ${newItem?.content} at ${newItem?.due?.date.toString()}`
+      `Created **${newItem?.content}** at <t:${due}> (<t:${due}:R>)`
     )
   } catch (err) {
     logger({ prefix: 'alert', message: `Todoist: ${err}` })
