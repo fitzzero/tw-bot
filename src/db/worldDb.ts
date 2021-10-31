@@ -73,6 +73,7 @@ export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
   if (!world) return null
 
   if (data.start) world.start = data.start
+  if (data.radius) world.radius = data.radius
 
   try {
     await world.save()
