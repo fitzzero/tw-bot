@@ -7,10 +7,12 @@ export interface World extends Document {
   lastSync: Moment
   testData: boolean
   start: Coordinate | undefined
+  radius: number
 }
 
 export interface UpdateWorld {
-  start: Coordinate | undefined
+  start?: Coordinate
+  radius?: number
 }
 
 export interface Coordinate {

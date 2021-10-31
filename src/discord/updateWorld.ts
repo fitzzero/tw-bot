@@ -12,19 +12,26 @@ const documentation = new SlashCommandBuilder()
       .setDescription('Update the center x|y coordinates')
       .setRequired(false)
   )
+  .addNumberOption(option =>
+    option
+      .setName('radius')
+      .setDescription('Radius to include for village alerts')
+      .setRequired(false)
+  )
   .setDescription('Updates properties of the world')
 
 const controller: CommandFn = async interaction => {
   if (!interaction.isCommand()) return
+  // Get Properties
   const startString = interaction.options.getString('start')
-  if (!startString) {
+  const radius = interaction.options.getNumber('radius')
+
+  if (!startString && !radius) {
     await interaction.reply('No properties added to update')
     return
   }
 
-  const updateData: UpdateWorld = {
-    start: undefined,
-  }
+  const updateData: UpdateWorld = {}
 
   if (startString) {
     const args = startString.split('|')
@@ -39,6 +46,8 @@ const controller: CommandFn = async interaction => {
     updateData.start = start
   }
 
+  if (radius) updateData.radius = radius
+
   const world = await patchWorld(updateData)
 
   if (!world) {
@@ -46,14 +55,17 @@ const controller: CommandFn = async interaction => {
     return
   }
 
-  let reply = ''
+  let reply = `Updated ${world.name} settings`
   if (updateData.start) {
     const villageId = `${updateData.start.x}|${updateData.start.y}`
-    reply += `Updated starting coordinates to ${villageId}`
+    reply += `\nSet starting coordinates to ${villageId}`
     const village = await getVillage(villageId)
     if (village) {
       reply += ` (${village.name})`
     }
+  }
+  if (updateData.radius) {
+    reply += `\nSet alert radius to: ${updateData.radius}`
   }
 
   await interaction.reply(reply)

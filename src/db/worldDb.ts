@@ -16,7 +16,11 @@ export const worldSchema = new Schema<World>(
     name: String,
     lastSync: Date,
     testData: Boolean,
-    start: String,
+    start: {
+      x: Number,
+      y: Number,
+    },
+    radius: Number,
   },
   schemaOptions
 )
@@ -68,7 +72,7 @@ export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
   const world = getActiveWorld()
   if (!world) return null
 
-  world.start = data.start || world.start
+  if (data.start) world.start = data.start
 
   try {
     await world.save()
