@@ -9,6 +9,7 @@ export const villageSchema = new Schema<Village>(
   {
     _id: { type: String, required: true },
     name: String,
+    number: Number,
     x: { type: Number, required: true },
     y: { type: Number, required: true },
     k: Number,

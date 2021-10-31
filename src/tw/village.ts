@@ -25,6 +25,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
         const villageData: VillageData = {
           _id: `${data[2]}|${data[3]}`,
           name: data[1],
+          number: parseInt(data[0]),
           x,
           y,
           k: Math.floor(y / 100) * 10 + Math.floor(x / 100),

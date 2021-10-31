@@ -10,6 +10,7 @@ export interface VillageHistoric extends Omit<VillageData, '_id'> {
 export interface VillageData {
   _id: string
   name: string
+  number: number
   x: number
   y: number
   k: number

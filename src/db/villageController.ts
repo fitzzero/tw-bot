@@ -66,6 +66,7 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
       village.lastSync = villageData.lastSync
       // Migrations
       village.k = villageData.k
+      village.number = villageData.number
     }
     await village.save()
     return
