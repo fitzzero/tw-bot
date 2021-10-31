@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Item } from 'todoist/dist/v8-types'
-import { todoist } from '../todoist/connect'
-import { getActiveProject } from '../todoist/project'
-import { logger } from '../utility/logger'
-import { wait } from '../utility/wait'
-import { Command, CommandFn } from './commands'
+import { todoist } from '../../todoist/connect'
+import { getActiveProject } from '../../todoist/project'
+import { logger } from '../../utility/logger'
+import { wait } from '../../utility/wait'
+import { Command, CommandFn } from '../commands'
 
 const documentation = new SlashCommandBuilder()
   .setName('todo')

@@ -1,8 +1,9 @@
 import moment from 'moment'
 import { Schema, model } from 'mongoose'
 import { isDev } from '../config'
+import { getActiveWorld } from '../loop'
 import { VoidFnProps } from '../types/methods'
-import { World } from '../types/world'
+import { UpdateWorld, World } from '../types/world'
 import { logger } from '../utility/logger'
 
 const schemaOptions = {
@@ -15,6 +16,11 @@ export const worldSchema = new Schema<World>(
     name: String,
     lastSync: Date,
     testData: Boolean,
+    start: {
+      x: Number,
+      y: Number,
+    },
+    radius: Number,
   },
   schemaOptions
 )
@@ -60,4 +66,20 @@ export const updateLastSync: VoidFnProps<{ worldId: number }> = async ({
   world.lastSync = lastSync
   world.save()
   return
+}
+
+export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
+  const world = getActiveWorld()
+  if (!world) return null
+
+  if (data.start) world.start = data.start
+
+  try {
+    await world.save()
+    logger({ prefix: 'success', message: `Database: Updated ${world.name}` })
+    return world
+  } catch (err) {
+    logger({ prefix: 'alert', message: `Database: ${err}` })
+    return null
+  }
 }

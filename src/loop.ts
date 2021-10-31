@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { worldId } from './config'
 import { connectDb } from './db/connect'
-import { updateLastSync, updateOrCreateWorld } from './db/world'
+import { updateLastSync, updateOrCreateWorld } from './db/worldDb'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
 import { VoidFn } from './types/methods'
@@ -10,6 +10,10 @@ import { logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
 
 let worldInMemory: World | undefined = undefined
+
+export const getActiveWorld = (): World | undefined => {
+  return worldInMemory
+}
 
 export interface LoopFnProps {
   world: World

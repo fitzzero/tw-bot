@@ -10,14 +10,24 @@ export interface VillageHistoric extends Omit<VillageData, '_id'> {
 export interface VillageData {
   _id: string
   name: string
+  number: number
   x: number
   y: number
   k: number
-  player: number
+  playerId: string
   points: number
   rank: number | null
   lastSync: Moment
+  stats?: VillageStats
 }
+
+export interface VillageStats {
+  lastPointDecrease: number
+  lastPointIncrease: number
+  stale: boolean
+}
+
+export type GetVillage = (villageId: string) => Promise<Village | null>
 
 export interface UpdateVillage {
   villageData: VillageData
