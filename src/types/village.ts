@@ -19,6 +19,8 @@ export interface VillageData {
   lastSync: Moment
 }
 
+export type GetVillage = (villageId: string) => Promise<Village | null>
+
 export interface UpdateVillage {
   villageData: VillageData
 }

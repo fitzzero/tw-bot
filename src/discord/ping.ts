@@ -10,8 +10,6 @@ const documentation = new SlashCommandBuilder()
 const controller: CommandFn = async interaction => {
   if (!interaction.isCommand()) return
 
-  interaction.memberPermissions
-
   const content = `Pong`
 
   await interaction.reply({ content, components })

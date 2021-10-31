@@ -1,5 +1,8 @@
 import fetch from 'cross-fetch'
-import { cleanDeletedVillages, updateOrCreateVillage } from '../db/villageDb'
+import {
+  cleanDeletedVillages,
+  updateOrCreateVillage,
+} from '../db/villageController'
 import { addVillageHistory } from '../db/villageHistory'
 import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'

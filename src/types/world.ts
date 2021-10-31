@@ -6,4 +6,14 @@ export interface World extends Document {
   name: string
   lastSync: Moment
   testData: boolean
+  start: Coordinate | undefined
+}
+
+export interface UpdateWorld {
+  start: Coordinate | undefined
+}
+
+export interface Coordinate {
+  x: number
+  y: number
 }
