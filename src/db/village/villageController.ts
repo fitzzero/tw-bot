@@ -7,7 +7,7 @@ import {
 } from '../../types/village'
 import { logger } from '../../utility/logger'
 import { VillageModel } from './villageSchema'
-import { stats } from './villageStats'
+import { addVillageStats } from './villageStats'
 
 export const cleanDeletedVillages: PromiseFn<BulkUpdateVillage, void> = async ({
   villageData,
@@ -61,7 +61,7 @@ export const updateOrCreateVillage: PromiseFn<UpdateVillage, void> = async ({
       village = new VillageModel(villageData)
     } else {
       // Stats
-      village = stats({ village, newData: villageData })
+      village = addVillageStats({ village, newData: villageData })
       // Updates
       village.name = villageData.name
       village.playerId = villageData.playerId
