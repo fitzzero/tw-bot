@@ -1,9 +1,12 @@
 import { ColorResolvable, MessageEmbed, TextChannel } from 'discord.js'
 import { discordConfig } from '../config'
+import { getStartDistance } from '../db/village/villageStats'
 import { getActivePlayerData } from '../tw/player'
+import { getActiveTribeData } from '../tw/tribe'
 import { PromiseFn } from '../types/methods'
-import { Village } from '../types/village'
+import { VillageData } from '../types/village'
 import { logger } from '../utility/logger'
+import { currentUnix } from '../utility/time'
 import { getActiveGuild } from './guild'
 
 let channel: TextChannel | undefined = undefined
@@ -11,7 +14,7 @@ let channel: TextChannel | undefined = undefined
 export interface VillageAlertProps {
   color: 'red' | 'yellow' | 'blue' | 'green' | 'white' | 'purple'
   message: string
-  village: Village
+  village: VillageData
   fields?: Field[]
 }
 
@@ -60,6 +63,9 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
   const player = getActivePlayerData().find(
     player => player._id === village.playerId
   )
+  const tribe = getActiveTribeData().find(tribe => tribe._id === player?.tribe)
+  const distance = getStartDistance({ x: village.x, y: village.y })
+
   const colorHex = colorKey[color] as ColorResolvable
   const embed = new MessageEmbed()
     .setColor(colorHex)
@@ -67,11 +73,16 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
     .setURL(
       `https://us56.tribalwars.us/game.php?screen=info_village&id=${village.number}`
     )
-    .addField('Points', `${village.points}`)
+    .addField('Points', `${village.points}`, true)
+
+  if (distance) {
+    embed.addField('Distance', distance, true)
+  }
 
   if (player) {
-    embed.addField('Player', player.name, true)
-    embed.addField('Tribe', player.tribe, true)
+    let playerString = player.name
+    if (tribe) playerString += ` (${tribe?.tag})`
+    embed.addField('Player / Tribe', playerString, true)
   }
 
   if (fields) {
@@ -80,7 +91,9 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
     })
   }
 
-  embed.addField('Last Update', message)
+  const unixTime = currentUnix()
+
+  embed.addField('Last Update', `${message} (<t:${unixTime}:R>)`)
 
   channel?.send({ embeds: [embed] })
 }

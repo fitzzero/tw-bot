@@ -2,15 +2,21 @@ import fetch from 'cross-fetch'
 import { updateOrCreateTribe } from '../db/tribe/tribe'
 import { addTribeHistory } from '../db/tribe/tribeHistoric'
 import { LoopFn } from '../loop'
+import { Fn } from '../types/methods'
 import { TribeData } from '../types/tribe'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
+let activeTribeData: TribeData[] = []
+
+export const getActiveTribeData: Fn<void, TribeData[]> = () => activeTribeData
+
 export const syncTribes: LoopFn = async ({ world }) => {
   try {
     // Data: id, name, tag, members, villages, points, all_points, rank
     const tribes = await fetchTribes(world)
+    const newTribeData: TribeData[] = []
 
     // Data: rank, id, kills
     const od = await fetchTribeOd(world, 'all')
@@ -42,10 +48,12 @@ export const syncTribes: LoopFn = async ({ world }) => {
         if (!tribeData || !tribeData._id) {
           return
         }
+        newTribeData.push(tribeData)
         await updateOrCreateTribe(tribeData)
         await addTribeHistory(tribeData)
       })
     )
+    activeTribeData = newTribeData
     logger({
       prefix: 'success',
       message: `TW: Synced ${tribes?.length} tribes for ${world.name}`,

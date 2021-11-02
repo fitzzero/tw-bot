@@ -63,28 +63,30 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
   }
 
   const newStats = newData.stats
+  const oldStats = village.stats
 
   // Tests
   if (foundInRange === 0 && testData) {
     newStats.lastPointDecrease = 0
-    village.points = village.points - 123
+    oldStats.lastPointDecrease = 1
+    newData.points = newData.points - 123
   }
   if (foundInRange === 1 && testData) {
-    village.stats.stale = true
+    oldStats.stale = true
+    newStats.stale = false
   }
   if (foundInRange === 2 && testData) {
+    oldStats.stale = false
     newStats.stale = true
-    village.stats.stale = false
   }
 
-  const oldStats = village.stats
   foundInRange++
 
   // Inactive
   if (newStats.stale && !oldStats?.stale) {
     villageAlert({
       message: `Has gone inactive`,
-      village,
+      village: newData,
       color: 'white',
     })
   }
@@ -93,7 +95,7 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
   if (!newStats.stale && oldStats?.stale) {
     villageAlert({
       message: `No longer inactive`,
-      village,
+      village: newData,
       color: 'yellow',
     })
   }
@@ -102,7 +104,7 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
   if (newStats.lastPointDecrease === 0 && oldStats.lastPointDecrease > 0) {
     villageAlert({
       message: `Just dropped points`,
-      village,
+      village: newData,
       color: 'red',
       fields: [
         {
@@ -154,4 +156,15 @@ export const addVillageStats: Fn<RunVillageStats, Village> = ({
   village.stats = newStats
 
   return village
+}
+
+export const getStartDistance = (check: Coordinate): string | undefined => {
+  if (!start) return
+
+  const distanceA = Math.abs(check.x - start.x)
+  const distanceB = Math.abs(check.y - start.y)
+
+  const distanceC = Math.sqrt(Math.pow(distanceA, 2) + Math.pow(distanceB, 2))
+
+  return distanceC.toString()
 }
