@@ -20,7 +20,7 @@ let foundInRange = 0
 
 export const villagesInRange = (): number => foundInRange
 
-export const initStatsConfig: PromiseFn<void, void> = async () => {
+const initStatsConfig: PromiseFn<void, void> = async () => {
   const world = getActiveWorld()
   if (isDev || world?.testData) {
     start = { x: 500, y: 500 }
@@ -50,9 +50,8 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
   village,
   newData,
 }) => {
-  if (!village.stats || !newData.stats || village.playerId === '') return
+  if (!village.stats || !newData.stats || village.playerId === '0') return
   if (!initialized) {
-    console.log('curious')
     await initStatsConfig()
   }
   if (!start || !radius) {
