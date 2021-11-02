@@ -27,6 +27,11 @@ export interface VillageStats {
   stale: boolean
 }
 
+export interface RunVillageStats {
+  village: Village
+  newData: VillageData
+}
+
 export type GetVillage = (villageId: string) => Promise<Village | null>
 
 export interface UpdateVillage {

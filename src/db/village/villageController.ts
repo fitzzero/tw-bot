@@ -1,13 +1,13 @@
 import { discordAlert } from '../../discord/alert'
 import { getActiveWorld } from '../../loop'
-import { VoidFnProps } from '../../types/methods'
+import { Fn, PromiseFn } from '../../types/methods'
 import {
   BulkUpdateVillage,
   GetVillage,
   RemoveVillage,
+  RunVillageStats,
   UpdateVillage,
   Village,
-  VillageData,
   VillageStats,
 } from '../../types/village'
 import { Coordinate } from '../../types/world'
@@ -15,7 +15,7 @@ import { logger } from '../../utility/logger'
 import { coordinatesInRange } from '../../utility/twUtility'
 import { VillageModel } from './villageSchema'
 
-export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
+export const cleanDeletedVillages: PromiseFn<BulkUpdateVillage, void> = async ({
   villageData,
 }) => {
   const allVillages = await VillageModel.find()
@@ -47,7 +47,7 @@ export const getVillage: GetVillage = async villageId => {
   return village
 }
 
-export const removeVillage: VoidFnProps<RemoveVillage> = async ({
+export const removeVillage: PromiseFn<RemoveVillage, void> = async ({
   village,
 }) => {
   try {
@@ -123,7 +123,7 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
   return
 }
 
-const stats = (village: Village, newData: VillageData): Village => {
+const stats: Fn<RunVillageStats, Village> = ({ village, newData }) => {
   let lastPointIncrease = village.stats?.lastPointIncrease || 0
   let lastPointDecrease = village.stats?.lastPointDecrease || 0
   let stale = false
@@ -153,7 +153,7 @@ const stats = (village: Village, newData: VillageData): Village => {
   return village
 }
 
-export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
+export const updateOrCreateVillage: PromiseFn<UpdateVillage, void> = async ({
   villageData,
 }) => {
   try {
@@ -162,7 +162,7 @@ export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
       village = new VillageModel(villageData)
     } else {
       // Stats
-      village = stats(village, villageData)
+      village = stats({ village, newData: villageData })
       // Updates
       village.name = villageData.name
       village.playerId = villageData.playerId

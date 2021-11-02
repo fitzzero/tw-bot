@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { isDev } from '../../config'
 import { getActiveWorld } from '../../loop'
-import { VoidFnProps } from '../../types/methods'
+import { PromiseFn } from '../../types/methods'
 import { UpdateWorld, World } from '../../types/world'
 import { logger } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
@@ -30,7 +30,7 @@ export const updateOrCreateWorld = async (
   }
 }
 
-export const updateLastSync: VoidFnProps<{ worldId: number }> = async ({
+export const updateLastSync: PromiseFn<{ worldId: number }, void> = async ({
   worldId,
 }) => {
   const world = await WorldModel.findById(worldId)
