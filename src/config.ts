@@ -24,7 +24,7 @@ export const prodDiscordConfig: DiscordConfig = {
   guild: {
     id: '855057085719642134',
     alerts: '904407658558275636',
-    villages: '904881978044710962',
+    villages: '904407658558275636',
   },
 }
 

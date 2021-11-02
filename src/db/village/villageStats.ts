@@ -164,7 +164,9 @@ export const getStartDistance = (check: Coordinate): string | undefined => {
   const distanceA = Math.abs(check.x - start.x)
   const distanceB = Math.abs(check.y - start.y)
 
-  const distanceC = Math.sqrt(Math.pow(distanceA, 2) + Math.pow(distanceB, 2))
+  const distanceC = Math.round(
+    Math.sqrt(Math.pow(distanceA, 2) + Math.pow(distanceB, 2))
+  )
 
   return distanceC.toString()
 }
