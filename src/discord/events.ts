@@ -1,3 +1,4 @@
+import { discordConfig } from '../config'
 import { logger } from '../utility/logger'
 import { activeCommands } from './commands'
 import { discord } from './connect'
@@ -12,7 +13,8 @@ export const DiscordEvents = (): void => {
 
   discord.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
-    activeCommands.forEach(command => {
+    if (interaction.guildId != discordConfig().guild.id) return
+    activeCommands().forEach(command => {
       if (interaction.commandName === command.documentation.name) {
         if (interaction.isCommand()) command.controller(interaction)
       }

@@ -1,10 +1,10 @@
 import moment from 'moment'
 import { worldId } from './config'
 import { connectDb } from './db/connect'
-import { updateLastSync, updateOrCreateWorld } from './db/worldDb'
+import { updateOrCreateWorld, updateLastSync } from './db/world/worldController'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
-import { VoidFn } from './types/methods'
+import { PromiseFn } from './types/methods'
 import { World } from './types/world'
 import { logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
@@ -21,7 +21,7 @@ export interface LoopFnProps {
 
 export type LoopFn = (props: LoopFnProps) => Promise<void>
 
-export const startLoop: VoidFn = async () => {
+export const startLoop: PromiseFn<void, void> = async () => {
   // Load world
   connectDb(worldId)
   worldInMemory = await updateOrCreateWorld(worldId)
@@ -34,9 +34,10 @@ export const startLoop: VoidFn = async () => {
   setInterval(function () {
     loop()
   }, 60 * 1000) // 60 * 1000 milsec
+  return
 }
 
-const loop: VoidFn = async () => {
+const loop: PromiseFn<void, void> = async () => {
   if (!worldInMemory) return
   const lastSync = worldInMemory.lastSync
     ? moment(worldInMemory.lastSync)
@@ -56,4 +57,5 @@ const loop: VoidFn = async () => {
 
   // Sync Todoist Projects
   syncProject({ world: worldInMemory })
+  return
 }

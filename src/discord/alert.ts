@@ -1,6 +1,6 @@
 import { TextChannel } from 'discord.js'
 import { discordConfig } from '../config'
-import { VoidFnProps } from '../types/methods'
+import { PromiseFn } from '../types/methods'
 import { logger } from '../utility/logger'
 import { getActiveGuild } from './guild'
 
@@ -10,10 +10,10 @@ export interface DiscordAlertProps {
   message: string
 }
 
-export const getChannel = async (): Promise<void> => {
+const getChannel = async (): Promise<void> => {
   try {
     const guild = await getActiveGuild()
-    const channelId = discordConfig.guild.alerts
+    const channelId = discordConfig().guild.alerts
     const someChannel = await guild?.channels.fetch(channelId)
     if (someChannel?.isText) {
       channel = someChannel as TextChannel
@@ -24,7 +24,7 @@ export const getChannel = async (): Promise<void> => {
   }
 }
 
-export const discordAlert: VoidFnProps<DiscordAlertProps> = async ({
+export const discordAlert: PromiseFn<DiscordAlertProps, void> = async ({
   message,
 }) => {
   if (!channel) {

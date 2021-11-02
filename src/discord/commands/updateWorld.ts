@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getVillage } from '../../db/villageController'
-import { patchWorld } from '../../db/worldDb'
+import { getVillage } from '../../db/village/villageController'
+import { patchWorld } from '../../db/world/worldController'
 import { Coordinate, UpdateWorld } from '../../types/world'
 import { Command, CommandFn } from '../commands'
 

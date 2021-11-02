@@ -1,62 +1,5 @@
-import { discordAlert } from '../discord/alert'
-import { getActiveWorld } from '../loop'
-import { VoidFnProps } from '../types/methods'
-import {
-  BulkUpdateVillage,
-  GetVillage,
-  RemoveVillage,
-  UpdateVillage,
-  Village,
-  VillageData,
-  VillageStats,
-} from '../types/village'
-import { Coordinate } from '../types/world'
-import { logger } from '../utility/logger'
-import { coordinatesInRange } from '../utility/twUtility'
-import { VillageModel } from './villageSchema'
-
-export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
-  villageData,
-}) => {
-  const allVillages = await VillageModel.find()
-  logger({
-    prefix: 'start',
-    message: `Database: Checking ${allVillages.length} villages...`,
-  })
-  let removedCount = 0
-
-  await Promise.all(
-    allVillages.map(async village => {
-      const foundInNewData = villageData.find(data => data._id === village._id)
-      if (!foundInNewData) {
-        removedCount = removedCount + 1
-        await removeVillage({ village })
-      }
-    })
-  )
-
-  logger({
-    prefix: 'success',
-    message: `Database: Removed ${removedCount} old villages`,
-  })
-  return
-}
-
-export const getVillage: GetVillage = async villageId => {
-  const village = await VillageModel.findById(villageId)
-  return village
-}
-
-export const removeVillage: VoidFnProps<RemoveVillage> = async ({
-  village,
-}) => {
-  try {
-    village.remove()
-  } catch (err) {
-    logger({ prefix: 'alert', message: `Database: ${err}` })
-  }
-  return
-}
+import { Coordinate } from '../../types/world'
+import { Village, VillageStats } from '../../types/village'
 
 let testData = false
 let checkStats = true
@@ -74,6 +17,7 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
       start = { x: 500, y: 500 }
       radius = 10
       testData = true
+      foundInRange = 0
       logger({ prefix: 'success', message: `World: Using test stat values` })
     } else if (!world?.radius || !world?.start) {
       checkStats = false
@@ -85,6 +29,7 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
     } else {
       start = world.start
       radius = world.radius
+      foundInRange = 0
     }
   }
   if (!checkStats || !start || !radius) {
@@ -123,7 +68,7 @@ const statAlerts = (village: Village, newStats: VillageStats): void => {
   return
 }
 
-const stats = (village: Village, newData: VillageData): Village => {
+export const stats: Fn<RunVillageStats, Village> = ({ village, newData }) => {
   let lastPointIncrease = village.stats?.lastPointIncrease || 0
   let lastPointDecrease = village.stats?.lastPointDecrease || 0
   let stale = false
@@ -151,32 +96,4 @@ const stats = (village: Village, newData: VillageData): Village => {
   village.stats = newStats
 
   return village
-}
-
-export const updateOrCreateVillage: VoidFnProps<UpdateVillage> = async ({
-  villageData,
-}) => {
-  try {
-    let village = await VillageModel.findById(villageData?._id)
-    if (!village) {
-      village = new VillageModel(villageData)
-    } else {
-      // Stats
-      village = stats(village, villageData)
-      // Updates
-      village.name = villageData.name
-      village.playerId = villageData.playerId
-      village.points = villageData.points
-      village.rank = villageData.rank
-      village.lastSync = villageData.lastSync
-      // Migrations
-      village.k = villageData.k
-      village.number = villageData.number
-      await village.save()
-      return
-    }
-  } catch (err) {
-    logger({ prefix: 'alert', message: `${err}` })
-    return
-  }
 }

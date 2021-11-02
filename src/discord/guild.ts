@@ -6,7 +6,7 @@ let guild: Guild | undefined = undefined
 
 export const getActiveGuild = async (): Promise<Guild | undefined> => {
   if (!guild) {
-    guild = await discord.guilds.fetch(discordConfig.guild.id)
+    guild = await discord.guilds.fetch(discordConfig().guild.id)
   }
   return guild
 }

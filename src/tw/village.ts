@@ -2,9 +2,9 @@ import fetch from 'cross-fetch'
 import {
   cleanDeletedVillages,
   updateOrCreateVillage,
-  villagesInRange,
-} from '../db/villageController'
-import { addVillageHistory } from '../db/villageHistory'
+} from '../db/village/villageController'
+import { addVillageHistory } from '../db/village/villageHistory'
+import { villagesInRange } from '../db/village/villageStats'
 import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
@@ -53,9 +53,11 @@ export const syncVillages: LoopFn = async ({ world }) => {
         villages.shift()
       }
       cleanDeletedVillages({ villageData: villages })
+      return
     }
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
+    return
   }
 }
 

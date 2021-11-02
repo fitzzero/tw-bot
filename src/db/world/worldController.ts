@@ -1,31 +1,10 @@
 import moment from 'moment'
-import { Schema, model } from 'mongoose'
-import { isDev } from '../config'
-import { getActiveWorld } from '../loop'
-import { VoidFnProps } from '../types/methods'
-import { UpdateWorld, World } from '../types/world'
-import { logger } from '../utility/logger'
-
-const schemaOptions = {
-  toJSON: { virtuals: true },
-}
-
-export const worldSchema = new Schema<World>(
-  {
-    _id: { type: Number, required: true },
-    name: String,
-    lastSync: Date,
-    testData: Boolean,
-    start: {
-      x: Number,
-      y: Number,
-    },
-    radius: Number,
-  },
-  schemaOptions
-)
-
-const WorldModel = model<World>('World', worldSchema)
+import { isDev } from '../../config'
+import { getActiveWorld } from '../../loop'
+import { PromiseFn } from '../../types/methods'
+import { UpdateWorld, World } from '../../types/world'
+import { logger } from '../../utility/logger'
+import { WorldModel } from './worldSchema'
 
 export const updateOrCreateWorld = async (
   worldId: number
@@ -51,7 +30,7 @@ export const updateOrCreateWorld = async (
   }
 }
 
-export const updateLastSync: VoidFnProps<{ worldId: number }> = async ({
+export const updateLastSync: PromiseFn<{ worldId: number }, void> = async ({
   worldId,
 }) => {
   const world = await WorldModel.findById(worldId)
@@ -73,6 +52,7 @@ export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
   if (!world) return null
 
   if (data.start) world.start = data.start
+  if (data.radius) world.radius = data.radius
 
   try {
     await world.save()

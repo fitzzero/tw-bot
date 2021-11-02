@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { VoidFnProps } from '../types/methods'
+import { PromiseFn } from '../types/methods'
 
 export interface LoggerProps {
   message: string
@@ -14,7 +14,7 @@ const prefixIcons = {
   none: '',
 }
 
-export const logger: VoidFnProps<LoggerProps> = async ({
+export const logger: PromiseFn<LoggerProps, void> = async ({
   message,
   logTime,
   prefix = 'none',

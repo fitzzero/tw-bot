@@ -1,6 +1,6 @@
 import { connection, model, Schema } from 'mongoose'
-import { VillageData, VillageHistoric } from '../types/village'
-import { logger } from '../utility/logger'
+import { VillageData, VillageHistoric } from '../../types/village'
+import { logger } from '../../utility/logger'
 
 const schemaOptions = {
   toJSON: { virtuals: true },
