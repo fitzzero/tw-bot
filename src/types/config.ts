@@ -6,5 +6,6 @@ export interface DiscordConfig {
   guild: {
     id: string
     alerts: string
+    villages: string
   }
 }
