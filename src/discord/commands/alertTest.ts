@@ -26,7 +26,7 @@ const controller: CommandFn = async interaction => {
   return
 }
 
-export const alert: Command = {
+export const alertCommand: Command = {
   documentation,
   controller,
 }

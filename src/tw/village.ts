@@ -53,9 +53,11 @@ export const syncVillages: LoopFn = async ({ world }) => {
         villages.shift()
       }
       cleanDeletedVillages({ villageData: villages })
+      return
     }
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
+    return
   }
 }
 

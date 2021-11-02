@@ -1,7 +1,13 @@
-import { discordAlert } from '../../discord/alert'
+import { isDev } from '../../config'
+import { villageAlert } from '../../discord/villageAlert'
 import { getActiveWorld } from '../../loop'
 import { Fn, PromiseFn } from '../../types/methods'
-import { Village, VillageStats, RunVillageStats } from '../../types/village'
+import {
+  Village,
+  VillageStats,
+  RunVillageStats,
+  VillageData,
+} from '../../types/village'
 import { Coordinate } from '../../types/world'
 import { logger } from '../../utility/logger'
 import { coordinatesInRange } from '../../utility/twUtility'
@@ -14,12 +20,13 @@ let foundInRange = 0
 
 export const villagesInRange = (): number => foundInRange
 
-const getStatConfig: PromiseFn<void, void> = async () => {
+export const initStatsConfig: PromiseFn<void, void> = async () => {
   const world = getActiveWorld()
-  if (world?.testData) {
+  if (isDev || world?.testData) {
     start = { x: 500, y: 500 }
     radius = 10
     testData = true
+    initialized = true
     logger({ prefix: 'success', message: `World: Using test stat values` })
   } else if (!world?.radius || !world?.start) {
     initialized = true
@@ -28,6 +35,7 @@ const getStatConfig: PromiseFn<void, void> = async () => {
       message: `World: No start and radius values, skipping stats`,
     })
   } else {
+    initialized = true
     start = world.start
     radius = world.radius
   }
@@ -36,15 +44,16 @@ const getStatConfig: PromiseFn<void, void> = async () => {
 
 interface StatAlerts {
   village: Village
-  newStats: VillageStats
+  newData: VillageData
 }
 const statAlerts: PromiseFn<StatAlerts, void> = async ({
   village,
-  newStats,
+  newData,
 }) => {
-  if (!village.stats) return
+  if (!village.stats || !newData.stats || village.playerId === '') return
   if (!initialized) {
-    await getStatConfig()
+    console.log('curious')
+    await initStatsConfig()
   }
   if (!start || !radius) {
     return
@@ -53,8 +62,12 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
     return
   }
 
+  const newStats = newData.stats
+
+  // Tests
   if (foundInRange === 0 && testData) {
     newStats.lastPointDecrease = 0
+    village.points = village.points - 123
   }
   if (foundInRange === 1 && testData) {
     village.stats.stale = true
@@ -63,21 +76,46 @@ const statAlerts: PromiseFn<StatAlerts, void> = async ({
     newStats.stale = true
     village.stats.stale = false
   }
+
   const oldStats = village.stats
   foundInRange++
+
+  // Inactive
   if (newStats.stale && !oldStats?.stale) {
-    discordAlert({
-      message: `Village: ${village._id} (${village.name}) has gone inactive`,
+    villageAlert({
+      message: `Has gone inactive`,
+      village,
+      color: 'white',
     })
   }
+
+  // Active
   if (!newStats.stale && oldStats?.stale) {
-    discordAlert({
-      message: `Village: ${village._id} (${village.name}) no longer inactive`,
+    villageAlert({
+      message: `No longer inactive`,
+      village,
+      color: 'yellow',
     })
   }
+
+  // Dropped
   if (newStats.lastPointDecrease === 0 && oldStats.lastPointDecrease > 0) {
-    discordAlert({
-      message: `Village: ${village._id} (${village.name}) has just dropped points`,
+    villageAlert({
+      message: `Just dropped points`,
+      village,
+      color: 'red',
+      fields: [
+        {
+          name: 'Points Lost',
+          value: `${village.points - newData.points}`,
+          inline: true,
+        },
+        {
+          name: 'Original Points',
+          value: `${village.points}`,
+          inline: true,
+        },
+      ],
     })
   }
 
@@ -111,7 +149,8 @@ export const addVillageStats: Fn<RunVillageStats, Village> = ({
     stale,
   }
 
-  statAlerts({ village, newStats })
+  newData.stats = newStats
+  statAlerts({ village, newData })
   village.stats = newStats
 
   return village

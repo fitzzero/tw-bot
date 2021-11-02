@@ -6,7 +6,7 @@ import { syncVillages } from './village'
 
 export const syncTw: LoopFn = async ({ world }) => {
   logger({ prefix: 'start', message: `TW: Starting ${world.name} sync` })
-  syncPlayers({ world })
-  syncVillages({ world })
-  syncTribes({ world })
+  await syncTribes({ world })
+  await syncPlayers({ world })
+  await syncVillages({ world })
 }

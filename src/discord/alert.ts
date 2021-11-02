@@ -10,7 +10,7 @@ export interface DiscordAlertProps {
   message: string
 }
 
-export const getChannel = async (): Promise<void> => {
+const getChannel = async (): Promise<void> => {
   try {
     const guild = await getActiveGuild()
     const channelId = discordConfig().guild.alerts
