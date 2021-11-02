@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
-import { Player, PlayerData } from '../types/player'
-import { logger } from '../utility/logger'
+import { Player, PlayerData } from '../../types/player'
+import { logger } from '../../utility/logger'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch'
-import { updateOrCreatePlayer } from '../db/player'
-import { addPlayerHistory } from '../db/playerHistory'
+import { updateOrCreatePlayer } from '../db/player/player'
+import { addPlayerHistory } from '../db/player/playerHistory'
 import { LoopFn } from '../loop'
 import { PlayerData } from '../types/player'
 import { World } from '../types/world'

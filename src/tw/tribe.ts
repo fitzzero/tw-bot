@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch'
-import { updateOrCreateTribe } from '../db/tribe'
-import { addTribeHistory } from '../db/tribeHistoric'
+import { updateOrCreateTribe } from '../db/tribe/tribe'
+import { addTribeHistory } from '../db/tribe/tribeHistoric'
 import { LoopFn } from '../loop'
 import { TribeData } from '../types/tribe'
 import { World } from '../types/world'

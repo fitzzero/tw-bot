@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { worldId } from './config'
 import { connectDb } from './db/connect'
-import { updateLastSync, updateOrCreateWorld } from './db/worldDb'
+import { updateLastSync, updateOrCreateWorld } from './db/world/worldDb'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
 import { VoidFn } from './types/methods'

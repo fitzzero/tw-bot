@@ -1,6 +1,6 @@
-import { discordAlert } from '../discord/alert'
-import { getActiveWorld } from '../loop'
-import { VoidFnProps } from '../types/methods'
+import { discordAlert } from '../../discord/alert'
+import { getActiveWorld } from '../../loop'
+import { VoidFnProps } from '../../types/methods'
 import {
   BulkUpdateVillage,
   GetVillage,
@@ -9,10 +9,10 @@ import {
   Village,
   VillageData,
   VillageStats,
-} from '../types/village'
-import { Coordinate } from '../types/world'
-import { logger } from '../utility/logger'
-import { coordinatesInRange } from '../utility/twUtility'
+} from '../../types/village'
+import { Coordinate } from '../../types/world'
+import { logger } from '../../utility/logger'
+import { coordinatesInRange } from '../../utility/twUtility'
 import { VillageModel } from './villageSchema'
 
 export const cleanDeletedVillages: VoidFnProps<BulkUpdateVillage> = async ({
