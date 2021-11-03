@@ -39,7 +39,7 @@ export interface UpdateVillage {
 }
 
 export interface BulkUpdateVillage {
-  villageData: VillageData[]
+  newVillageData: VillageData[]
 }
 
 export interface RemoveVillage {

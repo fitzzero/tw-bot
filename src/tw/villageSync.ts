@@ -1,24 +1,24 @@
 import fetch from 'cross-fetch'
 import {
   cleanDeletedVillages,
+  totalActiveVillages,
   updateOrCreateVillage,
 } from '../db/village/villageController'
 import { addVillageHistory } from '../db/village/villageHistory'
-import { villagesInRange } from '../db/village/villageStats'
 import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
-import { logger } from '../utility/logger'
+import { logger, logSuccess } from '../utility/logger'
 import { withinLastDay } from '../utility/time'
 
 export const syncVillages: LoopFn = async ({ world }) => {
   try {
-    const villageData = await fetchVillages(world)
-    const villages: VillageData[] = []
+    const villageDataCsv = await fetchVillages(world)
+    const newVillageData: VillageData[] = []
 
     await Promise.all(
-      villageData.map(async data => {
+      villageDataCsv.map(async data => {
         if (data[0] === '' || data[0] === null) return
         const x = parseInt(data[2])
         const y = parseInt(data[3])
@@ -40,19 +40,17 @@ export const syncVillages: LoopFn = async ({ world }) => {
         }
         await updateOrCreateVillage({ villageData })
         await addVillageHistory(villageData)
-        villages.push(villageData)
+        newVillageData.push(villageData)
+        return villageData
       })
     )
-    const inRange = villagesInRange()
-    logger({
-      prefix: 'success',
-      message: `TW: Synced ${villages?.length} villages for ${world.name} - ${inRange} villages in range`,
-    })
+
+    logSuccess(
+      `Synced ${totalActiveVillages()} villages for ${world.name}`,
+      'TW'
+    )
     if (!withinLastDay(world.lastSync)) {
-      if (world.testData) {
-        villages.shift()
-      }
-      cleanDeletedVillages({ villageData: villages })
+      cleanDeletedVillages({ newVillageData })
       return
     }
   } catch (err) {

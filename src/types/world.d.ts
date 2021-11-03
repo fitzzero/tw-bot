@@ -10,6 +10,10 @@ export interface World extends Document {
   radius: number
 }
 
+export interface GetWorld {
+  id: number
+}
+
 export interface UpdateWorld {
   start?: Coordinate
   radius?: number
