@@ -1,6 +1,6 @@
 import { LoopFn } from '../loop'
 import { logger } from '../utility/logger'
-import { syncPlayers } from './player'
+import { syncPlayers } from './playerSync'
 import { syncTribes } from './tribe'
 import { syncVillages } from './villageSync'
 

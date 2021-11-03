@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { worldId } from './config'
 import { connectDb } from './db/connect'
+import { loadActivePlayers } from './db/player/playerController'
 import { loadActiveVillages } from './db/village/villageController'
 import {
   updateLastSync,
@@ -23,6 +24,7 @@ export type LoopFn = (props: LoopFnProps) => Promise<void>
 const loadData: PromiseFn<void, void> = async () => {
   connectDb(worldId)
   await loadActiveWorld()
+  await loadActivePlayers()
   await loadActiveVillages()
   return
 }

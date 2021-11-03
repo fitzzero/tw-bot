@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch'
 import {
   cleanDeletedVillages,
-  totalActiveVillages,
+  saveActiveVillages,
   updateOrCreateVillage,
 } from '../db/village/villageController'
 import { addVillageHistory } from '../db/village/villageHistory'
@@ -9,7 +9,7 @@ import { LoopFn } from '../loop'
 import { VillageData } from '../types/village'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
-import { logger, logSuccess } from '../utility/logger'
+import { logger } from '../utility/logger'
 import { withinLastDay } from '../utility/time'
 
 export const syncVillages: LoopFn = async ({ world }) => {
@@ -38,17 +38,14 @@ export const syncVillages: LoopFn = async ({ world }) => {
         if (!villageData || !villageData._id) {
           return
         }
-        await updateOrCreateVillage({ villageData })
+        updateOrCreateVillage({ villageData })
         await addVillageHistory(villageData)
         newVillageData.push(villageData)
         return villageData
       })
     )
 
-    logSuccess(
-      `Synced ${totalActiveVillages()} villages for ${world.name}`,
-      'TW'
-    )
+    await saveActiveVillages()
     if (!withinLastDay(world.lastSync)) {
       cleanDeletedVillages({ newVillageData })
       return

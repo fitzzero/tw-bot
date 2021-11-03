@@ -15,9 +15,6 @@ let activeVillages: Village[] = []
 export const getActiveVillages: Fn<void, Village[]> = () => {
   return activeVillages
 }
-export const totalActiveVillages: Fn<void, number> = () => {
-  return activeVillages.length
-}
 
 export const loadActiveVillages: PromiseFn<void, void> = async () => {
   const loadedVillages: Village[] = []
@@ -31,8 +28,19 @@ export const loadActiveVillages: PromiseFn<void, void> = async () => {
 }
 
 export const saveActiveVillages: PromiseFn<void, void> = async () => {
-  await VillageModel.bulkWrite(activeVillages)
+  const bulkOps = activeVillages.map(village => {
+    return {
+      updateOne: {
+        filter: { _id: village._id },
+        update: village.toJSON,
+        upsert: true,
+      },
+    }
+  })
+
+  await VillageModel.bulkWrite(bulkOps)
   logSuccess(`Saved ${activeVillages.length} villages`, 'Database')
+  return
 }
 
 export const cleanDeletedVillages: PromiseFn<BulkUpdateVillage, void> = async ({

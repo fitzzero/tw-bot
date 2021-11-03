@@ -1,7 +1,7 @@
 import { ColorResolvable, MessageEmbed, TextChannel } from 'discord.js'
 import { discordConfig } from '../config'
+import { getActivePlayers } from '../db/player/playerController'
 import { getStartDistance } from '../db/village/villageStats'
-import { getActivePlayerData } from '../tw/player'
 import { getActiveTribeData } from '../tw/tribe'
 import { PromiseFn } from '../types/methods'
 import { VillageData } from '../types/village'
@@ -60,7 +60,7 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
     logger({ prefix: 'alert', message: `Discord: Couldn't load alert channel` })
     return
   }
-  const player = getActivePlayerData().find(
+  const player = getActivePlayers().find(
     player => player._id === village.playerId
   )
   const tribe = getActiveTribeData().find(tribe => tribe._id === player?.tribe)
