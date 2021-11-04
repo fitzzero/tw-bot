@@ -21,11 +21,11 @@ export const loadActiveTribes: PromiseFn<void, void> = async () => {
 }
 
 export const saveActiveTribes: PromiseFn<void, void> = async () => {
-  const bulkOps = activeTribes.map(village => {
+  const bulkOps = activeTribes.map(tribe => {
     return {
       updateOne: {
-        filter: { _id: village._id },
-        update: village.toJSON,
+        filter: { _id: tribe._id },
+        update: tribe.toObject(),
         upsert: true,
       },
     }

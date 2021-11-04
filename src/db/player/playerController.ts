@@ -25,7 +25,7 @@ export const saveActivePlayers: PromiseFn<void, void> = async () => {
     return {
       updateOne: {
         filter: { _id: player._id },
-        update: player.toJSON,
+        update: player.toObject(),
         upsert: true,
       },
     }

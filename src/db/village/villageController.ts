@@ -32,7 +32,7 @@ export const saveActiveVillages: PromiseFn<void, void> = async () => {
     return {
       updateOne: {
         filter: { _id: village._id },
-        update: village.toJSON,
+        update: village.toObject,
         upsert: true,
       },
     }
