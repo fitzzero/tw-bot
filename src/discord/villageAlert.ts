@@ -1,8 +1,8 @@
 import { ColorResolvable, MessageEmbed, TextChannel } from 'discord.js'
 import { discordConfig } from '../config'
 import { getActivePlayers } from '../db/player/playerController'
+import { getActiveTribes } from '../db/tribe/tribeController.ts'
 import { getStartDistance } from '../db/village/villageStats'
-import { getActiveTribeData } from '../tw/tribe'
 import { PromiseFn } from '../types/methods'
 import { VillageData } from '../types/village'
 import { logger } from '../utility/logger'
@@ -63,7 +63,7 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
   const player = getActivePlayers().find(
     player => player._id === village.playerId
   )
-  const tribe = getActiveTribeData().find(tribe => tribe._id === player?.tribe)
+  const tribe = getActiveTribes().find(tribe => tribe._id === player?.tribe)
   const distance = getStartDistance({ x: village.x, y: village.y })
 
   const colorHex = colorKey[color] as ColorResolvable

@@ -38,7 +38,7 @@ export const syncVillages: LoopFn = async ({ world }) => {
         if (!villageData || !villageData._id) {
           return
         }
-        updateOrCreateVillage({ villageData })
+        updateOrCreateVillage(villageData)
         await addVillageHistory(villageData)
         newVillageData.push(villageData)
         return villageData

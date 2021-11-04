@@ -1,7 +1,7 @@
 import { LoopFn } from '../loop'
 import { logger } from '../utility/logger'
 import { syncPlayers } from './playerSync'
-import { syncTribes } from './tribe'
+import { syncTribes } from './tribeSync'
 import { syncVillages } from './villageSync'
 
 export const syncTw: LoopFn = async ({ world }) => {

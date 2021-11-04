@@ -3,8 +3,8 @@ import {
   BulkUpdateVillage,
   GetVillage,
   RemoveVillage,
-  UpdateVillage,
   Village,
+  VillageData,
 } from '../../types/village'
 import { logger, logSuccess } from '../../utility/logger'
 import { VillageModel } from './villageSchema'
@@ -88,9 +88,7 @@ export const removeVillage: PromiseFn<RemoveVillage, void> = async ({
   return
 }
 
-export const updateOrCreateVillage: Fn<UpdateVillage, void> = async ({
-  villageData,
-}) => {
+export const updateOrCreateVillage: Fn<VillageData, void> = villageData => {
   const index = activeVillages.findIndex(
     village => village._id === villageData._id
   )
@@ -110,6 +108,7 @@ export const updateOrCreateVillage: Fn<UpdateVillage, void> = async ({
     // Migrations
     village.k = villageData.k
     village.number = villageData.number
+
     activeVillages[index] = village
   }
   return

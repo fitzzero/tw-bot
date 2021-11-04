@@ -35,7 +35,7 @@ export const saveActivePlayers: PromiseFn<void, void> = async () => {
   return
 }
 
-export const updateOrCreatePlayer: Fn<PlayerData, void> = async playerData => {
+export const updateOrCreatePlayer: Fn<PlayerData, void> = playerData => {
   try {
     const index = activePlayers.findIndex(
       player => player._id === playerData._id
