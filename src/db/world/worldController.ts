@@ -55,16 +55,19 @@ export const updateLastSync: PromiseFn<void, void> = async () => {
 export const patchWorld = async (
   data: WorldEditProps
 ): Promise<World | null> => {
-  const world = getActiveWorld()
-  if (!world) return null
+  if (!activeWorld) return null
 
-  if (data.start) world.start = data.start
-  if (data.radius) world.radius = data.radius
+  if (data.start) activeWorld.start = data.start
+  if (data.radius) activeWorld.radius = data.radius
+  if (data.roles) activeWorld.roles = data.roles
 
   try {
-    await world.save()
-    logger({ prefix: 'success', message: `Database: Updated ${world.name}` })
-    return world
+    await saveWorld()
+    logger({
+      prefix: 'success',
+      message: `Database: Updated ${activeWorld.name}`,
+    })
+    return activeWorld
   } catch (err) {
     logger({ prefix: 'alert', message: `Database: ${err}` })
     return null
@@ -80,4 +83,15 @@ export const addDashboardMessage: PromiseFn<DashboardMessage, void> =
     activeWorld.dashboard.push(messageData)
     saveWorld()
     return
+  }
+
+export const updateDashboardMessage: Fn<DashboardMessage, void> =
+  messageData => {
+    if (!activeWorld) return
+    const index = activeWorld?.dashboard?.findIndex(
+      message => (message.messageId = messageData.messageId)
+    )
+    if (!index || !activeWorld.dashboard) return
+    activeWorld.dashboard[index] = messageData
+    saveWorld()
   }
