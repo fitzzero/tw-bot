@@ -20,6 +20,13 @@ export const worldSchema = new Schema<World>(
       app: String,
       browser: String,
     },
+    dashboard: [
+      {
+        key: String,
+        channelId: String,
+        messageId: String,
+      },
+    ],
   },
   schemaOptions
 )

@@ -1,5 +1,6 @@
 import { discordConfig } from '../config'
 import { logger } from '../utility/logger'
+import { loadActiveMessage } from './active'
 import { activeCommands } from './commands'
 import { discord } from './connect'
 
@@ -9,6 +10,7 @@ export const DiscordEvents = (): void => {
       prefix: 'success',
       message: `Discord: Connected as ${discord.user?.username}`,
     })
+    loadActiveMessage()
   })
 
   discord.on('interactionCreate', async interaction => {

@@ -35,5 +35,5 @@ export const discordAlert: PromiseFn<DiscordAlertProps, void> = async ({
     return
   }
 
-  channel?.send(message)
+  channel.send(message)
 }
