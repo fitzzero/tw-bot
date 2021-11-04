@@ -4,7 +4,10 @@ import { Routes } from 'discord-api-types/v9'
 import { discordConfig } from '../config'
 import { PromiseFn } from '../types/methods'
 import { logger } from '../utility/logger'
-import { SlashCommandBuilder } from '@discordjs/builders'
+import {
+  SlashCommandBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from '@discordjs/builders'
 import { Interaction } from 'discord.js'
 
 const token = process.env.WRTOKEN
@@ -14,7 +17,7 @@ const rest = new REST({ version: '9' }).setToken(token || '')
 export type CommandFn = (interaction: Interaction) => Promise<void>
 
 export interface Command {
-  documentation: SlashCommandBuilder
+  documentation: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder
   controller: CommandFn
 }
 

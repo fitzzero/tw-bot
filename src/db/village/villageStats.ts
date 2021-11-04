@@ -1,6 +1,5 @@
 import { isDev } from '../../config'
 import { villageAlert } from '../../discord/villageAlert'
-import { getActiveWorld } from '../../loop'
 import { Fn, PromiseFn } from '../../types/methods'
 import {
   Village,
@@ -11,6 +10,7 @@ import {
 import { Coordinate } from '../../types/world'
 import { logger } from '../../utility/logger'
 import { coordinatesInRange } from '../../utility/twUtility'
+import { getActiveWorld } from '../world/worldController'
 
 let initialized = false
 let testData = false
@@ -18,7 +18,7 @@ let start: Coordinate | undefined = undefined
 let radius: number | undefined = undefined
 let foundInRange = 0
 
-export const villagesInRange = (): number => foundInRange
+export const totalVillagesInRange = (): number => foundInRange
 
 const initStatsConfig: PromiseFn<void, void> = async () => {
   const world = getActiveWorld()

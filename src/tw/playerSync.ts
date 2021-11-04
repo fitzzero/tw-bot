@@ -1,18 +1,14 @@
 import fetch from 'cross-fetch'
-import { updateOrCreatePlayer } from '../db/player/player'
+import {
+  saveActivePlayers,
+  updateOrCreatePlayer,
+} from '../db/player/playerController'
 import { addPlayerHistory } from '../db/player/playerHistory'
 import { LoopFn } from '../loop'
-import { Fn } from '../types/methods'
 import { PlayerData } from '../types/player'
 import { World } from '../types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
-
-let activePlayerData: PlayerData[] = []
-
-export const getActivePlayerData: Fn<void, PlayerData[]> = () => {
-  return activePlayerData
-}
 
 export const syncPlayers: LoopFn = async ({ world }) => {
   try {
@@ -24,8 +20,6 @@ export const syncPlayers: LoopFn = async ({ world }) => {
     const oda = await fetchOd(world, 'att')
     const odd = await fetchOd(world, 'def')
     const ods = await fetchOd(world, 'sup')
-
-    const newPlayerData: PlayerData[] = []
 
     await Promise.all(
       players.map(async data => {
@@ -52,16 +46,11 @@ export const syncPlayers: LoopFn = async ({ world }) => {
         if (!playerData || !playerData._id) {
           return
         }
-        newPlayerData.push(playerData)
-        await updateOrCreatePlayer(playerData)
+        updateOrCreatePlayer(playerData)
         await addPlayerHistory(playerData)
       })
     )
-    activePlayerData = newPlayerData
-    logger({
-      prefix: 'success',
-      message: `TW: Synced ${players?.length} players for ${world.name}`,
-    })
+    await saveActivePlayers()
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

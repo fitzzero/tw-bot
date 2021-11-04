@@ -2,15 +2,14 @@ import { PromiseFn } from '../types/methods'
 import { logger } from './logger'
 
 interface TryCatch {
-  functionToTry: () => void
+  tryFn: () => void
+  name: string
 }
 
-export const tryCatch: PromiseFn<TryCatch, void> = async ({
-  functionToTry,
-}) => {
+export const tryCatch: PromiseFn<TryCatch, void> = async ({ tryFn, name }) => {
   try {
-    functionToTry()
+    tryFn()
   } catch (err) {
-    logger({ prefix: 'alert', message: `${err}` })
+    logger({ prefix: 'alert', message: `$${name}: ${err}` })
   }
 }

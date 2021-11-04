@@ -1,53 +1,55 @@
 import moment from 'moment'
-import { isDev } from '../../config'
-import { getActiveWorld } from '../../loop'
-import { PromiseFn } from '../../types/methods'
-import { UpdateWorld, World } from '../../types/world'
-import { logger } from '../../utility/logger'
+import { isDev, worldId } from '../../config'
+import { Fn, PromiseFn } from '../../types/methods'
+import { GetWorld, WorldEditProps, World } from '../../types/world'
+import { logger, logSuccess } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
 
-export const updateOrCreateWorld = async (
-  worldId: number
-): Promise<World | undefined> => {
-  try {
-    let world = await WorldModel.findById(worldId)
-    if (!world) {
-      world = new WorldModel({
-        _id: worldId,
-        name: `w${worldId}`,
-        testData: !!isDev,
-      })
-    } else {
-      // Migrations
-      if (!world?.name) world.name = `w${worldId}`
-    }
-    logger({ prefix: 'success', message: `Database: Loaded w${world.id}` })
-    await world.save()
-    return world
-  } catch (err) {
-    logger({ prefix: 'alert', message: `${err}` })
-    return
-  }
-}
+let activeWorld: World | undefined = undefined
 
-export const updateLastSync: PromiseFn<{ worldId: number }, void> = async ({
-  worldId,
-}) => {
-  const world = await WorldModel.findById(worldId)
-  if (!world) {
-    logger({
-      prefix: 'alert',
-      message: `Database: Failed to update lastSync for w${worldId}`,
-    })
-    return
-  }
-  const lastSync = moment()
-  world.lastSync = lastSync
-  world.save()
+export const getActiveWorld: Fn<void, World | undefined> = () => activeWorld
+
+export const loadActiveWorld: PromiseFn<void, void> = async () => {
+  activeWorld = await findOrCreateWorld({ id: worldId })
   return
 }
 
-export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
+export const saveWorld: PromiseFn<void, void> = async () => {
+  if (activeWorld) {
+    await activeWorld.save()
+    logSuccess(`Saved ${activeWorld.name}`)
+  }
+  return
+}
+
+export const findOrCreateWorld: PromiseFn<GetWorld, World> = async ({ id }) => {
+  let world = await WorldModel.findById(id)
+  if (!world) {
+    world = new WorldModel({
+      _id: worldId,
+      name: `w${worldId}`,
+      testData: !!isDev,
+    })
+  } else {
+    // Migrations
+    if (!world?.name) world.name = `w${worldId}`
+  }
+  logger({ prefix: 'success', message: `Database: Loaded w${world.id}` })
+  await world.save()
+  return world
+}
+
+export const updateLastSync: PromiseFn<void, void> = async () => {
+  if (!activeWorld) return
+  const lastSync = moment()
+  activeWorld.lastSync = lastSync
+  await saveWorld()
+  return
+}
+
+export const patchWorld = async (
+  data: WorldEditProps
+): Promise<World | null> => {
   const world = getActiveWorld()
   if (!world) return null
 
