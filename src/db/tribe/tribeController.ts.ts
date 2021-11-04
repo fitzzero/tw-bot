@@ -11,8 +11,8 @@ export const getActiveTribes: Fn<void, Tribe[]> = () => {
 
 export const loadActiveTribes: PromiseFn<void, void> = async () => {
   const loadedTribes: Tribe[] = []
-  const villageCollection = await TribeModel.find({})
-  villageCollection.forEach(tribe => {
+  const tribeCollection = await TribeModel.find({})
+  tribeCollection.forEach(tribe => {
     loadedTribes.push(tribe)
   })
   activeTribes = loadedTribes

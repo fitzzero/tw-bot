@@ -17,6 +17,11 @@ export const syncVillages: LoopFn = async ({ world }) => {
     const villageDataCsv = await fetchVillages(world)
     const newVillageData: VillageData[] = []
 
+    logger({
+      prefix: 'start',
+      message: `TW: Loading ${villageDataCsv.length} villages`,
+    })
+
     await Promise.all(
       villageDataCsv.map(async data => {
         if (data[0] === '' || data[0] === null) return
