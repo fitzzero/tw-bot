@@ -1,8 +1,8 @@
 import { Fn, PromiseFn } from '../../types/methods'
-import { Account, AccountData } from '../../types/account'
+import { Account, AccountData, Scopes } from '../../types/account'
 import { logSuccess } from '../../utility/logger'
-import { AccountModel } from './accountSchema.ts'
-import { accountFixtures } from './accountFixtures.ts'
+import { AccountModel } from './accountSchema'
+import { accountFixtures } from './accountFixtures'
 
 let activeAccounts: Account[] = []
 
@@ -16,7 +16,7 @@ export const loadActiveAccounts: PromiseFn<void, void> = async () => {
   accountCollection.forEach(account => {
     loadedAccounts.push(account)
   })
-  if (activeAccounts.length === 0) {
+  if (loadedAccounts.length === 0) {
     accountFixtures()
   }
   activeAccounts = loadedAccounts
@@ -47,3 +47,11 @@ export const createAccount: PromiseFn<AccountData, Account> =
 
     return newAccount
   }
+
+export const hasAdmin: Fn<string, boolean> = accountId => {
+  const account = activeAccounts.find(account => account._id === accountId)
+  if (!account) return false
+  const hasAdmin = account.scopes.find(scope => scope === Scopes.ADMIN)
+  if (hasAdmin) return true
+  else return false
+}

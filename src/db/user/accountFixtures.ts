@@ -2,7 +2,7 @@ import moment from 'moment'
 import { PromiseFn } from '../../types/methods'
 import { Scopes, AccountData } from '../../types/account'
 import { logSuccess } from '../../utility/logger'
-import { createAccount } from './accountController.ts'
+import { createAccount } from './accountController'
 
 const admins: AccountData[] = [
   {

@@ -3,7 +3,7 @@ import { worldId } from './config'
 import { connectDb } from './db/connect'
 import { loadActivePlayers } from './db/player/playerController'
 import { loadActiveTribes } from './db/tribe/tribeController.ts'
-import { loadActiveAccounts } from './db/user/accountController.ts'
+import { loadActiveAccounts } from './db/user/accountController'
 import { loadActiveVillages } from './db/village/villageController'
 import {
   updateLastSync,
