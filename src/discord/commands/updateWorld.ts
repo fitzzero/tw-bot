@@ -1,52 +1,87 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
+import {
+  SlashCommandBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from '@discordjs/builders'
 import { getVillage } from '../../db/village/villageController'
 import { patchWorld } from '../../db/world/worldController'
-import { Coordinate, UpdateWorld } from '../../types/world'
+import { Coordinate, WorldEditProps } from '../../types/world'
 import { Command, CommandFn } from '../commands'
 
-const documentation = new SlashCommandBuilder()
-  .setName('updateworld')
-  .addStringOption(option =>
-    option
-      .setName('start')
-      .setDescription('Update the center x|y coordinates')
-      .setRequired(false)
-  )
-  .addNumberOption(option =>
-    option
-      .setName('radius')
-      .setDescription('Radius to include for village alerts')
-      .setRequired(false)
-  )
-  .setDescription('Updates properties of the world')
+const documentation: SlashCommandSubcommandsOnlyBuilder =
+  new SlashCommandBuilder()
+    .setName('updateworld')
+    .setDescription('Update active world settings')
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('radius')
+        .setDescription('Adjust the start radius of the world')
+        .addNumberOption(option =>
+          option
+            .setName('radius')
+            .setDescription('Size of radius from start')
+            .setRequired(true)
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('start')
+        .setDescription('Set starting coordinate of the world')
+        .addNumberOption(option =>
+          option.setName('x').setDescription('X coordinate').setRequired(true)
+        )
+        .addNumberOption(option =>
+          option.setName('y').setDescription('Y coordinate').setRequired(true)
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('roles')
+        .setDescription('Add world roles')
+        .addRoleOption(option =>
+          option
+            .setName('browser')
+            .setDescription('Role for browser player')
+            .setRequired(true)
+        )
+        .addRoleOption(option =>
+          option
+            .setName('app')
+            .setDescription('Role for app player')
+            .setRequired(true)
+        )
+    )
 
 const controller: CommandFn = async interaction => {
   if (!interaction.isCommand()) return
   // Get Properties
-  const startString = interaction.options.getString('start')
+  const subCommand = interaction.options.getSubcommand()
   const radius = interaction.options.getNumber('radius')
+  const x = interaction.options.getNumber('x')
+  const y = interaction.options.getNumber('y')
 
-  if (!startString && !radius) {
+  if (!['start', 'roles', 'radius'].includes(subCommand)) {
     await interaction.reply('No properties added to update')
     return
   }
 
-  const updateData: UpdateWorld = {}
+  const updateData: WorldEditProps = {}
 
-  if (startString) {
-    const args = startString.split('|')
-    if (!args[1]) {
-      await interaction.reply('Error parsing start coordinates')
-      return
-    }
-    const start: Coordinate = {
-      x: parseInt(args[0]) || 0,
-      y: parseInt(args[1]) || 0,
-    }
+  if (x && y) {
+    const start: Coordinate = { x, y }
     updateData.start = start
   }
 
   if (radius) updateData.radius = radius
+
+  if (interaction.options.getSubcommand() === 'roles') {
+    const browserRoleId = interaction.options.getRole('browser')
+    const appRoleId = interaction.options.getRole('app')
+    if (!browserRoleId || !appRoleId) return
+    updateData.roles = {
+      app: appRoleId.id,
+      browser: browserRoleId.id,
+    }
+  }
 
   const world = await patchWorld(updateData)
 
@@ -66,6 +101,9 @@ const controller: CommandFn = async interaction => {
   }
   if (updateData.radius) {
     reply += `\nSet alert radius to: ${updateData.radius}`
+  }
+  if (updateData.roles) {
+    reply += `\nAdded <@&${updateData.roles.app}> (App) and <@&${updateData.roles.browser}> (Browser)`
   }
 
   await interaction.reply(reply)

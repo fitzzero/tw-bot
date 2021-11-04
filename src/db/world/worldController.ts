@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { isDev, worldId } from '../../config'
 import { Fn, PromiseFn } from '../../types/methods'
-import { GetWorld, UpdateWorld, World } from '../../types/world'
+import { GetWorld, WorldEditProps, World } from '../../types/world'
 import { logger, logSuccess } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
 
@@ -47,7 +47,9 @@ export const updateLastSync: PromiseFn<void, void> = async () => {
   return
 }
 
-export const patchWorld = async (data: UpdateWorld): Promise<World | null> => {
+export const patchWorld = async (
+  data: WorldEditProps
+): Promise<World | null> => {
   const world = getActiveWorld()
   if (!world) return null
 

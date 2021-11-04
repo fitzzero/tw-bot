@@ -16,6 +16,10 @@ export const worldSchema = new Schema<World>(
       y: Number,
     },
     radius: Number,
+    roles: {
+      app: String,
+      browser: String,
+    },
   },
   schemaOptions
 )

@@ -1,22 +1,24 @@
 import { Document } from 'mongoose'
 import { Moment } from 'moment'
 
-export interface World extends Document {
+export interface World extends WorldEditProps, Document {
   _id: number
   name: string
   lastSync: Moment
   testData: boolean
-  start: Coordinate | undefined
-  radius: number
 }
 
 export interface GetWorld {
   id: number
 }
 
-export interface UpdateWorld {
+export interface WorldEditProps {
   start?: Coordinate
   radius?: number
+  roles?: {
+    app: string
+    browser: string
+  }
 }
 
 export interface Coordinate {
