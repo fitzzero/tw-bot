@@ -15,7 +15,7 @@ export const devDiscordConfig = {
   guild: {
     id: '620484161974566922',
     alerts: '904963008525107250',
-    dashboard: '904905248051720193',
+    dashboard: '904963008525107250',
     villages: '904963022089515090',
   },
 }
@@ -26,7 +26,7 @@ export const prodDiscordConfig: DiscordConfig = {
   guild: {
     id: '855057085719642134',
     alerts: '904407658558275636',
-    dashboard: '904963008525107250',
+    dashboard: '904905248051720193',
     villages: '904407658558275636',
   },
 }

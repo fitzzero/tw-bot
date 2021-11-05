@@ -14,7 +14,7 @@ export const getDashboardChannel: PromiseFn<void, TextChannel | undefined> =
 
     try {
       const guild = await getActiveGuild()
-      const channelId = discordConfig().guild.alerts
+      const channelId = discordConfig().guild.dashboard
       const someChannel = await guild?.channels.fetch(channelId)
       if (someChannel?.isText) {
         channel = someChannel as TextChannel
