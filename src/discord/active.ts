@@ -156,6 +156,7 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
     const member = await guild.members.fetch(interaction.user.id)
     const phoneRole = await guild.roles.fetch(world.roles.app)
     const browserRole = await guild.roles.fetch(world.roles.browser)
+    const channel = await getDashboardChannel()
     if (!phoneRole || !browserRole) return
 
     interaction.deferUpdate()
@@ -168,7 +169,9 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
       activeMessageData.data.phoneId = member.id
       activeMessageData.data.phoneChanged = moment()
       discordAlert({
-        message: `<t:${getUnix()}:R>: ${member.displayName} is on 📱`,
+        message: `<t:${getUnix()}:R>: ${member.displayName} is on 📱 (<#${
+          channel?.id
+        }>)`,
       })
     }
     // Browser Button
@@ -180,7 +183,9 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
       activeMessageData.data.browserId = member.id
       activeMessageData.data.phoneChanged = moment()
       discordAlert({
-        message: `<t:${getUnix()}:R>: ${member.displayName} is on 💻`,
+        message: `<t:${getUnix()}:R>: ${member.displayName} is on 💻 (<#${
+          channel?.id
+        }>)`,
       })
     }
     // Offline Button
@@ -196,7 +201,9 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
       await member.roles.remove(browserRole)
       await member.roles.remove(phoneRole)
       discordAlert({
-        message: `<t:${getUnix()}:R>: ${member.displayName} is now offline`,
+        message: `<t:${getUnix()}:R>: ${member.displayName} is now offline (<#${
+          channel?.id
+        }>)`,
       })
     }
     updateActiveMessage()
