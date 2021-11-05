@@ -31,4 +31,5 @@ export interface DashboardMessage {
   key: string
   channelId: string
   messageId: string
+  data: Schema.Types.Mixed
 }

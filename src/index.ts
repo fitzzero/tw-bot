@@ -1,6 +1,5 @@
 import { DatabaseEvents } from './db/events'
 import { DiscordEvents } from './discord/events'
-import { startDiscord } from './discord/connect'
 import { startLoop } from './loop'
 import { logger } from './utility/logger'
 import { isDev } from './config'
@@ -13,5 +12,4 @@ DatabaseEvents()
 DiscordEvents()
 
 /* Start Services */
-startDiscord()
 startLoop()

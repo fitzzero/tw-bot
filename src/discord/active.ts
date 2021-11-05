@@ -6,18 +6,28 @@ import {
   MessageEmbed,
   Snowflake,
 } from 'discord.js'
+import moment, { Moment } from 'moment'
 import {
   addDashboardMessage,
   getActiveWorld,
   updateDashboardMessage,
 } from '../db/world/worldController'
-import { PromiseFn } from '../types/methods'
-import { currentUnix } from '../utility/time'
-import { wait } from '../utility/wait'
+import { Fn, PromiseFn } from '../types/methods'
+import { DashboardMessage } from '../types/world'
+import { getUnix } from '../utility/time'
 import { discordAlert } from './alert'
 import { getDashboardChannel } from './dashboard'
 import { getActiveGuild } from './guild'
 
+interface MessageData extends DashboardMessage {
+  data: {
+    phoneId?: string
+    phoneChanged?: Moment
+    browserId?: string
+    browserChanged?: Moment
+  }
+}
+let activeMessageData: MessageData | undefined = undefined
 let message: Message | undefined = undefined
 
 enum ButtonInteractions {
@@ -42,130 +52,153 @@ export const loadActiveMessage: PromiseFn<void, void> = async () => {
 
   const dashboard = world?.dashboard?.find(message => message.key === key)
   const embeds = await getEmbeds()
-  const content = `Last updated <t:${currentUnix()}:R>`
+  const components = getComponents()
   if (!dashboard) {
-    message = await channel.send({ content, embeds, components })
-    addDashboardMessage({
+    message = await channel.send({ embeds, components })
+    activeMessageData = await addDashboardMessage({
       key,
       channelId: channel.id,
       messageId: message.id,
+      data: {},
     })
   } else {
+    activeMessageData = dashboard
+    if (!activeMessageData.data) activeMessageData.data = {}
     try {
       message = await channel.messages.fetch(dashboard.messageId as Snowflake)
     } catch (err) {
-      message = await channel.send({ content, embeds, components })
-      updateDashboardMessage({
-        key,
-        channelId: channel.id,
+      message = await channel.send({ embeds, components })
+      await updateDashboardMessage({
+        ...activeMessageData,
         messageId: message.id,
       })
     }
-    await message.edit({ content, embeds, components })
+    await message.edit({ embeds, components })
   }
 }
 
 export const updateActiveMessage: PromiseFn<void, void> = async () => {
-  if (!message) return
+  if (!message || !activeMessageData) return
   const embeds = await getEmbeds()
-  const content = `Last updated <t:${currentUnix()}:R>`
-  await message.edit({ content, embeds, components })
+  const components = getComponents()
+  await message.edit({ embeds, components })
+  updateDashboardMessage(activeMessageData)
 }
 
 const getEmbeds: PromiseFn<void, MessageEmbed[]> = async () => {
   const browser = new MessageEmbed()
+  browser.setColor('#e3f2fd')
+  browser.setAuthor('💻 Open')
   const app = new MessageEmbed()
+  app.setColor('#e3f2fd')
+  app.setAuthor('📱 Open')
 
-  await wait(5000)
   const guild = await getActiveGuild()
   const world = getActiveWorld()
-  if (!guild || !world || !world.roles) return [browser, app]
+  if (!guild || !world || !world.roles || !activeMessageData)
+    return [browser, app]
 
-  const phoneRole = await guild.roles.fetch(world.roles.app)
-  const browserRole = await guild.roles.fetch(world.roles.browser)
+  const browserUserId = activeMessageData.data.browserId
+  const phoneUserId = activeMessageData.data.phoneId
 
-  const browserUser = browserRole?.members?.random()
-  const browserAvatar = browserUser?.displayAvatarURL()
-  const phoneUser = phoneRole?.members?.random()
-  const phoneAvatar = phoneUser?.displayAvatarURL()
-
-  if (browserUser) {
+  if (browserUserId) {
+    const member = await guild.members.fetch(browserUserId)
+    const avatar = member.user.displayAvatarURL()
+    const sinceUnix = getUnix(activeMessageData.data.browserChanged)
     browser.setColor('#81c784')
-    browser.setAuthor(
-      browserUser.displayName,
-      browserAvatar ? browserAvatar : undefined
-    )
-    //browser.setFooter('Some karma and time')
-  } else {
-    browser.setColor('#e3f2fd')
-    browser.setAuthor('Open')
+    browser.setAuthor(member.displayName, avatar ? avatar : undefined)
+    browser.setDescription(`💻 since <t:${sinceUnix}:R>`)
   }
 
-  if (phoneUser) {
+  if (phoneUserId) {
+    const member = await guild.members.fetch(phoneUserId)
+    const avatar = member.user.displayAvatarURL()
+    const sinceUnix = getUnix(activeMessageData.data.phoneChanged)
     app.setColor('#81c784')
-    app.setAuthor(phoneUser.displayName, phoneAvatar ? phoneAvatar : undefined)
-    //browser.setFooter('Some karma and time')
-  } else {
-    app.setColor('#e3f2fd')
-    app.setAuthor('Open')
+    app.setAuthor(member.displayName, avatar ? avatar : undefined)
+    app.setDescription(`📱 since <t:${sinceUnix}:R>`)
   }
 
   return [browser, app]
 }
 
-const components = [
-  new MessageActionRow()
+const getComponents: Fn<void, MessageActionRow[]> = () => {
+  const activePhone = activeMessageData?.data.phoneId
+  const activeBrowser = activeMessageData?.data.browserId
+  const row = new MessageActionRow()
     .addComponents(
       new MessageButton()
         .setCustomId(ButtonInteractions.BROWSER)
         .setLabel('💻 Takeover')
-        .setStyle('SUCCESS')
+        .setStyle(activeBrowser ? 'SECONDARY' : 'SUCCESS')
     )
     .addComponents(
       new MessageButton()
         .setCustomId(ButtonInteractions.PHONE)
         .setLabel('📱 Takeover')
-        .setStyle('SUCCESS')
+        .setStyle(activePhone ? 'SECONDARY' : 'SUCCESS')
     )
     .addComponents(
       new MessageButton()
         .setCustomId(ButtonInteractions.OFF)
         .setLabel('Go Offline')
         .setStyle('DANGER')
-    ),
-]
+    )
+  return [row]
+}
 
 export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
   async interaction => {
     const guild = await getActiveGuild()
     const world = getActiveWorld()
-    if (!guild || !world || !world.roles?.app) return
+    if (!guild || !world || !world.roles?.app || !activeMessageData) return
 
     const member = await guild.members.fetch(interaction.user.id)
     const phoneRole = await guild.roles.fetch(world.roles.app)
     const browserRole = await guild.roles.fetch(world.roles.browser)
     if (!phoneRole || !browserRole) return
 
+    interaction.deferUpdate()
+    // Phone Button
     if (interaction.customId === ButtonInteractions.PHONE) {
       phoneRole.members.map(m => {
         m.roles.remove(phoneRole)
       })
       await member.roles.add(phoneRole)
-      discordAlert({ message: `${member.displayName} now on Phone` })
+      activeMessageData.data.phoneId = member.id
+      activeMessageData.data.phoneChanged = moment()
+      discordAlert({
+        message: `<t:${getUnix()}:R>: ${member.displayName} is on 📱`,
+      })
     }
+    // Browser Button
     if (interaction.customId === ButtonInteractions.BROWSER) {
       browserRole.members.map(m => {
         m.roles.remove(browserRole)
       })
       await member.roles.add(browserRole)
-      discordAlert({ message: `${member.displayName} now on Browser` })
+      activeMessageData.data.browserId = member.id
+      activeMessageData.data.phoneChanged = moment()
+      discordAlert({
+        message: `<t:${getUnix()}:R>: ${member.displayName} is on 💻`,
+      })
     }
+    // Offline Button
     if (interaction.customId === ButtonInteractions.OFF) {
+      if (member.id === activeMessageData.data.browserId) {
+        activeMessageData.data.browserId = undefined
+        activeMessageData.data.browserChanged = moment()
+      }
+      if (member.id === activeMessageData.data.phoneId) {
+        activeMessageData.data.phoneId = undefined
+        activeMessageData.data.phoneChanged = moment()
+      }
       await member.roles.remove(browserRole)
       await member.roles.remove(phoneRole)
-      discordAlert({ message: `${member.displayName} is off` })
+      discordAlert({
+        message: `<t:${getUnix()}:R>: ${member.displayName} is now offline`,
+      })
     }
-    interaction.update('Updating...')
     updateActiveMessage()
     return
   }

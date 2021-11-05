@@ -74,24 +74,27 @@ export const patchWorld = async (
   }
 }
 
-export const addDashboardMessage: PromiseFn<DashboardMessage, void> =
+export const addDashboardMessage: PromiseFn<
+  DashboardMessage,
+  DashboardMessage
+> = async messageData => {
+  if (!activeWorld) return messageData
+  if (!activeWorld.dashboard) {
+    activeWorld.dashboard = []
+  }
+  activeWorld.dashboard.push(messageData)
+  saveWorld()
+  return messageData
+}
+
+export const updateDashboardMessage: PromiseFn<DashboardMessage, void> =
   async messageData => {
     if (!activeWorld) return
-    if (!activeWorld.dashboard) {
-      activeWorld.dashboard = []
-    }
-    activeWorld.dashboard.push(messageData)
-    saveWorld()
-    return
-  }
-
-export const updateDashboardMessage: Fn<DashboardMessage, void> =
-  messageData => {
-    if (!activeWorld) return
     const index = activeWorld?.dashboard?.findIndex(
-      message => (message.messageId = messageData.messageId)
+      message => (message.key = messageData.key)
     )
     if (!index || !activeWorld.dashboard) return
+    console.log(3)
     activeWorld.dashboard[index] = messageData
-    saveWorld()
+    await saveWorld()
   }

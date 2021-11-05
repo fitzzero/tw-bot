@@ -16,6 +16,7 @@ export const withinLastMinute = (date?: Moment): boolean => {
   return !!date.isSame(moment.tz('America/New_York'), 'minute')
 }
 
-export const currentUnix = (): number => {
+export const getUnix = (time?: Moment): number => {
+  if (time) return time.tz('America/New_York').unix()
   return moment.tz('America/New_York').unix()
 }

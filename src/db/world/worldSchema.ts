@@ -25,6 +25,7 @@ export const worldSchema = new Schema<World>(
         key: String,
         channelId: String,
         messageId: String,
+        data: Schema.Types.Mixed,
       },
     ],
   },

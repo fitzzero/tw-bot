@@ -6,7 +6,7 @@ import { getStartDistance } from '../db/village/villageStats'
 import { PromiseFn } from '../types/methods'
 import { VillageData } from '../types/village'
 import { logger } from '../utility/logger'
-import { currentUnix } from '../utility/time'
+import { getUnix } from '../utility/time'
 import { getActiveGuild } from './guild'
 
 let channel: TextChannel | undefined = undefined
@@ -91,7 +91,7 @@ export const villageAlert: PromiseFn<VillageAlertProps, void> = async ({
     })
   }
 
-  const unixTime = currentUnix()
+  const unixTime = getUnix()
 
   embed.addField('Last Update', `${message} (<t:${unixTime}:R>)`)
 
