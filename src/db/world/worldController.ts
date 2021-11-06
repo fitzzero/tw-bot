@@ -94,7 +94,6 @@ export const updateDashboardMessage: PromiseFn<DashboardMessage, void> =
       message => (message.key = messageData.key)
     )
     if (!index || !activeWorld.dashboard) return
-    console.log(3)
     activeWorld.dashboard[index] = messageData
     await saveWorld()
   }
