@@ -11,6 +11,7 @@ export const startTwProxy: Fn<void, void> = () => {
     target: 'https://www.tribalwars.net/en-dk/',
     changeOrigin: true,
     ws: true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onProxyReq: function onProxyReq(proxyReq: any) {
       proxyReq.setHeader('cookie', cookie)
     },

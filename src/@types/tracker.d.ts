@@ -30,14 +30,7 @@ export interface TrackerHistory {
 }
 
 export type TrackerTargetTypes = 'village' | 'player' | 'tribe' | 'radius'
-export const TrackerTypesArray = [
-  'radius',
-  'farm',
-  'target',
-  'self',
-  'ally',
-  'enemy',
-]
+
 export type TrackerTypes =
   | 'radius'
   | 'farm'

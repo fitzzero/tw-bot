@@ -1,11 +1,16 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { createTracker } from '../../db/tracker/trackerController'
-import {
-  TrackerTypesArray,
-  TrackerTypes,
-  TrackerData,
-} from '../../@types/tracker'
+import { TrackerTypes, TrackerData } from '../../@types/tracker'
 import { Command, CommandFn } from '../commands'
+
+export const TrackerTypesArray = [
+  'radius',
+  'farm',
+  'target',
+  'self',
+  'ally',
+  'enemy',
+]
 
 const documentation = new SlashCommandBuilder()
   .setName('track')
