@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Command, CommandFn } from '../commands'
-import { hasAdmin } from '../../db/user/accountController'
+import { hasAdmin } from '../../db/account/accountController'
 import { cannedResponses } from '../canned'
 import { getActiveWorld } from '../../db/world/worldController'
 import { syncTw } from '../../tw/tribalWars'
