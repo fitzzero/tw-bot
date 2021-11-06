@@ -5,6 +5,7 @@ import {
 import { getVillage } from '../../db/village/villageController'
 import { patchWorld } from '../../db/world/worldController'
 import { Coordinate, WorldEditProps } from '../../types/world'
+import { loadActiveMessage } from '../active'
 import { Command, CommandFn } from '../commands'
 
 const documentation: SlashCommandSubcommandsOnlyBuilder =
@@ -104,6 +105,7 @@ const controller: CommandFn = async interaction => {
   }
   if (updateData.roles) {
     reply += `\nAdded <@&${updateData.roles.app}> (App) and <@&${updateData.roles.browser}> (Browser)`
+    loadActiveMessage()
   }
 
   await interaction.reply(reply)

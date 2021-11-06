@@ -1,7 +1,12 @@
 import moment from 'moment'
 import { isDev, worldId } from '../../config'
 import { Fn, PromiseFn } from '../../types/methods'
-import { GetWorld, WorldEditProps, World } from '../../types/world'
+import {
+  GetWorld,
+  WorldEditProps,
+  World,
+  DashboardMessage,
+} from '../../types/world'
 import { logger, logSuccess } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
 
@@ -50,18 +55,46 @@ export const updateLastSync: PromiseFn<void, void> = async () => {
 export const patchWorld = async (
   data: WorldEditProps
 ): Promise<World | null> => {
-  const world = getActiveWorld()
-  if (!world) return null
+  if (!activeWorld) return null
 
-  if (data.start) world.start = data.start
-  if (data.radius) world.radius = data.radius
+  if (data.start) activeWorld.start = data.start
+  if (data.radius) activeWorld.radius = data.radius
+  if (data.roles) activeWorld.roles = data.roles
 
   try {
-    await world.save()
-    logger({ prefix: 'success', message: `Database: Updated ${world.name}` })
-    return world
+    await saveWorld()
+    logger({
+      prefix: 'success',
+      message: `Database: Updated ${activeWorld.name}`,
+    })
+    return activeWorld
   } catch (err) {
     logger({ prefix: 'alert', message: `Database: ${err}` })
     return null
   }
 }
+
+export const addDashboardMessage: PromiseFn<
+  DashboardMessage,
+  DashboardMessage
+> = async messageData => {
+  if (!activeWorld) return messageData
+  if (!activeWorld.dashboard) {
+    activeWorld.dashboard = []
+  }
+  activeWorld.dashboard.push(messageData)
+  saveWorld()
+  return messageData
+}
+
+export const updateDashboardMessage: PromiseFn<DashboardMessage, void> =
+  async messageData => {
+    if (!activeWorld) return
+    const index = activeWorld?.dashboard?.findIndex(
+      message => (message.key = messageData.key)
+    )
+    if (!index || !activeWorld.dashboard) return
+    console.log(3)
+    activeWorld.dashboard[index] = messageData
+    await saveWorld()
+  }

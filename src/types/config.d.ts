@@ -6,6 +6,7 @@ export interface DiscordConfig {
   guild: {
     id: string
     alerts: string
+    dashboard: string
     villages: string
   }
 }

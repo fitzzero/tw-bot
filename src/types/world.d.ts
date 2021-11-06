@@ -6,6 +6,7 @@ export interface World extends WorldEditProps, Document {
   name: string
   lastSync: Moment
   testData: boolean
+  dashboard?: DashboardMessage[]
 }
 
 export interface GetWorld {
@@ -24,4 +25,11 @@ export interface WorldEditProps {
 export interface Coordinate {
   x: number
   y: number
+}
+
+export interface DashboardMessage {
+  key: string
+  channelId: string
+  messageId: string
+  data: Schema.Types.Mixed
 }
