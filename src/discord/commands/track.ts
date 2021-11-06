@@ -1,21 +1,21 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { createTracker } from '../../db/tracker/trackerController'
 import {
-  TrackerData,
-  TrackerTypes,
   TrackerTypesArray,
-} from '../../types/tracker'
+  TrackerTypes,
+  TrackerData,
+} from '../../@types/tracker'
 import { Command, CommandFn } from '../commands'
 
 const documentation = new SlashCommandBuilder()
   .setName('track')
   .setDescription('Village Trackers')
 
-TrackerTypesArray.forEach(type => {
+TrackerTypesArray.forEach(trackerType => {
   documentation.addSubcommand(subcommand =>
     subcommand
-      .setName(type)
-      .setDescription(`Add new ${type} target`)
+      .setName(trackerType)
+      .setDescription(`Add new ${trackerType} target`)
       .addStringOption(option =>
         option
           .setName('village')
@@ -60,7 +60,7 @@ const controller: CommandFn = async interaction => {
   interaction.reply(`Added ${targetId} as a new ${subCommand} target`)
 }
 
-export const ping: Command = {
+export const track: Command = {
   documentation,
   controller,
 }

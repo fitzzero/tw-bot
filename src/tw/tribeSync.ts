@@ -5,8 +5,8 @@ import {
 } from '../db/tribe/tribeController.ts'
 import { addTribeHistory } from '../db/tribe/tribeHistoric'
 import { LoopFn } from '../loop'
-import { TribeData } from '../types/tribe'
-import { World } from '../types/world'
+import { TribeData } from '../@types/tribe'
+import { World } from '../@types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 

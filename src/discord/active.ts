@@ -12,8 +12,8 @@ import {
   getActiveWorld,
   updateDashboardMessage,
 } from '../db/world/worldController'
-import { Fn, PromiseFn } from '../types/methods'
-import { DashboardMessage } from '../types/world'
+import { Fn, PromiseFn } from '../@types/methods'
+import { DashboardMessage } from '../@types/world'
 import { getUnix } from '../utility/time'
 import { discordAlert } from './alert'
 import { getDashboardChannel } from './dashboard'

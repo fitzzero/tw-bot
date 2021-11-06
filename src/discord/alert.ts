@@ -1,6 +1,6 @@
 import { TextChannel } from 'discord.js'
 import { discordConfig } from '../config'
-import { PromiseFn } from '../types/methods'
+import { PromiseFn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import { getActiveGuild } from './guild'
 

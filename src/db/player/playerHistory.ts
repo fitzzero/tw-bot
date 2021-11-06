@@ -1,5 +1,5 @@
 import { connection, model, Schema } from 'mongoose'
-import { PlayerData, PlayerHistoric } from '../../types/player'
+import { PlayerData, PlayerHistoric } from '../../@types/player'
 import { logger } from '../../utility/logger'
 
 const schemaOptions = {

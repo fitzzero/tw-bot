@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { World } from '../../types/world'
+import { World } from '../../@types/world'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

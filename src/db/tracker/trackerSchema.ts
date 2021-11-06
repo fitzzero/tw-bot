@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { Tracker } from '../../types/tracker'
+import { Tracker } from '../../@types/tracker'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

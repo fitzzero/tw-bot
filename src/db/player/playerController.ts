@@ -1,5 +1,5 @@
-import { Fn, PromiseFn } from '../../types/methods'
-import { Player, PlayerData } from '../../types/player'
+import { Fn, PromiseFn } from '../../@types/methods'
+import { Player, PlayerData } from '../../@types/player'
 import { logger, logSuccess } from '../../utility/logger'
 import { PlayerModel } from './playerSchema'
 

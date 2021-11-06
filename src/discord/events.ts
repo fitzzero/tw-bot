@@ -1,6 +1,6 @@
 import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { discordConfig } from '../config'
-import { Fn } from '../types/methods'
+import { Fn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import {
   activeButtonIds,

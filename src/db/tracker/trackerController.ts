@@ -1,6 +1,6 @@
-import { Fn, PromiseFn } from '../../types/methods'
+import { Fn, PromiseFn } from '../../@types/methods'
 import { logSuccess } from '../../utility/logger'
-import { Tracker, TrackerData } from '../../types/tracker'
+import { Tracker, TrackerData } from '../../@types/tracker'
 import { TrackerModel } from './trackerSchema'
 
 let activeTrackers: Tracker[] = []

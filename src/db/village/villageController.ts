@@ -1,11 +1,11 @@
-import { Fn, PromiseFn } from '../../types/methods'
+import { Fn, PromiseFn } from '../../@types/methods'
 import {
   BulkUpdateVillage,
   GetVillage,
   RemoveVillage,
   Village,
   VillageData,
-} from '../../types/village'
+} from '../../@types/village'
 import { logger, logSuccess } from '../../utility/logger'
 import { VillageModel } from './villageSchema'
 import { addVillageStats } from './villageStats'

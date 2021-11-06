@@ -1,5 +1,5 @@
-import { Fn, PromiseFn } from '../../types/methods'
-import { Account, AccountData, Scopes } from '../../types/account'
+import { Fn, PromiseFn } from '../../@types/methods'
+import { Account, AccountData, Scopes } from '../../@types/account'
 import { logSuccess } from '../../utility/logger'
 import { AccountModel } from './accountSchema'
 import { accountFixtures } from './accountFixtures'

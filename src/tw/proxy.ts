@@ -1,6 +1,6 @@
 import express from 'express'
 import { createProxyMiddleware } from 'http-proxy-middleware'
-import { Fn } from '../types/methods'
+import { Fn } from '../@types/methods'
 import { logSuccess } from '../utility/logger'
 
 const cookie =

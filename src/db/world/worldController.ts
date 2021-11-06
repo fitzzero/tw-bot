@@ -1,12 +1,12 @@
 import moment from 'moment'
 import { isDev, worldId } from '../../config'
-import { Fn, PromiseFn } from '../../types/methods'
+import { Fn, PromiseFn } from '../../@types/methods'
 import {
   GetWorld,
   WorldEditProps,
   World,
   DashboardMessage,
-} from '../../types/world'
+} from '../../@types/world'
 import { logger, logSuccess } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
 

@@ -2,8 +2,9 @@ import { alertCommand } from './discord/commands/alertTest'
 import { ping } from './discord/commands/ping'
 import { sync } from './discord/commands/sync'
 import { todo } from './discord/commands/todo'
+import { track } from './discord/commands/track'
 import { updateWorld } from './discord/commands/updateWorld'
-import { DiscordConfig } from './types/config'
+import { DiscordConfig } from './@types/config'
 
 export const isDev = !!process.argv[2]
 
@@ -11,7 +12,7 @@ export const worldId = isDev ? 1 : 56
 
 export const devDiscordConfig = {
   client: '896860363541348413',
-  commands: [alertCommand, ping, todo, updateWorld, sync],
+  commands: [alertCommand, ping, todo, updateWorld, sync, track],
   guild: {
     id: '620484161974566922',
     alerts: '904963008525107250',
