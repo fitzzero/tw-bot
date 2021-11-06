@@ -25,11 +25,11 @@ export const loadActiveAccounts: PromiseFn<void, void> = async () => {
 }
 
 export const saveActiveAccounts: PromiseFn<void, void> = async () => {
-  const bulkOps = activeAccounts.map(player => {
+  const bulkOps = activeAccounts.map(account => {
     return {
       updateOne: {
-        filter: { _id: player._id },
-        update: player.toJSON,
+        filter: { _id: account._id },
+        update: account.toObject(),
         upsert: true,
       },
     }

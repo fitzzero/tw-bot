@@ -27,7 +27,7 @@ export const prodDiscordConfig: DiscordConfig = {
     id: '855057085719642134',
     alerts: '904407658558275636',
     dashboard: '904905248051720193',
-    villages: '904407658558275636',
+    villages: '904881978044710962',
   },
 }
 
