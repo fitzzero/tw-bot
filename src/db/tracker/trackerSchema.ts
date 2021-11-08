@@ -7,7 +7,6 @@ const schemaOptions = {
 
 export const trackerSchema = new Schema<Tracker>(
   {
-    _id: { type: String, required: true },
     discord: {
       messageId: String,
     },

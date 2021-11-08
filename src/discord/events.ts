@@ -9,6 +9,7 @@ import {
 } from './active'
 import { activeCommands } from './commands'
 import { discord } from './connect'
+import { tryCatch } from '../utility/try'
 
 export const DiscordEvents = (): void => {
   discord.on('ready', () => {
@@ -22,10 +23,16 @@ export const DiscordEvents = (): void => {
   discord.on('interactionCreate', async interaction => {
     if (interaction.guildId != discordConfig().guild.id) return
     if (interaction.isCommand()) {
-      handleCommand(interaction)
+      tryCatch({
+        tryFn: () => handleCommand(interaction),
+        name: 'Discord Interaction',
+      })
     }
     if (interaction.isButton()) {
-      handleButton(interaction)
+      tryCatch({
+        tryFn: () => handleButton(interaction),
+        name: 'Discord Interaction',
+      })
     }
   })
 }
