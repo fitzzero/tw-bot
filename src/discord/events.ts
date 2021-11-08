@@ -25,7 +25,7 @@ export const DiscordEvents = (): void => {
     if (interaction.isCommand()) {
       tryCatch({
         tryFn: () => handleCommand(interaction),
-        name: 'Discord Interaction',
+        name: 'Discord Command',
       })
     }
     if (interaction.isButton()) {
