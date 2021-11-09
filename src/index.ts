@@ -4,8 +4,10 @@ import { startLoop } from './loop'
 import { logger } from './utility/logger'
 import { isDev } from './config'
 
-if (isDev) logger({ prefix: 'success', message: 'Bot: Starting in Develop' })
-else logger({ prefix: 'success', message: 'Bot: Starting in Production' })
+const version = '21-11-9'
+
+if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
+else logger({ prefix: 'success', message: 'v${version} starting in Prod' })
 
 /* Listen */
 DatabaseEvents()
