@@ -12,7 +12,13 @@ const error: PromiseFn<CommandInteraction, void> = async interaction => {
   return
 }
 
+const loading: PromiseFn<CommandInteraction, void> = async interaction => {
+  interaction.reply({ content: 'Loading...' })
+  return
+}
+
 export const cannedResponses = {
   requiresAdmin,
   error,
+  loading,
 }

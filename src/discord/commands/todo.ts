@@ -5,6 +5,7 @@ import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
 import { wait } from '../../utility/wait'
+import { cannedResponses } from '../canned'
 import { Command, CommandFn } from '../commands'
 
 const documentation = new SlashCommandBuilder()
@@ -29,9 +30,10 @@ const controller: CommandFn = async interaction => {
   const when = interaction.options.getString('when')
   const project = getActiveProject()
   if (!what || !when) {
-    await interaction.reply('Error!')
+    cannedResponses.error(interaction)
     return
   }
+  cannedResponses.loading(interaction)
 
   try {
     const newItem = (await todoist?.items.add({
@@ -44,12 +46,13 @@ const controller: CommandFn = async interaction => {
 
     const due = moment.tz(newItem?.due?.date, 'America/New_York').unix()
 
-    await interaction.reply(
+    await interaction.editReply(
       `Created **${newItem?.content}** at <t:${due}> (<t:${due}:R>)`
     )
+    return
   } catch (err) {
     logger({ prefix: 'alert', message: `Todoist: ${err}` })
-    await interaction.reply('Something went wrong, closing command...')
+    await interaction.editReply('Something went wrong, closing command...')
     await wait(5000)
     await interaction.deleteReply()
   }
