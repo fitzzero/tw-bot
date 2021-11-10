@@ -7,7 +7,7 @@ import { isDev } from './config'
 const version = '21-11-9'
 
 if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
-else logger({ prefix: 'success', message: 'v${version} starting in Prod' })
+else logger({ prefix: 'success', message: `v${version} starting in Prod` })
 
 /* Listen */
 DatabaseEvents()

@@ -4,7 +4,6 @@ import { Item } from 'todoist/dist/v8-types'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
-import { tryCatch } from '../../utility/try'
 import { wait } from '../../utility/wait'
 import { cannedResponses } from '../canned'
 import { Command, CommandFn } from '../commands'
@@ -34,7 +33,7 @@ const controller: CommandFn = async interaction => {
     cannedResponses.error(interaction)
     return
   }
-  await cannedResponses.loading(interaction)
+  await interaction.deferReply()
 
   try {
     const newItem = (await todoist?.items.add({
@@ -46,13 +45,9 @@ const controller: CommandFn = async interaction => {
     })) as Item
 
     const due = moment.tz(newItem?.due?.date, 'America/New_York').unix()
-    await tryCatch({
-      tryFn: () =>
-        interaction.editReply(
-          `Created **${newItem?.content}** at <t:${due}> (<t:${due}:R>)`
-        ),
-      name: 'Discord todo:',
-    })
+    await interaction.editReply(
+      `Created **${newItem?.content}** at <t:${due}> (<t:${due}:R>)`
+    )
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `Todoist: ${err}` })
