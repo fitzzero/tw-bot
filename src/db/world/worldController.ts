@@ -1,12 +1,12 @@
 import moment from 'moment'
 import { isDev, worldId } from '../../config'
-import { Fn, PromiseFn } from '../../types/methods'
+import { Fn, PromiseFn } from '../../@types/methods'
 import {
   GetWorld,
   WorldEditProps,
   World,
   DashboardMessage,
-} from '../../types/world'
+} from '../../@types/world'
 import { logger, logSuccess } from '../../utility/logger'
 import { WorldModel } from './worldSchema'
 
@@ -94,7 +94,6 @@ export const updateDashboardMessage: PromiseFn<DashboardMessage, void> =
       message => (message.key = messageData.key)
     )
     if (!index || !activeWorld.dashboard) return
-    console.log(3)
     activeWorld.dashboard[index] = messageData
     await saveWorld()
   }

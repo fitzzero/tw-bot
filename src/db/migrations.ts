@@ -1,5 +1,5 @@
 import { connection } from 'mongoose'
-import { PromiseFn } from '../types/methods'
+import { PromiseFn } from '../@types/methods'
 import { logger } from '../utility/logger'
 
 export const villageMigration: PromiseFn<void, void> = async () => {

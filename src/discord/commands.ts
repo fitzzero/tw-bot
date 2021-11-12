@@ -2,7 +2,7 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { discordConfig } from '../config'
-import { PromiseFn } from '../types/methods'
+import { PromiseFn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import {
   SlashCommandBuilder,

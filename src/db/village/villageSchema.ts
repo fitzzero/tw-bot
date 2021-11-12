@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { Village } from '../../types/village'
+import { Village } from '../../@types/village'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

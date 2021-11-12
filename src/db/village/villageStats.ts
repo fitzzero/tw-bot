@@ -1,13 +1,13 @@
 import { isDev } from '../../config'
 import { villageAlert } from '../../discord/villageAlert'
-import { Fn, PromiseFn } from '../../types/methods'
+import { Fn, PromiseFn } from '../../@types/methods'
 import {
   Village,
   VillageStats,
   RunVillageStats,
   VillageData,
-} from '../../types/village'
-import { Coordinate } from '../../types/world'
+} from '../../@types/village'
+import { Coordinate } from '../../@types/world'
 import { logger } from '../../utility/logger'
 import { coordinatesInRange } from '../../utility/twUtility'
 import { getActiveWorld } from '../world/worldController'

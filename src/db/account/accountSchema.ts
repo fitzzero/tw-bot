@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { Account } from '../../types/account'
+import { Account } from '../../@types/account'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

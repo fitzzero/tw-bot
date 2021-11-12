@@ -1,6 +1,6 @@
 import express from 'express'
 import { createProxyMiddleware } from 'http-proxy-middleware'
-import { Fn } from '../types/methods'
+import { Fn } from '../@types/methods'
 import { logSuccess } from '../utility/logger'
 
 const cookie =
@@ -11,6 +11,7 @@ export const startTwProxy: Fn<void, void> = () => {
     target: 'https://www.tribalwars.net/en-dk/',
     changeOrigin: true,
     ws: true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onProxyReq: function onProxyReq(proxyReq: any) {
       proxyReq.setHeader('cookie', cookie)
     },

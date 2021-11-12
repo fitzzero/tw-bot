@@ -1,4 +1,4 @@
-import { Coordinate } from '../types/world'
+import { Coordinate } from '../@types/world'
 
 export const coordinatesInRange = (
   center: Coordinate,

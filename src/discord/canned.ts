@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { PromiseFn } from '../types/methods'
+import { PromiseFn } from '../@types/methods'
 
 const requiresAdmin: PromiseFn<CommandInteraction, void> =
   async interaction => {
@@ -12,7 +12,13 @@ const error: PromiseFn<CommandInteraction, void> = async interaction => {
   return
 }
 
+const loading: PromiseFn<CommandInteraction, void> = async interaction => {
+  interaction.reply({ content: 'Loading...' })
+  return
+}
+
 export const cannedResponses = {
   requiresAdmin,
   error,
+  loading,
 }

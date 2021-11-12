@@ -3,7 +3,7 @@ import { worldId } from './config'
 import { connectDb } from './db/connect'
 import { loadActivePlayers } from './db/player/playerController'
 import { loadActiveTribes } from './db/tribe/tribeController.ts'
-import { loadActiveAccounts } from './db/user/accountController'
+import { loadActiveAccounts } from './db/account/accountController'
 import { loadActiveVillages } from './db/village/villageController'
 import {
   updateLastSync,
@@ -12,10 +12,11 @@ import {
 } from './db/world/worldController'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
-import { PromiseFn } from './types/methods'
-import { World } from './types/world'
+import { PromiseFn } from './@types/methods'
+import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
+import { loadActiveTrackers } from './db/tracker/trackerController'
 
 export interface LoopFnProps {
   world: World
@@ -27,6 +28,7 @@ const loadData: PromiseFn<void, void> = async () => {
   connectDb(worldId)
   await loadActiveWorld()
   await loadActiveAccounts()
+  await loadActiveTrackers()
   await loadActiveTribes()
   await loadActivePlayers()
   await loadActiveVillages()

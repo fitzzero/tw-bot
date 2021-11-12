@@ -1,4 +1,4 @@
-import { PromiseFn } from '../types/methods'
+import { PromiseFn } from '../@types/methods'
 import { logger } from './logger'
 
 interface TryCatch {

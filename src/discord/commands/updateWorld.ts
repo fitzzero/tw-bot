@@ -4,7 +4,7 @@ import {
 } from '@discordjs/builders'
 import { getVillage } from '../../db/village/villageController'
 import { patchWorld } from '../../db/world/worldController'
-import { Coordinate, WorldEditProps } from '../../types/world'
+import { Coordinate, WorldEditProps } from '../../@types/world'
 import { loadActiveMessage } from '../active'
 import { Command, CommandFn } from '../commands'
 

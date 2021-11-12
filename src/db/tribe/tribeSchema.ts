@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { Tribe } from '../../types/tribe'
+import { Tribe } from '../../@types/tribe'
 
 const schemaOptions = {
   toJSON: { virtuals: true },

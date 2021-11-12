@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { Fn } from '../types/methods'
+import { Fn } from '../@types/methods'
 
 export interface LoggerProps {
   message: string

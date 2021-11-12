@@ -12,8 +12,8 @@ import {
   getActiveWorld,
   updateDashboardMessage,
 } from '../db/world/worldController'
-import { Fn, PromiseFn } from '../types/methods'
-import { DashboardMessage } from '../types/world'
+import { Fn, PromiseFn } from '../@types/methods'
+import { DashboardMessage } from '../@types/world'
 import { getUnix } from '../utility/time'
 import { discordAlert } from './alert'
 import { getDashboardChannel } from './dashboard'
@@ -181,7 +181,7 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
       })
       await member.roles.add(browserRole)
       activeMessageData.data.browserId = member.id
-      activeMessageData.data.phoneChanged = moment()
+      activeMessageData.data.browserChanged = moment()
       discordAlert({
         message: `<t:${getUnix()}:R>: ${member.displayName} is on 💻 (<#${
           channel?.id

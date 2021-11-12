@@ -5,8 +5,8 @@ import {
 } from '../db/player/playerController'
 import { addPlayerHistory } from '../db/player/playerHistory'
 import { LoopFn } from '../loop'
-import { PlayerData } from '../types/player'
-import { World } from '../types/world'
+import { PlayerData } from '../@types/player'
+import { World } from '../@types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 

@@ -1,6 +1,6 @@
 import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { discordConfig } from '../config'
-import { Fn } from '../types/methods'
+import { Fn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import {
   activeButtonIds,
@@ -19,15 +19,22 @@ export const DiscordEvents = (): void => {
     loadActiveMessage()
   })
 
-  discord.on('interactionCreate', async interaction => {
-    if (interaction.guildId != discordConfig().guild.id) return
-    if (interaction.isCommand()) {
-      handleCommand(interaction)
-    }
-    if (interaction.isButton()) {
-      handleButton(interaction)
-    }
-  })
+  try {
+    discord.on('interactionCreate', async interaction => {
+      if (interaction.guildId != discordConfig().guild.id) return
+      if (interaction.isCommand()) {
+        handleCommand(interaction)
+      }
+      if (interaction.isButton()) {
+        handleButton(interaction)
+      }
+    })
+  } catch (err) {
+    logger({
+      prefix: 'alert',
+      message: `Discord:\n ${err}`,
+    })
+  }
 }
 
 const handleCommand: Fn<CommandInteraction, void> = interaction => {

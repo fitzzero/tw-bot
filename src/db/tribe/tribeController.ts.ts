@@ -1,5 +1,5 @@
-import { Fn, PromiseFn } from '../../types/methods'
-import { Tribe, TribeData } from '../../types/tribe'
+import { Fn, PromiseFn } from '../../@types/methods'
+import { Tribe, TribeData } from '../../@types/tribe'
 import { logger, logSuccess } from '../../utility/logger'
 import { TribeModel } from './tribeSchema'
 
