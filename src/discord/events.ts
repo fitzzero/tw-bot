@@ -9,7 +9,6 @@ import {
 } from './active'
 import { activeCommands } from './commands'
 import { discord } from './connect'
-import { tryCatch } from '../utility/try'
 
 export const DiscordEvents = (): void => {
   discord.on('ready', () => {
@@ -20,21 +19,22 @@ export const DiscordEvents = (): void => {
     loadActiveMessage()
   })
 
-  discord.on('interactionCreate', async interaction => {
-    if (interaction.guildId != discordConfig().guild.id) return
-    if (interaction.isCommand()) {
-      tryCatch({
-        tryFn: () => handleCommand(interaction),
-        name: 'Discord Command',
-      })
-    }
-    if (interaction.isButton()) {
-      tryCatch({
-        tryFn: () => handleButton(interaction),
-        name: 'Discord Interaction',
-      })
-    }
-  })
+  try {
+    discord.on('interactionCreate', async interaction => {
+      if (interaction.guildId != discordConfig().guild.id) return
+      if (interaction.isCommand()) {
+        handleCommand(interaction)
+      }
+      if (interaction.isButton()) {
+        handleButton(interaction)
+      }
+    })
+  } catch (err) {
+    logger({
+      prefix: 'alert',
+      message: `Discord:\n ${err}`,
+    })
+  }
 }
 
 const handleCommand: Fn<CommandInteraction, void> = interaction => {

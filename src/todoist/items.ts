@@ -1,5 +1,7 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
+import { ItemData } from '../@types/item'
+import { PromiseFn } from '../@types/methods'
 import { discordAlert } from '../discord/alert'
 import { logger } from '../utility/logger'
 import { withinLastMinute } from '../utility/time'
@@ -30,4 +32,22 @@ export const syncItems: ProjectFn = async ({ project }) => {
   items.forEach(item => {
     discordAlert({ message: `Todo: ${item?.content}` })
   })
+}
+
+export const addItem: PromiseFn<ItemData, Item | undefined> = async ({
+  content,
+  projectId,
+  dueString,
+}) => {
+  if (!todoist?.items) return
+
+  const newItem = (await todoist.items.add({
+    content,
+    project_id: projectId,
+    // Problem with 'todoist' Type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    due: { string: dueString } as any,
+  })) as Item
+
+  return newItem
 }
