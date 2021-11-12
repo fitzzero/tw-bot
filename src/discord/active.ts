@@ -181,7 +181,7 @@ export const handleActiveInteraction: PromiseFn<ButtonInteraction, void> =
       })
       await member.roles.add(browserRole)
       activeMessageData.data.browserId = member.id
-      activeMessageData.data.phoneChanged = moment()
+      activeMessageData.data.browserChanged = moment()
       discordAlert({
         message: `<t:${getUnix()}:R>: ${member.displayName} is on 💻 (<#${
           channel?.id
