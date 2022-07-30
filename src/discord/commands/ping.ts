@@ -10,13 +10,6 @@ const documentation = new SlashCommandBuilder()
 const controller: CommandFn = async interaction => {
   if (!interaction.isCommand()) return
 
-  const guild = await discord.guilds.fetch('855057085719642134')
-  const channel = (await guild.channels.fetch(
-    '904407658558275636'
-  )) as TextChannel
-  const message = await channel.messages.fetch('906056137198161921')
-  await message.delete()
-
   const content = `Pong`
 
   await interaction.reply({ content })

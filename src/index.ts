@@ -13,4 +13,4 @@ else logger({ prefix: 'success', message: `v${version} starting in Prod` })
 DiscordEvents()
 
 /* Start Services */
-//startLoop()
+startLoop()

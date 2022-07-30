@@ -1,11 +1,10 @@
 import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { discordConfig } from '../config'
-import { Fn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import { activeCommands } from './commands'
 import { discord } from './connect'
 
-export const DiscordEvents = (): void => {
+export const DiscordEvents = () => {
   discord.on('ready', () => {
     logger({
       prefix: 'success',
@@ -15,7 +14,7 @@ export const DiscordEvents = (): void => {
   })
 
   try {
-    discord.on('interactionCreate', async interaction => {
+    discord.on('interactionCreate', interaction => {
       if (interaction.guildId != discordConfig().guild.id) return
       if (interaction.isCommand()) {
         handleCommand(interaction)
@@ -32,7 +31,7 @@ export const DiscordEvents = (): void => {
   }
 }
 
-const handleCommand: Fn<CommandInteraction, void> = interaction => {
+const handleCommand = (interaction: CommandInteraction) => {
   activeCommands().forEach(command => {
     if (interaction.commandName === command.documentation.name) {
       if (interaction.isCommand()) command.controller(interaction)
@@ -40,4 +39,4 @@ const handleCommand: Fn<CommandInteraction, void> = interaction => {
   })
 }
 
-const handleButton: Fn<ButtonInteraction, void> = interaction => {}
+const handleButton = (interaction: ButtonInteraction) => {}

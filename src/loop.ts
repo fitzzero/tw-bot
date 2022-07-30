@@ -2,10 +2,10 @@ import moment from 'moment'
 import { worldId } from './config'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
-import { PromiseFn } from './@types/methods'
 import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
+import { startDiscord } from './discord/connect'
 
 export interface LoopFnProps {
   world: World
@@ -17,8 +17,9 @@ const loadData = async () => {
   return
 }
 
-export const startLoop: PromiseFn<void, void> = async () => {
+export const startLoop = async () => {
   // Load data
+  startDiscord()
   await loadData()
 
   loop()
@@ -28,7 +29,7 @@ export const startLoop: PromiseFn<void, void> = async () => {
   return
 }
 
-const loop: PromiseFn<void, void> = async () => {
+const loop = async () => {
   const world = null
 
   if (!world) {

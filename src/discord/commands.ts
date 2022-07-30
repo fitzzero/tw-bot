@@ -2,7 +2,6 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { discordConfig } from '../config'
-import { PromiseFn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import {
   SlashCommandBuilder,
@@ -23,7 +22,7 @@ export interface Command {
 
 export const activeCommands = (): Command[] => discordConfig().commands
 
-export const registerCommands: PromiseFn<void, void> = async () => {
+export const registerCommands = async () => {
   try {
     const commandDocumentation = activeCommands().map(
       command => command.documentation

@@ -1,7 +1,6 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
 import { ItemData } from '../@types/item'
-import { PromiseFn } from '../@types/methods'
 import { logger } from '../utility/logger'
 import { withinLastMinute } from '../utility/time'
 import { todoist } from './connect'
@@ -33,11 +32,7 @@ export const syncItems: ProjectFn = async ({ project }) => {
   })
 }
 
-export const addItem: PromiseFn<ItemData, Item | undefined> = async ({
-  content,
-  projectId,
-  dueString,
-}) => {
+export const addItem = async ({ content, projectId, dueString }: ItemData) => {
   if (!todoist?.items) return
 
   const newItem = (await todoist.items.add({

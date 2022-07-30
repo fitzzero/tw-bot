@@ -8,7 +8,7 @@ export const worldId = isDev ? 1 : 56
 
 export const devDiscordConfig = {
   client: '896860363541348413',
-  commands: [ping],
+  commands: [ping, todo],
   guild: {
     id: '620484161974566922',
     alerts: '904963008525107250',
