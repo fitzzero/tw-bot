@@ -2,7 +2,7 @@ import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { discordConfig } from '../config'
 import { logger } from '../utility/logger'
 import { activeCommands } from './commands'
-import { discord } from './connect'
+import { discordClient as discord } from './connect'
 
 export const DiscordEvents = () => {
   discord.on('ready', () => {

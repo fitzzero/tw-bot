@@ -1,9 +1,9 @@
 import fetch from 'cross-fetch'
 import { LoopFn } from '../loop'
-import { PlayerData } from '../@types/player'
 import { World } from '../@types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
+import { PlayerData } from '../sheet/players'
 
 export const syncPlayers: LoopFn = async ({ world }) => {
   try {

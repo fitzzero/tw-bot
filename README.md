@@ -16,6 +16,8 @@ War Room Bot
 - Add environment variables:  
   `WRTOKEN` : [Bot Token]  
   `WRTODOIST`: [Todoist API Key]
+  `WRGMAIL`: [Google Service Account]
+  `WRGKEY`: [Google Service Private Key]
 
 # Documentation
 

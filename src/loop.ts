@@ -6,6 +6,8 @@ import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
 import { startDiscord } from './discord/connect'
+import { players } from './sheet/players'
+import { loadDoc } from './sheet/connect'
 
 export interface LoopFnProps {
   world: World
@@ -13,14 +15,12 @@ export interface LoopFnProps {
 
 export type LoopFn = (props: LoopFnProps) => Promise<void>
 
-const loadData = async () => {
-  return
-}
-
 export const startLoop = async () => {
   // Load data
+  await loadDoc()
+  await players.loadData()
+
   startDiscord()
-  await loadData()
 
   loop()
   setInterval(function () {
@@ -30,12 +30,12 @@ export const startLoop = async () => {
 }
 
 const loop = async () => {
-  const world = null
+  // const world = null
 
-  if (!world) {
-    logAlert('Unable to load active world, stopping loop', 'Loop')
-    return
-  }
+  // if (!world) {
+  //   logAlert('Unable to load active world, stopping loop', 'Loop')
+  //   return
+  // }
   // const lastSync = world.lastSync ? moment(world.lastSync) : undefined
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
@@ -48,6 +48,6 @@ const loop = async () => {
   // }
 
   // Sync Todoist Projects
-  syncProject({ world })
+  // syncProject({ world })
   return
 }

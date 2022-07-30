@@ -1,0 +1,85 @@
+import {
+  GoogleSpreadsheetRow,
+  GoogleSpreadsheetWorksheet,
+} from 'google-spreadsheet'
+import { logger } from '../utility/logger'
+import { doc } from './connect'
+
+interface ConstructorProps {
+  title: string
+  headers: string[]
+}
+
+export class SheetData {
+  title: string
+  headers: string[]
+  private sheet: GoogleSpreadsheetWorksheet
+  private rows: GoogleSpreadsheetRow[]
+
+  constructor({ title, headers }: ConstructorProps) {
+    this.title = title
+    this.headers = headers
+  }
+
+  /*
+   * Load saved data
+   */
+  loadData = async () => {
+    await this.getOrCreateSheet()
+    await this.syncSheetHeaders()
+    this.rows = await this.sheet.getRows()
+
+    logger({
+      prefix: 'success',
+      message: `Sheet: Loaded ${this.title}`,
+    })
+  }
+
+  /*
+   * Load the class sheet
+   * Create a new sheet if not found
+   */
+  private getOrCreateSheet = async () => {
+    const title = this.title
+    let sheet = doc.sheetsByTitle[title]
+    if (!sheet) {
+      sheet = await doc.addSheet({ title })
+    }
+    this.sheet = sheet
+  }
+
+  /*
+   * Sync the class Headers
+   * Add any property types
+   * Must manually delete old
+   */
+  private syncSheetHeaders = async () => {
+    const savedHeaders = this.sheet.headerValues
+    const newHeaders: string[] = []
+    this.headers.forEach(header => {
+      if (!savedHeaders?.includes(header)) {
+        newHeaders.push(header)
+      }
+    })
+    await this.sheet.setHeaderRow(newHeaders)
+  }
+}
+
+// export const useLocalStorage = <T>(key: string, initialValue: T) => {
+//   const [internal, setInternal] = useLocalStorageValue({
+//     key: key,
+//     defaultValue: JSON.stringify(initialValue || '')
+//   })
+
+//   const value = useMemo(() => JSON.parse(internal) as T, [internal])
+
+//   const setValue = useCallback(
+//     (value: T | ((val: T) => T)) => {
+//       const updated = isFunction(value) ? value(JSON.parse(internal)) : value
+//       setInternal(JSON.stringify(updated))
+//     },
+//     [internal, setInternal]
+//   )
+
+//   return [value, setValue] as const
+// }
