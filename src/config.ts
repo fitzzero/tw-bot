@@ -1,9 +1,5 @@
-import { alertCommand } from './discord/commands/alertTest'
 import { ping } from './discord/commands/ping'
-import { sync } from './discord/commands/sync'
 import { todo } from './discord/commands/todo'
-import { track } from './discord/commands/track'
-import { updateWorld } from './discord/commands/updateWorld'
 import { DiscordConfig } from './@types/config'
 
 export const isDev = !!process.argv[2]

@@ -13,7 +13,7 @@ export interface LoopFnProps {
 
 export type LoopFn = (props: LoopFnProps) => Promise<void>
 
-const loadData: PromiseFn<void, void> = async () => {
+const loadData = async () => {
   return
 }
 

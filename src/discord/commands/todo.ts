@@ -25,7 +25,7 @@ const documentation = new SlashCommandBuilder()
   .setDescription('Add a new todo item')
 
 const controller: CommandFn = async interaction => {
-  if (!interaction.isCommand()) return
+  if (!interaction.isChatInputCommand()) return
   const what = interaction.options.getString('what')
   const when = interaction.options.getString('when')
   const project = getActiveProject()

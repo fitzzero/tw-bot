@@ -1,9 +1,4 @@
 import fetch from 'cross-fetch'
-import {
-  saveActiveTribes,
-  updateOrCreateTribe,
-} from '../db/tribe/tribeController.ts'
-import { addTribeHistory } from '../db/tribe/tribeHistoric'
 import { LoopFn } from '../loop'
 import { TribeData } from '../@types/tribe'
 import { World } from '../@types/world'
@@ -45,12 +40,12 @@ export const syncTribes: LoopFn = async ({ world }) => {
         if (!tribeData || !tribeData._id) {
           return
         }
-        updateOrCreateTribe(tribeData)
-        await addTribeHistory(tribeData)
+        // updateOrCreateTribe(tribeData)
+        // await addTribeHistory(tribeData)
       })
     )
 
-    saveActiveTribes()
+    // saveActiveTribes()
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

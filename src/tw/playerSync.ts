@@ -1,9 +1,4 @@
 import fetch from 'cross-fetch'
-import {
-  saveActivePlayers,
-  updateOrCreatePlayer,
-} from '../db/player/playerController'
-import { addPlayerHistory } from '../db/player/playerHistory'
 import { LoopFn } from '../loop'
 import { PlayerData } from '../@types/player'
 import { World } from '../@types/world'
@@ -46,11 +41,11 @@ export const syncPlayers: LoopFn = async ({ world }) => {
         if (!playerData || !playerData._id) {
           return
         }
-        updateOrCreatePlayer(playerData)
-        await addPlayerHistory(playerData)
+        // updateOrCreatePlayer(playerData)
+        // await addPlayerHistory(playerData)
       })
     )
-    await saveActivePlayers()
+    // await saveActivePlayers()
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })

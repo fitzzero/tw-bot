@@ -1,10 +1,4 @@
 import fetch from 'cross-fetch'
-import {
-  cleanDeletedVillages,
-  saveActiveVillages,
-  updateOrCreateVillage,
-} from '../db/village/villageController'
-import { addVillageHistory } from '../db/village/villageHistory'
 import { LoopFn } from '../loop'
 import { VillageData } from '../@types/village'
 import { World } from '../@types/world'
@@ -38,16 +32,16 @@ export const syncVillages: LoopFn = async ({ world }) => {
         if (!villageData || !villageData._id) {
           return
         }
-        updateOrCreateVillage(villageData)
-        await addVillageHistory(villageData)
+        // updateOrCreateVillage(villageData)
+        // await addVillageHistory(villageData)
         newVillageData.push(villageData)
         return villageData
       })
     )
 
-    await saveActiveVillages()
+    // await saveActiveVillages()
     if (!withinLastDay(world.lastSync)) {
-      cleanDeletedVillages({ newVillageData })
+      // cleanDeletedVillages({ newVillageData })
       return
     }
   } catch (err) {

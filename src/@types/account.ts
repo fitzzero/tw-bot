@@ -1,5 +1,4 @@
 import { Moment } from 'moment'
-import { Document } from 'mongoose'
 
 export type Account = AccountData & Document
 
