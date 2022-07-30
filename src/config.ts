@@ -12,7 +12,7 @@ export const worldId = isDev ? 1 : 56
 
 export const devDiscordConfig = {
   client: '896860363541348413',
-  commands: [alertCommand, ping, todo, updateWorld, sync, track],
+  commands: [ping],
   guild: {
     id: '620484161974566922',
     alerts: '904963008525107250',
@@ -23,7 +23,7 @@ export const devDiscordConfig = {
 
 export const prodDiscordConfig: DiscordConfig = {
   client: '896860363541348413',
-  commands: [todo, updateWorld],
+  commands: [],
   guild: {
     id: '855057085719642134',
     alerts: '904407658558275636',

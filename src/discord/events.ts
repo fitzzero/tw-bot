@@ -2,11 +2,6 @@ import { ButtonInteraction, CommandInteraction } from 'discord.js'
 import { discordConfig } from '../config'
 import { Fn } from '../@types/methods'
 import { logger } from '../utility/logger'
-import {
-  activeButtonIds,
-  handleActiveInteraction,
-  loadActiveMessage,
-} from './active'
 import { activeCommands } from './commands'
 import { discord } from './connect'
 
@@ -16,7 +11,7 @@ export const DiscordEvents = (): void => {
       prefix: 'success',
       message: `Discord: Connected as ${discord.user?.username}`,
     })
-    loadActiveMessage()
+    // TODO: Load Active Channels/Threads/Messages?
   })
 
   try {
@@ -45,8 +40,4 @@ const handleCommand: Fn<CommandInteraction, void> = interaction => {
   })
 }
 
-const handleButton: Fn<ButtonInteraction, void> = interaction => {
-  if (activeButtonIds.includes(interaction.customId)) {
-    handleActiveInteraction(interaction)
-  }
-}
+const handleButton: Fn<ButtonInteraction, void> = interaction => {}

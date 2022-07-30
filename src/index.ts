@@ -3,7 +3,7 @@ import { startLoop } from './loop'
 import { logger } from './utility/logger'
 import { isDev } from './config'
 
-const version = '21-11-10'
+const version = '1.0'
 
 if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
 else logger({ prefix: 'success', message: `v${version} starting in Prod` })

@@ -8,13 +8,13 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders'
-import { Interaction } from 'discord.js'
+import { CommandInteraction } from 'discord.js'
 
 const token = process.env.WRTOKEN
 
 const rest = new REST({ version: '9' }).setToken(token || '')
 
-export type CommandFn = (interaction: Interaction) => Promise<void>
+export type CommandFn = (interaction: CommandInteraction) => Promise<void>
 
 export interface Command {
   documentation: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder
