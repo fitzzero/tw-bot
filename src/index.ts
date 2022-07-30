@@ -1,4 +1,3 @@
-import { DatabaseEvents } from './db/events'
 import { DiscordEvents } from './discord/events'
 import { startLoop } from './loop'
 import { logger } from './utility/logger'
@@ -10,8 +9,8 @@ if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
 else logger({ prefix: 'success', message: `v${version} starting in Prod` })
 
 /* Listen */
-DatabaseEvents()
+// TODO: Google Events
 DiscordEvents()
 
 /* Start Services */
-startLoop()
+//startLoop()

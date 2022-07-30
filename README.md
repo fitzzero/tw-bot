@@ -4,7 +4,8 @@ War Room Bot
 
 # Req
 
-- Node v14
+- Node ^v18
+- Discord.JS ^v14
 
 # Setup
 
@@ -12,9 +13,8 @@ War Room Bot
 
 - [Invite Bot with scopes](https://discord.com/oauth2/authorize?client_id=896860363541348413&permissions=8&scope=bot%20applications.commands)
 
-- Add environment variables:
-  `WRTOKEN` : [Bot Token]
-  `WRDB` : [MongoDB Connection String]
+- Add environment variables:  
+  `WRTOKEN` : [Bot Token]  
   `WRTODOIST`: [Todoist API Key]
 
 # Documentation
