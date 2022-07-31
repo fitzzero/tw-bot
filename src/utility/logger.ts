@@ -14,7 +14,9 @@ const prefixIcons = {
 }
 
 export const logger = ({ message, logTime, prefix = 'none' }: LoggerProps) => {
-  const timeString = ` (${moment.tz('America/New_York').toString()})`
+  const timeString = ` (${moment
+    .tz('America/New_York')
+    .format('MMMM Do YYYY, HH:mm:ss')})`
   console.log(`${prefixIcons[prefix]}${message}${logTime ? timeString : ''}`)
 }
 

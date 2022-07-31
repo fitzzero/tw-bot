@@ -1,20 +1,21 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet'
+import { botConfig } from '../config'
 import { logger } from '../utility/logger'
 
-export const doc = new GoogleSpreadsheet(
-  '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI'
-)
+export const doc = new GoogleSpreadsheet(botConfig.coreDoc)
+
+const auth = {
+  client_email: process.env.WRGMAIL || '',
+  private_key: process.env.WRGKEY?.replace(/\\n/g, '\n') || '',
+}
 
 export const loadDoc = async () => {
-  await doc.useServiceAccountAuth({
-    client_email: process.env.WRGMAIL || '',
-    private_key: process.env.WRGKEY?.replace(/\\n/g, '\n') || '',
-  })
-
+  await doc.useServiceAccountAuth(auth)
   await doc.loadInfo()
 
   logger({
     prefix: 'success',
     message: `Sheet: Connected to ${doc.title}`,
   })
+  return doc
 }

@@ -2,6 +2,7 @@ import { DiscordEvents } from './discord/events'
 import { startLoop } from './loop'
 import { logger } from './utility/logger'
 import { isDev } from './config'
+import { startDiscord } from './discord/connect'
 
 const version = '1.0'
 
@@ -12,4 +13,5 @@ else logger({ prefix: 'success', message: `v${version} starting in Prod` })
 DiscordEvents()
 
 /* Start Services */
+startDiscord()
 startLoop()

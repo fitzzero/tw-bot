@@ -11,7 +11,9 @@ const headers = keys<TestData>()
 
 export const testData = new SheetData({ title: 'testData', headers })
 
-export const runTests = async () => {
+export const runSheetDataTests = async () => {
+  await testData.loadData()
+
   await testData.updateOrAdd({
     id: 'test1',
     name: 'One',

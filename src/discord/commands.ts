@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
-import { discordConfig } from '../config'
+import { botConfig } from '../config'
 import { logger } from '../utility/logger'
 import {
   SlashCommandBuilder,
@@ -20,7 +20,7 @@ export interface Command {
   controller: CommandFn
 }
 
-export const activeCommands = (): Command[] => discordConfig().commands
+export const activeCommands = (): Command[] => botConfig.commands
 
 export const registerCommands = async () => {
   try {
@@ -30,8 +30,8 @@ export const registerCommands = async () => {
 
     await rest.put(
       Routes.applicationGuildCommands(
-        discordConfig().client as any,
-        discordConfig().guild.id as any
+        botConfig.client as any,
+        botConfig.guild as any
       ),
       { body: commandDocumentation }
     )

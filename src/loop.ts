@@ -5,10 +5,10 @@ import { syncTw } from './tw/tribalWars'
 import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
-import { startDiscord } from './discord/connect'
 import { players } from './sheet/players'
+import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
-import { runTests, testData } from './sheet/sheetDataTests'
+import { settings } from './sheet/settings'
 
 export interface LoopFnProps {
   world: World
@@ -19,17 +19,15 @@ export type LoopFn = (props: LoopFnProps) => Promise<void>
 export const startLoop = async () => {
   await loadDoc()
 
-  // Dev tests
+  // Dev Pre Loop Tests
   if (isDev) {
-    await testData.loadData()
-    const passed = await runTests()
-    if (!passed) return
+    const testPass = await runDevTests()
+    if (!testPass) return
   }
 
-  // Load tw data
+  // Load data
+  await settings.loadData()
   await players.loadData()
-
-  startDiscord()
 
   loop()
   setInterval(function () {
@@ -39,22 +37,24 @@ export const startLoop = async () => {
 }
 
 const loop = async () => {
-  // const world = null
+  const world = settings.getById('world')
 
   // if (!world) {
   //   logAlert('Unable to load active world, stopping loop', 'Loop')
   //   return
   // }
-  // const lastSync = world.lastSync ? moment(world.lastSync) : undefined
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
 
   // Sync TW if it's been more than hour since last sync
-  // if (!withinLastHour(lastSync)) {
-  //   syncTw({ world })
-  // } else {
-  //   logger({ prefix: 'success', message: 'TW: In Sync (Skipped)' })
-  // }
+  if (!withinLastHour(world?.lastUpdate)) {
+    if (world) {
+      syncTw(world.value)
+      settings.updateOrAdd({ id: 'world' })
+    } else {
+      logAlert('No active world set', 'TW')
+    }
+  }
 
   // Sync Todoist Projects
   // syncProject({ world })

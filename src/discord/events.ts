@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction } from 'discord.js'
-import { discordConfig } from '../config'
+import { botConfig } from '../config'
 import { logger } from '../utility/logger'
 import { activeCommands } from './commands'
 import { discordClient as discord } from './connect'
@@ -15,7 +15,7 @@ export const DiscordEvents = () => {
 
   try {
     discord.on('interactionCreate', interaction => {
-      if (interaction.guildId != discordConfig().guild.id) return
+      if (interaction.guildId != botConfig.guild) return
       if (interaction.isCommand()) {
         handleCommand(interaction)
       }

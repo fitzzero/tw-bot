@@ -12,7 +12,7 @@ interface ConstructorProps {
 }
 
 export interface BaseSheetModel {
-  lastSync: string
+  lastUpdate: string
 }
 
 interface IdData {
@@ -37,7 +37,7 @@ export class SheetData {
   add = async (values: IdData) => {
     const data: IdData = {
       ...values,
-      lastSync: nowString(),
+      lastUpdate: nowString(),
     }
     await this.sheet.addRow(data)
   }
@@ -46,7 +46,7 @@ export class SheetData {
    * Get row by id
    */
   getById = (id: string) => {
-    const found = this.rows.find(row => row.id == id)
+    const found = this.rows?.find(row => row.id == id)
     return found
   }
 
@@ -62,7 +62,7 @@ export class SheetData {
           row[header] = values[header]
         }
       })
-      row.lastSync = nowString()
+      row.lastUpdate = nowString()
       await row.save()
     } else {
       this.add(values)

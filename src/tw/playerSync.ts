@@ -1,12 +1,11 @@
 import fetch from 'cross-fetch'
-import { LoopFn } from '../loop'
-import { World } from '../@types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 import { PlayerData } from '../sheet/players'
 import { nowString } from '../utility/time'
+import { settings } from '../sheet/settings'
 
-export const syncPlayers: LoopFn = async ({ world }) => {
+export const syncPlayers = async (world: string) => {
   try {
     // Data: id, name, ally, villages, points, rank
     const players = await fetchPlayers(world)
@@ -37,7 +36,7 @@ export const syncPlayers: LoopFn = async ({ world }) => {
           oda: playerOda ? parseInt(playerOda[2]) : 0,
           odd: playerOdd ? parseInt(playerOdd[2]) : 0,
           ods: playerOds ? parseInt(playerOds[2]) : 0,
-          lastSync: nowString(),
+          lastUpdate: nowString(),
         }
         if (!playerData || !playerData.id) {
           return
@@ -54,9 +53,9 @@ export const syncPlayers: LoopFn = async ({ world }) => {
   }
 }
 
-const fetchPlayers = async (world: World): Promise<string[][]> => {
-  let api = `https://us${world._id}.tribalwars.us/map/player.txt`
-  if (world.testData) {
+const fetchPlayers = async (world: string): Promise<string[][]> => {
+  let api = `https://us${world}.tribalwars.us/map/player.txt`
+  if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/player.txt'
   }
 
@@ -66,7 +65,7 @@ const fetchPlayers = async (world: World): Promise<string[][]> => {
   }
   const players = parseCsv(await response.text())
   if (!players || players.length == 0) {
-    throw new Error(`TW: Error loading world ${world._id} players`)
+    throw new Error(`TW: Error loading world ${world} players`)
   }
   logger({
     prefix: 'start',
@@ -76,11 +75,11 @@ const fetchPlayers = async (world: World): Promise<string[][]> => {
 }
 
 const fetchOd = async (
-  world: World,
+  world: string,
   type: 'att' | 'def' | 'sup' | 'all'
 ): Promise<string[][]> => {
-  let api = `https://us${world._id}.tribalwars.us/map/kill_${type}.txt`
-  if (world.testData) {
+  let api = `https://us${world}.tribalwars.us/map/kill_${type}.txt`
+  if (world == 'dev') {
     api = `https://fitzzero.sirv.com/tribalwars/example-data/kill_${type}.txt`
   }
 
@@ -90,7 +89,7 @@ const fetchOd = async (
   }
   const od = parseCsv(await response.text())
   if (!od || od.length == 0) {
-    throw new Error(`TW: Error loading world ${world._id} opponents defeated`)
+    throw new Error(`TW: Error loading world ${world} opponents defeated`)
   }
   return od
 }

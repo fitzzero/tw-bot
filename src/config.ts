@@ -1,34 +1,30 @@
 import { ping } from './discord/commands/ping'
 import { todo } from './discord/commands/todo'
-import { DiscordConfig } from './@types/config'
+import { Command } from './discord/commands'
 
 export const isDev = !!process.argv[2]
 
 export const worldId = isDev ? 1 : 56
 
-export const devDiscordConfig = {
+export interface BotConfig {
+  client: string
+  commands: Command[]
+  coreDoc: string
+  guild: string
+}
+
+export const devDiscordConfig: BotConfig = {
   client: '896860363541348413',
   commands: [ping, todo],
-  guild: {
-    id: '620484161974566922',
-    alerts: '904963008525107250',
-    dashboard: '904963008525107250',
-    villages: '904963022089515090',
-  },
+  coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
+  guild: '620484161974566922',
 }
 
-export const prodDiscordConfig: DiscordConfig = {
+export const prodDiscordConfig: BotConfig = {
   client: '896860363541348413',
   commands: [],
-  guild: {
-    id: '855057085719642134',
-    alerts: '904407658558275636',
-    dashboard: '904905248051720193',
-    villages: '904881978044710962',
-  },
+  coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
+  guild: '855057085719642134',
 }
 
-export const discordConfig = (): DiscordConfig => {
-  const config = isDev ? devDiscordConfig : prodDiscordConfig
-  return config
-}
+export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig
