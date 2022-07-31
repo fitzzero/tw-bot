@@ -17,33 +17,33 @@ export const syncVillages: LoopFn = async ({ world }) => {
         const x = parseInt(data[2])
         const y = parseInt(data[3])
 
-        const villageData: VillageData = {
-          _id: `${data[2]}|${data[3]}`,
-          name: data[1],
-          number: parseInt(data[0]),
-          x,
-          y,
-          k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
-          playerId: data[4],
-          points: parseInt(data[5]),
-          rank: parseInt(data[6]) || null,
-          lastSync: world.lastSync,
-        }
-        if (!villageData || !villageData._id) {
-          return
-        }
+        // const villageData: VillageData = {
+        //   _id: `${data[2]}|${data[3]}`,
+        //   name: data[1],
+        //   number: parseInt(data[0]),
+        //   x,
+        //   y,
+        //   k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
+        //   playerId: data[4],
+        //   points: parseInt(data[5]),
+        //   rank: parseInt(data[6]) || null,
+        //   lastSync: world.lastSync,
+        // }
+        // if (!villageData || !villageData._id) {
+        //   return
+        // }
         // updateOrCreateVillage(villageData)
         // await addVillageHistory(villageData)
-        newVillageData.push(villageData)
-        return villageData
+        // newVillageData.push(villageData)
+        // return villageData
       })
     )
 
     // await saveActiveVillages()
-    if (!withinLastDay(world.lastSync)) {
-      // cleanDeletedVillages({ newVillageData })
-      return
-    }
+    // if (!withinLastDay(world.lastSync)) {
+    //   // cleanDeletedVillages({ newVillageData })
+    //   return
+    // }
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
     return

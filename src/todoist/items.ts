@@ -17,7 +17,7 @@ export const syncItems: ProjectFn = async ({ project }) => {
 
   // Get items due this minute
   const items = itemsInMemory.filter(item => {
-    const due = moment.tz(item?.due?.date, 'America/New_York')
+    const due = item?.due?.date
     if (!due) return false
     const active = withinLastMinute(due)
     if (item.project_id === project.id && active) {
