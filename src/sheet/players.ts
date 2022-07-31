@@ -1,9 +1,8 @@
-import { Moment } from 'moment'
-import { SheetData } from './sheetData'
+import { BaseSheetModel, SheetData } from './sheetData'
 import { keys } from 'ts-transformer-keys'
 
-export interface PlayerData {
-  _id: string
+export interface PlayerData extends BaseSheetModel {
+  id: string
   name: string
   tribe: string
   villages: number
@@ -13,7 +12,6 @@ export interface PlayerData {
   oda: number
   odd: number
   ods: number
-  lastSync: Moment
 }
 
 const headers = keys<PlayerData>()

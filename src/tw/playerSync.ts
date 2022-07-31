@@ -4,6 +4,7 @@ import { World } from '../@types/world'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 import { PlayerData } from '../sheet/players'
+import { nowString } from '../utility/time'
 
 export const syncPlayers: LoopFn = async ({ world }) => {
   try {
@@ -26,7 +27,7 @@ export const syncPlayers: LoopFn = async ({ world }) => {
         const playerOds = ods.find(data => data[1] === playerId)
 
         const playerData: PlayerData = {
-          _id: playerId,
+          id: playerId,
           name: data[1],
           tribe: data[2],
           villages: parseInt(data[3]),
@@ -36,9 +37,9 @@ export const syncPlayers: LoopFn = async ({ world }) => {
           oda: playerOda ? parseInt(playerOda[2]) : 0,
           odd: playerOdd ? parseInt(playerOdd[2]) : 0,
           ods: playerOds ? parseInt(playerOds[2]) : 0,
-          lastSync: world.lastSync,
+          lastSync: nowString(),
         }
-        if (!playerData || !playerData._id) {
+        if (!playerData || !playerData.id) {
           return
         }
         // updateOrCreatePlayer(playerData)

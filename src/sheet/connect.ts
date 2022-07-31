@@ -1,8 +1,4 @@
-import {
-  GoogleSpreadsheet,
-  GoogleSpreadsheetRow,
-  GoogleSpreadsheetWorksheet,
-} from 'google-spreadsheet'
+import { GoogleSpreadsheet } from 'google-spreadsheet'
 import { logger } from '../utility/logger'
 
 export const doc = new GoogleSpreadsheet(

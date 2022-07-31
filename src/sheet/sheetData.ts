@@ -3,11 +3,21 @@ import {
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
 import { logger } from '../utility/logger'
+import { nowString } from '../utility/time'
 import { doc } from './connect'
 
 interface ConstructorProps {
   title: string
   headers: string[]
+}
+
+export interface BaseSheetModel {
+  lastSync: string
+}
+
+interface IdData {
+  id: string
+  [propName: string]: string | number | boolean
 }
 
 export class SheetData {
@@ -19,6 +29,45 @@ export class SheetData {
   constructor({ title, headers }: ConstructorProps) {
     this.title = title
     this.headers = headers
+  }
+
+  /*
+   * Add new row
+   */
+  add = async (values: IdData) => {
+    const data: IdData = {
+      ...values,
+      lastSync: nowString(),
+    }
+    await this.sheet.addRow(data)
+  }
+
+  /*
+   * Get row by id
+   */
+  getById = (id: string) => {
+    const found = this.rows.find(row => row.id == id)
+    return found
+  }
+
+  /*
+   * Update row
+   * Or add if new
+   */
+  updateOrAdd = async (values: IdData) => {
+    const row = this.getById(values.id)
+    if (row) {
+      this.headers.forEach(header => {
+        if (values[header]) {
+          row[header] = values[header]
+        }
+      })
+      row.lastSync = nowString()
+      await row.save()
+    } else {
+      this.add(values)
+    }
+    return row
   }
 
   /*

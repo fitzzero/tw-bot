@@ -9,7 +9,6 @@ if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
 else logger({ prefix: 'success', message: `v${version} starting in Prod` })
 
 /* Listen */
-// TODO: Google Events
 DiscordEvents()
 
 /* Start Services */

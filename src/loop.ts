@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { worldId } from './config'
+import { isDev, worldId } from './config'
 import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
 import { World } from './@types/world'
@@ -8,6 +8,7 @@ import { withinLastHour } from './utility/time'
 import { startDiscord } from './discord/connect'
 import { players } from './sheet/players'
 import { loadDoc } from './sheet/connect'
+import { runTests, testData } from './sheet/sheetDataTests'
 
 export interface LoopFnProps {
   world: World
@@ -16,8 +17,16 @@ export interface LoopFnProps {
 export type LoopFn = (props: LoopFnProps) => Promise<void>
 
 export const startLoop = async () => {
-  // Load data
   await loadDoc()
+
+  // Dev tests
+  if (isDev) {
+    await testData.loadData()
+    const passed = await runTests()
+    if (!passed) return
+  }
+
+  // Load tw data
   await players.loadData()
 
   startDiscord()
