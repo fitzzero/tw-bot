@@ -1,32 +1,43 @@
 import moment from 'moment-timezone'
 import { Moment } from 'moment'
 
-export const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss ZZ'
-export const momentTimeZone = 'America/New_York'
+const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss'
+const momentTimeZone = 'America/New_York'
+const momentUtcOffset = '-0400'
 
-export const withinLastDay = (dateString?: string) => {
-  if (!dateString) return false
-  const date = moment(dateString, momentStringFormat)
+export const withinLastDay = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
   return !!date.isSame(moment.tz(momentTimeZone), 'day')
 }
 
-export const withinLastHour = (dateString?: string) => {
-  if (!dateString) return false
-  const date = moment(dateString, momentStringFormat)
+export const withinLastHour = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
   return !!date.isSame(moment.tz(momentTimeZone), 'hour')
 }
 
-export const withinLastMinute = (dateString?: string) => {
-  if (!dateString) return false
-  const date = moment(dateString, momentStringFormat)
+export const withinLastMinute = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
   return !!date.isSame(moment.tz(momentTimeZone), 'minute')
 }
 
-export const getUnix = (time?: Moment) => {
-  if (time) return time.tz(momentTimeZone).unix()
-  return moment.tz(momentTimeZone).unix()
+export const getUnix = (date?: Moment) => {
+  date = validateMoment(date)
+  if (!date) return moment.tz(momentTimeZone).unix()
+  return date.tz(momentTimeZone).unix()
 }
 
 export const nowString = () => {
   return moment().tz(momentTimeZone).format(momentStringFormat)
+}
+
+export const validateMoment = (date?: Moment | string) => {
+  if (!date) return
+  if (typeof date === 'string') {
+    date = moment(date, momentStringFormat).utcOffset(momentUtcOffset, true)
+  }
+  if (!moment.isMoment(date)) return
+  return date
 }
