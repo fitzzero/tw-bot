@@ -7,7 +7,7 @@ export interface PlayerData extends BaseSheetModel {
   tribe: string
   villages: number
   points: number
-  rank: number | null
+  rank: number
   od: number
   oda: number
   odd: number

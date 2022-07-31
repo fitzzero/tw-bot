@@ -1,14 +1,14 @@
 import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
-import { PlayerData } from '../sheet/players'
+import { PlayerData, players } from '../sheet/players'
 import { nowString } from '../utility/time'
 import { settings } from '../sheet/settings'
 
 export const syncPlayers = async (world: string) => {
   try {
     // Data: id, name, ally, villages, points, rank
-    const players = await fetchPlayers(world)
+    const playerData = await fetchPlayers(world)
 
     // Data: rank, id, kills
     const od = await fetchOd(world, 'all')
@@ -17,7 +17,7 @@ export const syncPlayers = async (world: string) => {
     const ods = await fetchOd(world, 'sup')
 
     await Promise.all(
-      players.map(async data => {
+      playerData.map(async data => {
         if (data[0] === '' || data[0] === null) return
         const playerId = data[0]
         const playerOd = od.find(data => data[1] === playerId)
@@ -31,7 +31,7 @@ export const syncPlayers = async (world: string) => {
           tribe: data[2],
           villages: parseInt(data[3]),
           points: parseInt(data[4]),
-          rank: parseInt(data[5]) || null,
+          rank: parseInt(data[5]) || 0,
           od: playerOd ? parseInt(playerOd[2]) : 0,
           oda: playerOda ? parseInt(playerOda[2]) : 0,
           odd: playerOdd ? parseInt(playerOdd[2]) : 0,
@@ -41,11 +41,13 @@ export const syncPlayers = async (world: string) => {
         if (!playerData || !playerData.id) {
           return
         }
-        // updateOrCreatePlayer(playerData)
-        // await addPlayerHistory(playerData)
+        await players.updateOrAdd({ ...playerData })
       })
     )
-    // await saveActivePlayers()
+    logger({
+      prefix: 'success',
+      message: `TW: Players synced`,
+    })
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `${err}` })
@@ -69,7 +71,7 @@ const fetchPlayers = async (world: string): Promise<string[][]> => {
   }
   logger({
     prefix: 'start',
-    message: `TW: Loading ${players?.length} players...`,
+    message: `TW: Loading ${players?.length - 1} players...`,
   })
   return players
 }
