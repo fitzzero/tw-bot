@@ -61,7 +61,6 @@ export class SheetData<data extends BaseSheetModel> {
    * Or add if new
    */
   updateOrAdd = async (values: data, changes = false) => {
-    if (!values?.id) return false
     const idx = this.rows.findIndex(row => row.id === values.id)
     if (this.rows[idx]) {
       this.headers.forEach(header => {
