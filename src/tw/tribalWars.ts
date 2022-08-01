@@ -10,8 +10,9 @@ export const syncTwInProgress = () => inProgress
 export const syncTw = async (world: string) => {
   inProgress = true
   logger({ prefix: 'start', message: `TW: Starting ${world} sync` })
-  //await syncTribes({ world })
+  await syncTribes(world)
   await syncPlayers(world)
   await syncVillages(world)
   inProgress = false
+  logger({ prefix: 'success', message: `TW: Sync completed` })
 }

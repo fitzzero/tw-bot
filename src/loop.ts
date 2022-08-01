@@ -11,6 +11,7 @@ import { loadDoc } from './sheet/connect'
 import { settings } from './sheet/settings'
 import { getQueueLength } from './sheet/saveQueue'
 import { villages } from './sheet/villages'
+import { tribes } from './sheet/tribes'
 
 export interface LoopFnProps {
   world: World
@@ -29,6 +30,7 @@ export const startLoop = async () => {
 
   // Load data
   await settings.loadData()
+  await tribes.loadData()
   await players.loadData()
   await villages.loadData()
 
