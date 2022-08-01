@@ -5,10 +5,9 @@ import { VillageData, villages } from '../sheet/villages'
 
 export const syncVillages = async (world: string) => {
   const villageData = await fetchVillages(world)
-  const newVillageData: VillageData[] = []
 
   for (const data of villageData) {
-    if (data[0] === '' || data[0] === null) return
+    if (data[0] === '' || data[0] === null) break
     const x = parseInt(data[2])
     const y = parseInt(data[3])
 
@@ -21,11 +20,16 @@ export const syncVillages = async (world: string) => {
       playerId: data[4],
       points: parseInt(data[5]),
       rank: parseInt(data[6]) || 0,
+      lastUpdate: '',
     }
     if (villageData?.id) {
       await villages.updateOrAdd({ ...villageData })
     }
   }
+  logger({
+    prefix: 'success',
+    message: `TW: Villages synced`,
+  })
 }
 
 const fetchVillages = async (world: string): Promise<string[][]> => {

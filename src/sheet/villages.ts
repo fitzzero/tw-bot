@@ -1,7 +1,7 @@
 import { keys } from 'ts-transformer-keys'
 import { BaseSheetModel, SheetData } from './sheetData'
 
-export interface VillageData extends BaseSheetModel {
+interface BaseVillageData {
   id: string
   name: string
   x: number
@@ -12,6 +12,11 @@ export interface VillageData extends BaseSheetModel {
   rank: number
 }
 
-const headers = keys<VillageData>()
+export interface VillageData extends BaseVillageData, BaseSheetModel {}
 
-export const villages = new SheetData({ title: 'villages', headers })
+const headers = keys<BaseVillageData>()
+
+export const villages = new SheetData<VillageData>({
+  title: 'villages',
+  headers,
+})

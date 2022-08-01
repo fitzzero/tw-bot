@@ -48,7 +48,8 @@ const loop = async () => {
   if (!withinLastHour(world?.lastUpdate)) {
     if (world) {
       syncTw(world.value)
-      settings.updateOrAdd({ id: 'world' }, true)
+      world.lastUpdate = nowString()
+      world.save()
     } else {
       logAlert('No active world set', 'TW')
     }

@@ -2,49 +2,41 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
+import { keys } from 'ts-transformer-keys'
 import { logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
 
-interface idData {
-  id: string
-  lastEdit: string
+interface AddedProps {
+  lastUpdate: string
 }
 
-type dataParser = (str: string) => any
-
-enum PARSABLE_TYPE {
-  NUMBER,
-  STRING,
-  BOOLEAN,
+export interface BaseSheetModel extends AddedProps {
+  [propName: string]: string | number | boolean
 }
 
-const typeParserMap = new Map<PARSABLE_TYPE, dataParser>()
-
-typeParserMap.set(PARSABLE_TYPE.NUMBER, (str: string) => parseInt(str))
-typeParserMap.set(PARSABLE_TYPE.STRING, (str: string) => str)
-typeParserMap.set(PARSABLE_TYPE.BOOLEAN, (str: string) => {
-  return str == 'true' || str == 'TRUE' || str == '1'
-})
-
-type headerTypeMap = Map<string, PARSABLE_TYPE>
+const addedHeaders = keys<AddedProps>()
 
 interface ConstructorProps {
   title: string
-  headerTypeMap: headerTypeMap
+  headers: string[]
 }
 
-export class SheetData<data extends idData> {
+export class SheetData<data extends BaseSheetModel> {
   title: string
-  headerTypeMap: headerTypeMap
+  headers: string[]
 
   private sheet: GoogleSpreadsheetWorksheet
-  private rows?: GoogleSpreadsheetRow[]
+  private rows: GoogleSpreadsheetRow[]
 
-  constructor({ title, headerTypeMap }: ConstructorProps) {
+  constructor({ title, headers }: ConstructorProps) {
     this.title = title
-    this.headerTypeMap = headerTypeMap
+    this.headers = headers
+
+    addedHeaders.forEach(header => {
+      this.headers.push(header)
+    })
   }
 
   /*
@@ -52,6 +44,7 @@ export class SheetData<data extends idData> {
    */
   add = async (values: data) => {
     await limiter.removeTokens(1)
+    values.lastUpdate = nowString()
     await this.sheet.addRow(values)
   }
 
@@ -68,10 +61,14 @@ export class SheetData<data extends idData> {
    * Or add if new
    */
   updateOrAdd = async (values: data, changes = false) => {
-    const idx = this.rows?.findIndex(row => row.id === values.id)
-    if (idx) {
+    const idx = this.rows.findIndex(row => row.id === values.id)
+    if (this.rows[idx]) {
       this.headers.forEach(header => {
-        if (values[header] && this.rows[idx][header] != values[header]) {
+        if (
+          header != 'lastUpdate' &&
+          values[header] &&
+          this.rows[idx][header] != values[header]
+        ) {
           this.rows[idx][header] = values[header]
           changes = true
         }

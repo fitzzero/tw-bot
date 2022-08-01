@@ -32,6 +32,7 @@ export const syncPlayers = async (world: string) => {
       oda: playerOda ? parseInt(playerOda[2]) : 0,
       odd: playerOdd ? parseInt(playerOdd[2]) : 0,
       ods: playerOds ? parseInt(playerOds[2]) : 0,
+      lastUpdate: '',
     }
     if (playerData?.id) {
       await players.updateOrAdd({ ...playerData })

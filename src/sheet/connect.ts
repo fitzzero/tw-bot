@@ -5,7 +5,7 @@ import { logger } from '../utility/logger'
 
 export const doc = new GoogleSpreadsheet(botConfig.coreDoc)
 
-export const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 1000 })
+export const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 1100 })
 
 const auth = {
   client_email: process.env.WRGMAIL || '',
