@@ -1,10 +1,9 @@
 import fetch from 'cross-fetch'
-import { RowData } from '../sheet/sheetData'
 import { TribeData, tribes } from '../sheet/tribes'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
-export const syncTribes = async (world: RowData) => {
+export const syncTribes = async (world: string) => {
   // Data: id, name, tag, members, villages, points, all_points, rank
   const tribeData = await fetchTribes(world)
 
@@ -45,7 +44,7 @@ export const syncTribes = async (world: RowData) => {
   return
 }
 
-export const fetchTribes = async (world: RowData): Promise<string[][]> => {
+export const fetchTribes = async (world: string): Promise<string[][]> => {
   let api = `https://us${world}.tribalwars.us/map/ally.txt`
   if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/ally.txt'
@@ -68,7 +67,7 @@ export const fetchTribes = async (world: RowData): Promise<string[][]> => {
 }
 
 const fetchTribeOd = async (
-  world: RowData,
+  world: string,
   type: 'att' | 'def' | 'all'
 ): Promise<string[][]> => {
   let api = `https://us${world}.tribalwars.us/map/kill_${type}_tribe.txt`

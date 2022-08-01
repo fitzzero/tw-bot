@@ -8,22 +8,15 @@ import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
 
-interface AddedProps {
+export interface BaseSheetModel extends RowStructure {
   lastUpdate: string
 }
 
-export interface BaseSheetModel extends AddedProps {
+interface RowStructure {
   [propName: string]: RowData
 }
 
-export type RowData = string | number | boolean
-
-const addedHeaders = keys<AddedProps>()
-
-interface ConstructorProps {
-  title: string
-  headers: string[]
-}
+type RowData = string | number | boolean
 
 export class SheetData<data extends BaseSheetModel> {
   title: string
@@ -32,13 +25,9 @@ export class SheetData<data extends BaseSheetModel> {
   private sheet: GoogleSpreadsheetWorksheet
   private rows: GoogleSpreadsheetRow[]
 
-  constructor({ title, headers }: ConstructorProps) {
-    this.title = title
-    this.headers = headers
-
-    addedHeaders.forEach(header => {
-      this.headers.push(header)
-    })
+  constructor(tabTitle: string, tabHeaders: string[]) {
+    this.title = tabTitle
+    this.headers = tabHeaders
   }
 
   /*
@@ -72,6 +61,7 @@ export class SheetData<data extends BaseSheetModel> {
    * Or add if new
    */
   updateOrAdd = async (values: data, changes = false) => {
+    if (!values?.id) return false
     const idx = this.rows.findIndex(row => row.id === values.id)
     if (this.rows[idx]) {
       this.headers.forEach(header => {
@@ -91,7 +81,7 @@ export class SheetData<data extends BaseSheetModel> {
     } else {
       await this.add(values)
     }
-    return
+    return true
   }
 
   /*

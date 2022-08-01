@@ -1,16 +1,11 @@
-import { BaseSheetModel, SheetData } from './sheetData'
 import { keys } from 'ts-transformer-keys'
+import { BaseSheetModel, SheetData } from './sheetData'
 
-interface BaseDocumentData {
+export interface SettingsData extends BaseSheetModel {
   id: string
-  value: string | number | boolean
+  value: string
 }
 
-export interface DocumentData extends BaseDocumentData, BaseSheetModel {}
+const headers = keys<SettingsData>().map(key => key.toString())
 
-const headers = keys<BaseDocumentData>()
-
-export const settings = new SheetData<DocumentData>({
-  title: 'settings',
-  headers,
-})
+export const settings = new SheetData<SettingsData>('settings', headers)

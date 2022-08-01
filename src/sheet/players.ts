@@ -1,7 +1,7 @@
-import { BaseSheetModel, SheetData } from './sheetData'
 import { keys } from 'ts-transformer-keys'
+import { BaseSheetModel, SheetData } from './sheetData'
 
-interface BasePlayerData {
+export interface PlayerData extends BaseSheetModel {
   id: string
   name: string
   tribe: string
@@ -14,8 +14,6 @@ interface BasePlayerData {
   ods: number
 }
 
-export interface PlayerData extends BasePlayerData, BaseSheetModel {}
+const headers = keys<PlayerData>().map(key => key.toString())
 
-const headers = keys<BasePlayerData>()
-
-export const players = new SheetData<PlayerData>({ title: 'players', headers })
+export const players = new SheetData<PlayerData>('players', headers)

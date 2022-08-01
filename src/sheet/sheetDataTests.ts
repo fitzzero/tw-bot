@@ -1,20 +1,15 @@
-import { BaseSheetModel, SheetData } from './sheetData'
 import { keys } from 'ts-transformer-keys'
+import { BaseSheetModel, SheetData } from './sheetData'
 
-interface BaseTestData {
+interface TestData extends BaseSheetModel {
   id: string
   name: string
   points: number
 }
 
-interface TestData extends BaseTestData, BaseSheetModel {}
+const headers = keys<TestData>().map(key => key.toString())
 
-const headers = keys<BaseTestData>()
-
-export const testData = new SheetData<TestData>({
-  title: 'testData',
-  headers,
-})
+export const testData = new SheetData<TestData>('testData', headers)
 
 export const runSheetDataTests = async () => {
   await testData.loadData()
@@ -30,7 +25,7 @@ export const runSheetDataTests = async () => {
   if (test1?.name != 'Two') return false
   await testData.updateOrAdd({
     id: 'test1',
-    name: 'Three',
+    name: 'One',
     points: 5,
     lastUpdate: '',
   })

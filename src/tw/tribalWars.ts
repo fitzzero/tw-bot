@@ -1,4 +1,3 @@
-import { RowData } from '../sheet/sheetData'
 import { logger } from '../utility/logger'
 import { syncPlayers } from './playerSync'
 import { syncTribes } from './tribeSync'
@@ -8,7 +7,7 @@ let inProgress = false
 
 export const syncTwInProgress = () => inProgress
 
-export const syncTw = async (world: RowData) => {
+export const syncTw = async (world: string) => {
   inProgress = true
   logger({ prefix: 'start', message: `TW: Starting ${world} sync` })
   await syncTribes(world)

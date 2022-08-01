@@ -2,9 +2,8 @@ import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 import { VillageData, villages } from '../sheet/villages'
-import { RowData } from '../sheet/sheetData'
 
-export const syncVillages = async (world: RowData) => {
+export const syncVillages = async (world: string) => {
   const villageData = await fetchVillages(world)
 
   for (const data of villageData) {
@@ -33,7 +32,7 @@ export const syncVillages = async (world: RowData) => {
   })
 }
 
-const fetchVillages = async (world: RowData): Promise<string[][]> => {
+const fetchVillages = async (world: string): Promise<string[][]> => {
   let api = `https://us${world}.tribalwars.us/map/village.txt`
   if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/village.txt'
