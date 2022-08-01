@@ -42,8 +42,10 @@ export class SheetData<data extends RowStructure> {
     await limiter.removeTokens(1)
     try {
       await this.sheet.addRow({ ...values, lastUpdate: nowString() })
+      return true
     } catch (err) {
       logAlert(err, 'Sheet Add')
+      return false
     }
   }
 
@@ -61,30 +63,39 @@ export class SheetData<data extends RowStructure> {
   }
 
   /*
+   * Update existing
+   */
+  update = (values: data, changes = false) => {
+    const idx = this.rows.findIndex(row => row.id === values.id)
+    if (idx === -1) return false
+
+    this.headers.forEach(header => {
+      if (
+        header != 'lastUpdate' &&
+        values[header] &&
+        this.rows[idx][header] != values[header]
+      ) {
+        this.rows[idx][header] = values[header]
+        changes = true
+      }
+    })
+    if (changes) {
+      this.rows[idx].lastUpdate = nowString()
+      queueRowSave(this.rows[idx])
+      return true
+    } else {
+      return true
+    }
+  }
+
+  /*
    * Update row
    * Or add if new
    */
   updateOrAdd = async (values: data, changes = false) => {
-    const idx = this.rows.findIndex(row => row.id === values.id)
-    if (this.rows[idx]) {
-      this.headers.forEach(header => {
-        if (
-          header != 'lastUpdate' &&
-          values[header] &&
-          this.rows[idx][header] != values[header]
-        ) {
-          this.rows[idx][header] = values[header]
-          changes = true
-        }
-      })
-      if (changes) {
-        this.rows[idx].lastUpdate = nowString()
-        queueRowSave(this.rows[idx])
-      }
-    } else {
-      await this.add(values as data)
-    }
-    return true
+    const updateExisting = this.update(values, changes)
+    if (updateExisting) return true
+    else return await this.add(values as data)
   }
 
   /*

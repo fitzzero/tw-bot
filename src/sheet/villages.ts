@@ -14,4 +14,14 @@ export interface VillageData extends RowStructure {
 
 const headers = keys<VillageData>().map(key => key.toString())
 
-export const villages = new SheetData<VillageData>('villages', headers)
+class Villages extends SheetData<VillageData> {
+  constructor(tabTitle: string, tabHeaders: string[]) {
+    super(tabTitle, tabHeaders)
+  }
+
+  auditAndUpdate = async (newData: VillageData) => {
+    const existingData = this.getById(newData.id)
+  }
+}
+
+export const villages = new Villages('villages', headers)

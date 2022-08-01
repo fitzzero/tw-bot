@@ -11,6 +11,7 @@ export interface BotConfig {
   commands: Command[]
   coreDoc: string
   guild: string
+  writeEnabled: boolean
 }
 
 export const devDiscordConfig: BotConfig = {
@@ -18,6 +19,7 @@ export const devDiscordConfig: BotConfig = {
   commands: [ping, todo],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   guild: '620484161974566922',
+  writeEnabled: true,
 }
 
 export const prodDiscordConfig: BotConfig = {
@@ -25,6 +27,7 @@ export const prodDiscordConfig: BotConfig = {
   commands: [],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   guild: '855057085719642134',
+  writeEnabled: true,
 }
 
 export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig

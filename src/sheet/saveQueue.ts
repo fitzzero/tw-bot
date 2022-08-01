@@ -1,5 +1,6 @@
 import { GoogleSpreadsheetRow } from 'google-spreadsheet'
 import { isEmpty } from 'lodash'
+import { botConfig } from '../config'
 import { logAlert, logger } from '../utility/logger'
 import { limiter } from './connect'
 
@@ -27,7 +28,10 @@ export const runSaveQueue = async () => {
     const row = rowSaveQueue.shift()
     if (!row) break
     try {
-      await row.save()
+      if (botConfig.writeEnabled) await row.save()
+      else {
+        logger({ prefix: 'start', message: `${row.id} updated` })
+      }
     } catch (err) {
       logAlert(err, 'Sheet Queue')
       queueRowSave(row)
