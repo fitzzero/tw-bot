@@ -13,8 +13,10 @@ interface AddedProps {
 }
 
 export interface BaseSheetModel extends AddedProps {
-  [propName: string]: string | number | boolean
+  [propName: string]: RowData
 }
+
+export type RowData = string | number | boolean
 
 const addedHeaders = keys<AddedProps>()
 
@@ -53,7 +55,12 @@ export class SheetData<data extends BaseSheetModel> {
    */
   getById = (id: string) => {
     const found = this.rows?.find(row => row.id == id)
-    return found
+    if (!found) return
+    const foundObj: any = {}
+    this.headers.forEach(header => {
+      foundObj[header] = found[header]
+    })
+    return foundObj as data
   }
 
   /*

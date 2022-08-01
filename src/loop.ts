@@ -49,9 +49,8 @@ const loop = async () => {
   // Sync TW if it's been more than hour since last sync
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
     if (world) {
+      settings.updateOrAdd(world, true)
       syncTw(world.value)
-      world.lastUpdate = nowString()
-      world.save()
     } else {
       logAlert('No active world set', 'TW')
     }
