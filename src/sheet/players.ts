@@ -1,7 +1,7 @@
 import { keys } from 'ts-transformer-keys'
-import { BaseSheetModel, SheetData } from './sheetData'
+import { RowStructure, SheetData } from './sheetData'
 
-export interface PlayerData extends BaseSheetModel {
+export interface PlayerData extends RowStructure {
   id: string
   name: string
   tribe: string

@@ -1,7 +1,7 @@
 import { keys } from 'ts-transformer-keys'
-import { BaseSheetModel, SheetData } from './sheetData'
+import { RowStructure, SheetData } from './sheetData'
 
-export interface SettingsData extends BaseSheetModel {
+export interface SettingsData extends RowStructure {
   id: string
   value: string
 }

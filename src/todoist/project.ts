@@ -1,12 +1,11 @@
 import { Project } from 'todoist/dist/v8-types'
-import { LoopFn } from '../loop'
 import { logger } from '../utility/logger'
 import { todoist } from './connect'
 import { syncItems } from './items'
 
 let projectInMemory: Project | undefined = undefined
 
-export const getActiveProject = (): Project | undefined => projectInMemory
+export const getActiveProject = () => projectInMemory
 
 export interface ProjectFnProps {
   project: Project
@@ -14,7 +13,7 @@ export interface ProjectFnProps {
 
 export type ProjectFn = (props: ProjectFnProps) => Promise<void>
 
-export const syncProject: LoopFn = async ({ world }) => {
+export const syncProject = async (world: string) => {
   if (!todoist) {
     logger({ prefix: 'alert', message: 'Todoist: Error connecting' })
     return
@@ -24,12 +23,12 @@ export const syncProject: LoopFn = async ({ world }) => {
   if (!projectInMemory) {
     projectInMemory = todoist.projects
       .get()
-      .find(project => project.name === world.name)
+      .find(project => project.name === world)
   }
   if (!projectInMemory) {
     logger({
       prefix: 'alert',
-      message: `Todoist: Project ${world.name} Not Found`,
+      message: `Todoist: Project ${world} Not Found`,
     })
     return
   }
@@ -38,6 +37,6 @@ export const syncProject: LoopFn = async ({ world }) => {
 
   logger({
     prefix: 'success',
-    message: `Todoist: Synced Project ${world.name}`,
+    message: `Todoist: Synced Project ${world}`,
   })
 }

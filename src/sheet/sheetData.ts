@@ -2,22 +2,25 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
+import { keys } from 'ts-transformer-keys'
 import { logAlert, logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
 
-export interface BaseSheetModel extends RowStructure {
+export interface BaseSheetModel {
   lastUpdate: string
 }
 
-interface RowStructure {
+const addedHeaders = keys<BaseSheetModel>()
+
+export interface RowStructure {
   [propName: string]: RowData
 }
 
 type RowData = string | number | boolean
 
-export class SheetData<data extends BaseSheetModel> {
+export class SheetData<data extends RowStructure> {
   title: string
   headers: string[]
 
@@ -27,6 +30,9 @@ export class SheetData<data extends BaseSheetModel> {
   constructor(tabTitle: string, tabHeaders: string[]) {
     this.title = tabTitle
     this.headers = tabHeaders
+    addedHeaders.forEach(header => {
+      this.headers.push(header)
+    })
   }
 
   /*
@@ -34,9 +40,8 @@ export class SheetData<data extends BaseSheetModel> {
    */
   add = async (values: data) => {
     await limiter.removeTokens(1)
-    values.lastUpdate = nowString()
     try {
-      await this.sheet.addRow(values)
+      await this.sheet.addRow({ ...values, lastUpdate: nowString() })
     } catch (err) {
       logAlert(err, 'Sheet Add')
     }
@@ -52,7 +57,7 @@ export class SheetData<data extends BaseSheetModel> {
     this.headers.forEach(header => {
       foundObj[header] = found[header]
     })
-    return foundObj as data
+    return foundObj as data & BaseSheetModel
   }
 
   /*
@@ -63,11 +68,7 @@ export class SheetData<data extends BaseSheetModel> {
     const idx = this.rows.findIndex(row => row.id === values.id)
     if (this.rows[idx]) {
       this.headers.forEach(header => {
-        if (
-          header != 'lastUpdate' &&
-          values[header] &&
-          this.rows[idx][header] != values[header]
-        ) {
+        if (values[header] && this.rows[idx][header] != values[header]) {
           this.rows[idx][header] = values[header]
           changes = true
         }

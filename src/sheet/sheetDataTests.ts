@@ -1,7 +1,7 @@
 import { keys } from 'ts-transformer-keys'
-import { BaseSheetModel, SheetData } from './sheetData'
+import { RowStructure, SheetData } from './sheetData'
 
-interface TestData extends BaseSheetModel {
+interface TestData extends RowStructure {
   id: string
   name: string
   points: number
@@ -18,7 +18,6 @@ export const runSheetDataTests = async () => {
     id: 'test1',
     name: 'Two',
     points: 5,
-    lastUpdate: '',
   })
 
   const test1 = testData.getById('test1')
@@ -27,7 +26,6 @@ export const runSheetDataTests = async () => {
     id: 'test1',
     name: 'One',
     points: 5,
-    lastUpdate: '',
   })
   return true
 }
