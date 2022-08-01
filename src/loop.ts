@@ -9,7 +9,6 @@ import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
 import { settings } from './sheet/settings'
-import { runSaveQueue } from './sheet/saveQueue'
 
 export interface LoopFnProps {
   world: World
@@ -59,6 +58,5 @@ const loop = async () => {
 
   // Sync Todoist Projects
   // syncProject({ world })
-  runSaveQueue()
   return
 }

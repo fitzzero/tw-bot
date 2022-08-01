@@ -2,13 +2,10 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
-import { RateLimiter } from 'limiter'
 import { logger } from '../utility/logger'
 import { nowString } from '../utility/time'
-import { doc } from './connect'
+import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
-
-const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 1000 })
 
 interface ConstructorProps {
   title: string
