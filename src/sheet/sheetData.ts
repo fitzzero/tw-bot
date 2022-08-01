@@ -2,7 +2,6 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
-import { keys } from 'ts-transformer-keys'
 import { logAlert, logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
@@ -78,7 +77,7 @@ export class SheetData<data extends BaseSheetModel> {
         queueRowSave(this.rows[idx])
       }
     } else {
-      await this.add(values)
+      await this.add(values as data)
     }
     return true
   }

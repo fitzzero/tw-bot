@@ -29,6 +29,5 @@ export const runSheetDataTests = async () => {
     points: 5,
     lastUpdate: '',
   })
-
   return true
 }

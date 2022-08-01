@@ -16,5 +16,5 @@ export const runDevTests = async () => {
     prefix: 'success',
     message: `Dev: Tests Passed`,
   })
-  return false
+  return true
 }
