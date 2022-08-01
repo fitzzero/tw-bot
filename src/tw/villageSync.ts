@@ -20,7 +20,6 @@ export const syncVillages = async (world: string) => {
       playerId: data[4],
       points: parseInt(data[5]),
       rank: parseInt(data[6]) || 0,
-      lastUpdate: '',
     }
     if (villageData?.id) {
       await villages.updateOrAdd({ ...villageData })

@@ -31,7 +31,6 @@ export const syncTribes = async (world: string) => {
       od: tribeOd ? parseInt(tribeOd[2]) : 0,
       oda: tribeOda ? parseInt(tribeOda[2]) : 0,
       odd: tribeOdd ? parseInt(tribeOdd[2]) : 0,
-      lastUpdate: '',
     }
     if (tribeData.id) {
       await tribes.updateOrAdd({ ...tribeData })
