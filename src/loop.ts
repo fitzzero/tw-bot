@@ -45,7 +45,6 @@ const loop = async () => {
   const world = settings.getById('world')
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
-
   // Sync TW if it's been more than hour since last sync
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
     if (world) {

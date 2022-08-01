@@ -68,7 +68,11 @@ export class SheetData<data extends RowStructure> {
     const idx = this.rows.findIndex(row => row.id === values.id)
     if (this.rows[idx]) {
       this.headers.forEach(header => {
-        if (values[header] && this.rows[idx][header] != values[header]) {
+        if (
+          header != 'lastUpdate' &&
+          values[header] &&
+          this.rows[idx][header] != values[header]
+        ) {
           this.rows[idx][header] = values[header]
           changes = true
         }
