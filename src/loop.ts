@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { isDev, worldId } from './config'
 import { syncProject } from './todoist/project'
-import { syncTw } from './tw/tribalWars'
+import { syncTw, syncTwInProgress } from './tw/tribalWars'
 import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
 import { nowString, withinLastHour } from './utility/time'
@@ -45,7 +45,7 @@ const loop = async () => {
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
 
   // Sync TW if it's been more than hour since last sync
-  if (!withinLastHour(world?.lastUpdate)) {
+  if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
     if (world) {
       syncTw(world.value)
       world.lastUpdate = nowString()

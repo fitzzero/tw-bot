@@ -80,7 +80,7 @@ export class SheetData<data extends BaseSheetModel> {
     } else {
       await this.add(values)
     }
-    return this.rows[idx]
+    return
   }
 
   /*
