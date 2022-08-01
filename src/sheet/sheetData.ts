@@ -3,7 +3,7 @@ import {
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
 import { keys } from 'ts-transformer-keys'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
@@ -47,7 +47,11 @@ export class SheetData<data extends BaseSheetModel> {
   add = async (values: data) => {
     await limiter.removeTokens(1)
     values.lastUpdate = nowString()
-    await this.sheet.addRow(values)
+    try {
+      await this.sheet.addRow(values)
+    } catch (err) {
+      logAlert(err, 'Sheet Add')
+    }
   }
 
   /*

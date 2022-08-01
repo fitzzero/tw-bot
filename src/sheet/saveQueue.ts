@@ -1,6 +1,6 @@
 import { GoogleSpreadsheetRow } from 'google-spreadsheet'
 import { isEmpty } from 'lodash'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
 import { limiter } from './connect'
 
 const rowSaveQueue: GoogleSpreadsheetRow[] = []
@@ -25,7 +25,13 @@ export const runSaveQueue = async () => {
   while (!isEmpty(rowSaveQueue)) {
     await limiter.removeTokens(1)
     const row = rowSaveQueue.shift()
-    row?.save()
+    if (!row) break
+    try {
+      await row.save()
+    } catch (err) {
+      logAlert(err, 'Sheet Queue')
+      queueRowSave(row)
+    }
   }
   queueInProgress = false
   logger({
