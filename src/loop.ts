@@ -4,11 +4,12 @@ import { syncProject } from './todoist/project'
 import { syncTw } from './tw/tribalWars'
 import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
-import { withinLastHour } from './utility/time'
+import { nowString, withinLastHour } from './utility/time'
 import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
 import { settings } from './sheet/settings'
+import { runSaveQueue } from './sheet/saveQueue'
 
 export interface LoopFnProps {
   world: World
@@ -50,7 +51,7 @@ const loop = async () => {
   if (!withinLastHour(world?.lastUpdate)) {
     if (world) {
       syncTw(world.value)
-      settings.updateOrAdd({ id: 'world' })
+      settings.updateOrAdd({ id: 'world' }, true)
     } else {
       logAlert('No active world set', 'TW')
     }
@@ -58,5 +59,6 @@ const loop = async () => {
 
   // Sync Todoist Projects
   // syncProject({ world })
+  runSaveQueue()
   return
 }

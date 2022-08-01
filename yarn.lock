@@ -857,6 +857,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/lodash@^4.14.182":
+  version "4.14.182"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.182.tgz#05301a4d5e62963227eaafe0ce04dd77c54ea5c2"
+  integrity sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==
+
 "@types/mime@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-3.0.0.tgz#e9a9903894405c6a6551f1774df4e64d9804d69c"
@@ -3098,6 +3103,11 @@ json5@2.x, json5@^2.2.1:
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
   integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
 
+just-performance@4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/just-performance/-/just-performance-4.3.0.tgz#cc2bc8c9227f09e97b6b1df4cd0de2df7ae16db1"
+  integrity sha512-L7RjvtJsL0QO8xFs5wEoDDzzJwoiowRw6Rn/GnvldlchS2JQr9wFYPiwZcDfrbbujEKqKN0tvENdbjXdYhDp5Q==
+
 jwa@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/jwa/-/jwa-2.0.0.tgz#a7e9c3f29dae94027ebcaf49975c9345593410fc"
@@ -3148,6 +3158,13 @@ levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+limiter@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/limiter/-/limiter-2.1.0.tgz#d38d7c5b63729bb84fb0c4d8594b7e955a5182a2"
+  integrity sha512-361TYz6iay6n+9KvUUImqdLuFigK+K79qrUtBsXhJTLdH4rIt/r1y8r1iozwh8KbZNpujbFTSh74mJ7bwbAMOw==
+  dependencies:
+    just-performance "4.3.0"
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

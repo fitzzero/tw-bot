@@ -2,57 +2,46 @@ import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 import { PlayerData, players } from '../sheet/players'
-import { nowString } from '../utility/time'
-import { settings } from '../sheet/settings'
 
 export const syncPlayers = async (world: string) => {
-  try {
-    // Data: id, name, ally, villages, points, rank
-    const playerData = await fetchPlayers(world)
+  // Data: id, name, ally, villages, points, rank
+  const playerData = await fetchPlayers(world)
 
-    // Data: rank, id, kills
-    const od = await fetchOd(world, 'all')
-    const oda = await fetchOd(world, 'att')
-    const odd = await fetchOd(world, 'def')
-    const ods = await fetchOd(world, 'sup')
+  // Data: rank, id, kills
+  const od = await fetchOd(world, 'all')
+  const oda = await fetchOd(world, 'att')
+  const odd = await fetchOd(world, 'def')
+  const ods = await fetchOd(world, 'sup')
 
-    await Promise.all(
-      playerData.map(async data => {
-        if (data[0] === '' || data[0] === null) return
-        const playerId = data[0]
-        const playerOd = od.find(data => data[1] === playerId)
-        const playerOda = oda.find(data => data[1] === playerId)
-        const playerOdd = odd.find(data => data[1] === playerId)
-        const playerOds = ods.find(data => data[1] === playerId)
+  for (const data of playerData) {
+    if (data[0] === '' || data[0] === null) break
+    const playerId = data[0]
+    const playerOd = od.find(data => data[1] === playerId)
+    const playerOda = oda.find(data => data[1] === playerId)
+    const playerOdd = odd.find(data => data[1] === playerId)
+    const playerOds = ods.find(data => data[1] === playerId)
 
-        const playerData: PlayerData = {
-          id: playerId,
-          name: data[1],
-          tribe: data[2],
-          villages: parseInt(data[3]),
-          points: parseInt(data[4]),
-          rank: parseInt(data[5]) || 0,
-          od: playerOd ? parseInt(playerOd[2]) : 0,
-          oda: playerOda ? parseInt(playerOda[2]) : 0,
-          odd: playerOdd ? parseInt(playerOdd[2]) : 0,
-          ods: playerOds ? parseInt(playerOds[2]) : 0,
-          lastUpdate: nowString(),
-        }
-        if (!playerData || !playerData.id) {
-          return
-        }
-        await players.updateOrAdd({ ...playerData })
-      })
-    )
-    logger({
-      prefix: 'success',
-      message: `TW: Players synced`,
-    })
-    return
-  } catch (err) {
-    logger({ prefix: 'alert', message: `${err}` })
-    return
+    const playerData: PlayerData = {
+      id: playerId,
+      name: data[1],
+      tribe: data[2],
+      villages: parseInt(data[3]),
+      points: parseInt(data[4]),
+      rank: parseInt(data[5]) || 0,
+      od: playerOd ? parseInt(playerOd[2]) : 0,
+      oda: playerOda ? parseInt(playerOda[2]) : 0,
+      odd: playerOdd ? parseInt(playerOdd[2]) : 0,
+      ods: playerOds ? parseInt(playerOds[2]) : 0,
+    }
+    if (playerData?.id) {
+      await players.updateOrAdd({ ...playerData })
+    }
   }
+  logger({
+    prefix: 'success',
+    message: `TW: Players synced`,
+  })
+  return
 }
 
 const fetchPlayers = async (world: string): Promise<string[][]> => {

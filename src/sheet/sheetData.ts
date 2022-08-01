@@ -2,9 +2,13 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
+import { RateLimiter } from 'limiter'
 import { logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc } from './connect'
+import { queueRowSave } from './saveQueue'
+
+const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 1000 })
 
 interface ConstructorProps {
   title: string
@@ -12,7 +16,7 @@ interface ConstructorProps {
 }
 
 export interface BaseSheetModel {
-  lastUpdate: string
+  lastUpdate?: string
 }
 
 interface IdData {
@@ -39,6 +43,7 @@ export class SheetData {
       ...values,
       lastUpdate: nowString(),
     }
+    await limiter.removeTokens(1)
     await this.sheet.addRow(data)
   }
 
@@ -54,20 +59,23 @@ export class SheetData {
    * Update row
    * Or add if new
    */
-  updateOrAdd = async (values: IdData) => {
-    const row = this.getById(values.id)
-    if (row) {
+  updateOrAdd = async (values: IdData, changes = false) => {
+    const idx = this.rows.findIndex(row => row.id === values.id)
+    if (this.rows[idx]) {
       this.headers.forEach(header => {
-        if (values[header]) {
-          row[header] = values[header]
+        if (values[header] && this.rows[idx][header] != values[header]) {
+          this.rows[idx][header] = values[header]
+          changes = true
         }
       })
-      row.lastUpdate = nowString()
-      await row.save()
+      if (changes) {
+        this.rows[idx].lastUpdate = nowString()
+        queueRowSave(this.rows[idx])
+      }
     } else {
-      this.add(values)
+      await this.add(values)
     }
-    return row
+    return this.rows[idx]
   }
 
   /*
@@ -113,22 +121,3 @@ export class SheetData {
     await this.sheet.setHeaderRow(newHeaders)
   }
 }
-
-// export const useLocalStorage = <T>(key: string, initialValue: T) => {
-//   const [internal, setInternal] = useLocalStorageValue({
-//     key: key,
-//     defaultValue: JSON.stringify(initialValue || '')
-//   })
-
-//   const value = useMemo(() => JSON.parse(internal) as T, [internal])
-
-//   const setValue = useCallback(
-//     (value: T | ((val: T) => T)) => {
-//       const updated = isFunction(value) ? value(JSON.parse(internal)) : value
-//       setInternal(JSON.stringify(updated))
-//     },
-//     [internal, setInternal]
-//   )
-
-//   return [value, setValue] as const
-// }

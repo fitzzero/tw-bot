@@ -14,7 +14,9 @@ const prefixIcons = {
 }
 
 export const logger = ({ message, logTime, prefix = 'none' }: LoggerProps) => {
-  console.log(`${prefixIcons[prefix]}${message}${logTime ? nowString() : ''}`)
+  console.log(
+    `${prefixIcons[prefix]}${message}${logTime ? ' ' + nowString() : ''}`
+  )
 }
 
 export const logSuccess = (message: string, where?: string) => {
@@ -29,7 +31,7 @@ export const logSuccess = (message: string, where?: string) => {
   return
 }
 
-export const logAlert = (message: string, where?: string) => {
+export const logAlert = (message: any, where?: string) => {
   if (where) {
     message = `${where}: ${message}`
   }

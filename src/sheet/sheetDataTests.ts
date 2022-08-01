@@ -16,12 +16,16 @@ export const runSheetDataTests = async () => {
 
   await testData.updateOrAdd({
     id: 'test1',
-    name: 'One',
+    name: 'Two',
     points: 5,
   })
 
   const test1 = testData.getById('test1')
-  if (test1?.name != 'One') return false
+  if (test1?.name != 'Two') return false
+  await testData.updateOrAdd({
+    id: 'test1',
+    name: 'One',
+  })
 
   return true
 }
