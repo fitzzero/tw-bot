@@ -7,5 +7,5 @@ export const syncTw = async (world: string) => {
   logger({ prefix: 'start', message: `TW: Starting ${world} sync` })
   //await syncTribes({ world })
   await syncPlayers(world)
-  //await syncVillages({ world })
+  await syncVillages(world)
 }

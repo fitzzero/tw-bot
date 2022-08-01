@@ -6,6 +6,10 @@ import { limiter } from './connect'
 const rowSaveQueue: GoogleSpreadsheetRow[] = []
 let queueInProgress = false
 
+export const getQueueLength = () => {
+  return rowSaveQueue.length
+}
+
 export const queueRowSave = (row: GoogleSpreadsheetRow) => {
   const idx = rowSaveQueue.findIndex(savedRow => savedRow.id == row.id)
   if (idx > -1) {
@@ -18,10 +22,6 @@ export const queueRowSave = (row: GoogleSpreadsheetRow) => {
 
 export const runSaveQueue = async () => {
   queueInProgress = true
-  logger({
-    prefix: 'start',
-    message: `Sheet: ${rowSaveQueue.length} rows in queue to save`,
-  })
   while (!isEmpty(rowSaveQueue)) {
     await limiter.removeTokens(1)
     const row = rowSaveQueue.shift()

@@ -9,6 +9,8 @@ import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
 import { settings } from './sheet/settings'
+import { getQueueLength } from './sheet/saveQueue'
+import { villages } from './sheet/villages'
 
 export interface LoopFnProps {
   world: World
@@ -28,6 +30,7 @@ export const startLoop = async () => {
   // Load data
   await settings.loadData()
   await players.loadData()
+  await villages.loadData()
 
   loop()
   setInterval(function () {
@@ -39,11 +42,6 @@ export const startLoop = async () => {
 const loop = async () => {
   const world = settings.getById('world')
 
-  // if (!world) {
-  //   logAlert('Unable to load active world, stopping loop', 'Loop')
-  //   return
-  // }
-
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
 
   // Sync TW if it's been more than hour since last sync
@@ -54,6 +52,12 @@ const loop = async () => {
     } else {
       logAlert('No active world set', 'TW')
     }
+  }
+
+  // Log queue size if active
+  const saveQueue = getQueueLength()
+  if (saveQueue > 0) {
+    logger({ prefix: 'start', message: `${saveQueue} Updates queued to save` })
   }
 
   // Sync Todoist Projects

@@ -1,7 +1,7 @@
-import { BaseSheetModel, SheetData } from './sheetData'
+import { IdData, SheetData } from './sheetData'
 import { keys } from 'ts-transformer-keys'
 
-export interface TestData extends BaseSheetModel {
+export interface TestData extends IdData {
   id: string
   name: string
   points: number

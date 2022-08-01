@@ -7,41 +7,52 @@ import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
 import { queueRowSave } from './saveQueue'
 
+interface idData {
+  id: string
+  lastEdit: string
+}
+
+type dataParser = (str: string) => any
+
+enum PARSABLE_TYPE {
+  NUMBER,
+  STRING,
+  BOOLEAN,
+}
+
+const typeParserMap = new Map<PARSABLE_TYPE, dataParser>()
+
+typeParserMap.set(PARSABLE_TYPE.NUMBER, (str: string) => parseInt(str))
+typeParserMap.set(PARSABLE_TYPE.STRING, (str: string) => str)
+typeParserMap.set(PARSABLE_TYPE.BOOLEAN, (str: string) => {
+  return str == 'true' || str == 'TRUE' || str == '1'
+})
+
+type headerTypeMap = Map<string, PARSABLE_TYPE>
+
 interface ConstructorProps {
   title: string
-  headers: string[]
+  headerTypeMap: headerTypeMap
 }
 
-export interface BaseSheetModel {
-  lastUpdate?: string
-}
-
-interface IdData {
-  id: string
-  [propName: string]: string | number | boolean
-}
-
-export class SheetData {
+export class SheetData<data extends idData> {
   title: string
-  headers: string[]
-  private sheet: GoogleSpreadsheetWorksheet
-  private rows: GoogleSpreadsheetRow[]
+  headerTypeMap: headerTypeMap
 
-  constructor({ title, headers }: ConstructorProps) {
+  private sheet: GoogleSpreadsheetWorksheet
+  private rows?: GoogleSpreadsheetRow[]
+
+  constructor({ title, headerTypeMap }: ConstructorProps) {
     this.title = title
-    this.headers = headers
+    this.headerTypeMap = headerTypeMap
   }
 
   /*
    * Add new row
    */
-  add = async (values: IdData) => {
-    const data: IdData = {
-      ...values,
-      lastUpdate: nowString(),
-    }
+  add = async (values: data) => {
     await limiter.removeTokens(1)
-    await this.sheet.addRow(data)
+    await this.sheet.addRow(values)
   }
 
   /*
@@ -56,9 +67,9 @@ export class SheetData {
    * Update row
    * Or add if new
    */
-  updateOrAdd = async (values: IdData, changes = false) => {
-    const idx = this.rows.findIndex(row => row.id === values.id)
-    if (this.rows[idx]) {
+  updateOrAdd = async (values: data, changes = false) => {
+    const idx = this.rows?.findIndex(row => row.id === values.id)
+    if (idx) {
       this.headers.forEach(header => {
         if (values[header] && this.rows[idx][header] != values[header]) {
           this.rows[idx][header] = values[header]
