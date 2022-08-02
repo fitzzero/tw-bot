@@ -1,10 +1,7 @@
-import moment from 'moment'
-import { isDev, worldId } from './config'
-import { syncProject } from './todoist/project'
+import { isDev } from './config'
 import { syncTw, syncTwInProgress } from './tw/tribalWars'
-import { World } from './@types/world'
 import { logAlert, logger } from './utility/logger'
-import { nowString, withinLastHour } from './utility/time'
+import { withinLastHour } from './utility/time'
 import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
@@ -13,12 +10,8 @@ import { getQueueLength } from './sheet/saveQueue'
 import { villages } from './sheet/villages'
 import { tribes } from './sheet/tribes'
 import { channels } from './sheet/channels'
-
-export interface LoopFnProps {
-  world: World
-}
-
-export type LoopFn = (props: LoopFnProps) => Promise<void>
+import { messages } from './sheet/messages'
+import { syncDashboard } from './discord/dashboard'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -29,15 +22,7 @@ export const startLoop = async () => {
     if (!testPass) return
   }
 
-  // Load data
-  await settings.loadData()
-  await tribes.loadData()
-  await players.loadData()
-  await villages.loadData()
-  await channels.loadData()
-
-  // Initial sync
-  await channels.syncChannels()
+  await preLoadAndSyncData()
 
   loop()
   setInterval(function () {
@@ -70,4 +55,20 @@ const loop = async () => {
   // Sync Todoist Projects
   // syncProject({ world })
   return
+}
+
+const preLoadAndSyncData = async () => {
+  // TW Data
+  await settings.loadData()
+  await tribes.loadData()
+  await players.loadData()
+  await villages.loadData()
+
+  // Discord Data
+  await channels.loadData()
+  await messages.loadData()
+
+  // Discord Sync
+  await channels.syncChannels()
+  await syncDashboard()
 }

@@ -23,7 +23,7 @@ export const withinLastMinute = (date?: Moment | string) => {
   return !!date.isSame(moment.tz(momentTimeZone), 'minute')
 }
 
-export const getUnix = (date?: Moment) => {
+export const getUnix = (date?: Moment | string) => {
   date = validateMoment(date)
   if (!date) return moment.tz(momentTimeZone).unix()
   return date.tz(momentTimeZone).unix()
