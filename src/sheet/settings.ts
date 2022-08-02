@@ -8,6 +8,13 @@ export interface SettingsData extends RowStructure {
 
 const headers = keys<SettingsData>().map(key => key.toString())
 
+export const enum WarRoomSettings {
+  world = 'world',
+  startCoords = 'startCoordinates',
+  playerR = 'playerRadius',
+  barbR = 'barbRadius',
+}
+
 class Settings extends SheetData<SettingsData> {
   constructor(tabTitle: string, tabHeaders: string[]) {
     super(tabTitle, tabHeaders)
@@ -18,12 +25,12 @@ class Settings extends SheetData<SettingsData> {
   }
 
   getAlertSettings = () => {
-    const coordinates = this.getSettingValue('startCoordinates')
-    const playerRadius = this.getSettingValue('playerRadius')
-    const barbRadius = this.getSettingValue('barbRadius')
+    const coordinates = this.getSettingValue(WarRoomSettings.startCoords)
+    const playerRadius = this.getSettingValue(WarRoomSettings.playerR)
+    const barbRadius = this.getSettingValue(WarRoomSettings.barbR)
     if (!coordinates || !playerRadius || !barbRadius) return
     const coordsSplit = coordinates.split('|')
-    if (!coordsSplit?.[1]) return
+    if (!coordsSplit?.[0]) return
     return {
       x: parseInt(coordsSplit[0]),
       y: parseInt(coordsSplit[1]),

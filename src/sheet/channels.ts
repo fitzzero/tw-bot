@@ -16,7 +16,7 @@ export interface CreateChannelProps {
 
 const headers = keys<ChannelData>().map(key => key.toString())
 
-export enum WarRoomChannels {
+export const enum WarRoomChannels {
   dash = 'dashboard',
   news = 'news-feed',
   todo = 'todo',

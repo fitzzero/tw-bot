@@ -5,11 +5,56 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js'
-import { settings } from '../../sheet/settings'
+import { settings, WarRoomSettings } from '../../sheet/settings'
+import { syncDashboard } from '../dashboard'
+import { overviewDashboard } from '../dashboardMessages/overview'
 import { Modal } from '../modals'
+
+interface SettingField {
+  id: WarRoomSettings
+  label: string
+  maxLength: number
+  required?: boolean
+}
+
+const settingsToSync: SettingField[] = [
+  {
+    id: WarRoomSettings.world,
+    label: 'World short identifier (ie us60)',
+    maxLength: 4,
+    required: true,
+  },
+  {
+    id: WarRoomSettings.startCoords,
+    label: 'Starting coordinates x|y',
+    maxLength: 7,
+  },
+  {
+    id: WarRoomSettings.playerR,
+    label: 'Number of fields for player alerts',
+    maxLength: 3,
+  },
+  {
+    id: WarRoomSettings.barbR,
+    label: 'Number of fields for barbarian alerts',
+    maxLength: 3,
+  },
+]
 
 const controller = async (interaction: ModalSubmitInteraction) => {
   await interaction.deferReply()
+
+  for (const setting of settingsToSync) {
+    const newValue = interaction.fields.getTextInputValue(setting.id)
+    if (!newValue) break
+    await settings.updateOrAdd({
+      id: setting.id,
+      value: newValue,
+    })
+  }
+
+  await syncDashboard(overviewDashboard)
+
   await interaction.deleteReply()
 }
 
@@ -18,25 +63,24 @@ export const modalBuilder = () => {
     .setCustomId('dash-settings-modal')
     .setTitle('War Room Settings')
 
-  const rows = [
-    textRow('world', 'World short identifier (ie us60)'),
-    textRow('startCoordinates', 'Starting coordinates'),
-    textRow('playerRadius', 'Number of fields for player alerts'),
-    textRow('barbRadius', 'Number of fields for barbarian alerts'),
-  ]
+  const rows = []
+
+  for (const setting of settingsToSync) {
+    rows.push(textRow(setting))
+  }
 
   modal.addComponents(rows)
   return modal
 }
 
-const textRow = (settingId: string, label: string) => {
+const textRow = ({ id, label, maxLength, required = false }: SettingField) => {
   const input: TextInputBuilder = new TextInputBuilder()
-    .setCustomId(settingId)
-    .setValue(settings.getSettingValue(settingId) || '')
+    .setCustomId(id)
+    .setValue(settings.getSettingValue(id) || '')
     .setLabel(label)
     .setStyle(TextInputStyle.Short)
-    .setRequired(false)
-    .setMaxLength(4)
+    .setRequired(required)
+    .setMaxLength(maxLength)
 
   return new ActionRowBuilder<TextInputBuilder>().addComponents(input)
 }

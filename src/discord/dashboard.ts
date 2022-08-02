@@ -4,21 +4,29 @@ import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
 import { overviewDashboard } from './dashboardMessages/overview'
 
-export interface DashboardMessages {
+export interface DashboardMessage {
   id: string
   getPayload: () => MessageOptions
 }
 
-const activeDashboards: DashboardMessages[] = [overviewDashboard]
+const activeDashboards: DashboardMessage[] = [overviewDashboard]
 
-export const syncDashboard = async () => {
+export const syncDashboard = async (single?: DashboardMessage) => {
   let success = true
-  for (const dashboard of activeDashboards) {
+  if (single) {
     success = await messages.syncMessage({
-      id: dashboard.id,
+      id: single.id,
       channelId: WarRoomChannels.dash,
-      payload: dashboard.getPayload(),
+      payload: single.getPayload(),
     })
+  } else {
+    for (const dashboard of activeDashboards) {
+      success = await messages.syncMessage({
+        id: dashboard.id,
+        channelId: WarRoomChannels.dash,
+        payload: dashboard.getPayload(),
+      })
+    }
   }
   if (success) {
     logger({ message: 'Discord: Synced dashboard messages', prefix: 'success' })

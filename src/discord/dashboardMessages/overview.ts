@@ -3,20 +3,20 @@ import { BotInfo } from '../..'
 import { botConfig } from '../../config'
 import { settings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
-import { DashboardMessages } from '../dashboard'
+import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
   const world = settings.getById('world')
   const map = settings.getSettingValue('map')
 
-  let content = ''
+  let description = ''
   const alertSettings = settings.getAlertSettings()
   if (alertSettings) {
-    content = `Watching Players within __${alertSettings.playerRadius}__, Barbs within __${alertSettings.barbRadius}__ of **(${alertSettings.x}|${alertSettings.y})**`
+    description = `Watching Players within __${alertSettings.playerRadius}__, Barbs within __${alertSettings.barbRadius}__ of **(${alertSettings.x}|${alertSettings.y})**`
   }
 
   const options: MessageOptions = {
-    content,
+    content: '',
     tts: false,
     components: [
       {
@@ -49,7 +49,7 @@ const overview = () => {
     embeds: [
       {
         title: `Welcome to War Room v${BotInfo.version}`,
-        description: '',
+        description,
         color: 0xdb8dff,
         fields: [
           {
@@ -79,7 +79,7 @@ const overview = () => {
   return options
 }
 
-export const overviewDashboard: DashboardMessages = {
+export const overviewDashboard: DashboardMessage = {
   id: 'overview',
   getPayload: overview,
 }
