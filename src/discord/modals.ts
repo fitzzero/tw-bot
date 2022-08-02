@@ -1,4 +1,5 @@
 import { ModalBuilder, ModalSubmitInteraction } from 'discord.js'
+import { settingsModal } from './modals/editSettings'
 
 export interface Modal {
   customId: string
@@ -6,4 +7,4 @@ export interface Modal {
   controller: (interaction: ModalSubmitInteraction) => Promise<void>
 }
 
-export const activeModals: Modal[] = []
+export const activeModals: Modal[] = [settingsModal]

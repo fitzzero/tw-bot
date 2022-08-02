@@ -35,6 +35,8 @@ const textRow = (settingId: string, label: string) => {
     .setValue(settings.getSettingValue(settingId) || '')
     .setLabel(label)
     .setStyle(TextInputStyle.Short)
+    .setRequired(false)
+    .setMaxLength(4)
 
   return new ActionRowBuilder<TextInputBuilder>().addComponents(input)
 }
