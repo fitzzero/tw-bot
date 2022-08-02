@@ -7,7 +7,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
+import { CommandInteraction, ContextMenuCommandBuilder } from 'discord.js'
 
 const token = process.env.WRTOKEN
 
@@ -16,7 +16,10 @@ const rest = new REST({ version: '9' }).setToken(token || '')
 export type CommandFn = (interaction: CommandInteraction) => Promise<void>
 
 export interface Command {
-  documentation: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder
+  documentation:
+    | SlashCommandBuilder
+    | SlashCommandSubcommandsOnlyBuilder
+    | ContextMenuCommandBuilder
   controller: CommandFn
 }
 
@@ -29,10 +32,7 @@ export const registerCommands = async () => {
     )
 
     await rest.put(
-      Routes.applicationGuildCommands(
-        botConfig.client as any,
-        botConfig.guild as any
-      ),
+      Routes.applicationGuildCommands(botConfig.client, botConfig.guild),
       { body: commandDocumentation }
     )
     logger({ prefix: 'success', message: `Discord: Registered (/) commands` })

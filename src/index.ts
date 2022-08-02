@@ -4,7 +4,7 @@ import { logger } from './utility/logger'
 import { isDev } from './config'
 import { startDiscord } from './discord/connect'
 
-const version = '1.0'
+export const version = '1.0'
 
 if (isDev) logger({ prefix: 'success', message: `v${version} starting in Dev` })
 else logger({ prefix: 'success', message: `v${version} starting in Prod` })

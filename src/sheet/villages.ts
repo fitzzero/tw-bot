@@ -21,6 +21,12 @@ class Villages extends SheetData<VillageData> {
 
   auditAndUpdate = async (newData: VillageData) => {
     const existingData = this.getById(newData.id)
+    if (!existingData) {
+      await this.add(newData)
+      return
+    }
+
+    // Point drop
   }
 }
 

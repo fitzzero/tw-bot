@@ -7,6 +7,7 @@ export const isDev = !!process.argv[2]
 export const worldId = isDev ? 1 : 56
 
 export interface BotConfig {
+  category: string
   client: string
   commands: Command[]
   coreDoc: string
@@ -15,6 +16,7 @@ export interface BotConfig {
 }
 
 export const devDiscordConfig: BotConfig = {
+  category: '904962974635130880',
   client: '896860363541348413',
   commands: [ping, todo],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
@@ -23,6 +25,7 @@ export const devDiscordConfig: BotConfig = {
 }
 
 export const prodDiscordConfig: BotConfig = {
+  category: '904857595272114240',
   client: '896860363541348413',
   commands: [],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',

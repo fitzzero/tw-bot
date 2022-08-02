@@ -12,6 +12,7 @@ import { settings } from './sheet/settings'
 import { getQueueLength } from './sheet/saveQueue'
 import { villages } from './sheet/villages'
 import { tribes } from './sheet/tribes'
+import { channels } from './sheet/channels'
 
 export interface LoopFnProps {
   world: World
@@ -33,6 +34,10 @@ export const startLoop = async () => {
   await tribes.loadData()
   await players.loadData()
   await villages.loadData()
+  await channels.loadData()
+
+  // Initial sync
+  await channels.syncChannels()
 
   loop()
   setInterval(function () {
@@ -45,11 +50,12 @@ const loop = async () => {
   const world = settings.getById('world')
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
-  // Sync TW if it's been more than hour since last sync
+  // Re-sync if it's been more than hour since last sync
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
     if (world) {
       settings.updateOrAdd(world, true)
       syncTw(world.value)
+      channels.syncChannels()
     } else {
       logAlert('No active world set', 'TW')
     }
