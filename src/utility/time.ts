@@ -1,9 +1,9 @@
 import moment from 'moment-timezone'
 import { Moment } from 'moment'
 
-const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss'
-const momentTimeZone = 'America/New_York'
-const momentUtcOffset = '-0400'
+export const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss'
+export const momentTimeZone = 'America/New_York'
+export const momentUtcOffset = '-0400'
 
 export const withinLastDay = (date?: Moment | string) => {
   date = validateMoment(date)

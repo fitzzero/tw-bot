@@ -61,6 +61,21 @@ class Messages extends SheetData<MessageData> {
     return
   }
 
+  rebuildMessage = async ({ id, channelId, payload }: CreateMessageProps) => {
+    let success = true
+    const existingMessage = await this.getDiscordMessage(id)
+    if (existingMessage) {
+      try {
+        success = !!(await existingMessage.delete())
+      } catch (err) {
+        logAlert(err, 'Discord')
+        success = false
+      }
+    }
+    success = !!(await this.createMessage({ id, channelId, payload }))
+    return success
+  }
+
   syncMessage = async ({ id, channelId, payload }: CreateMessageProps) => {
     let success = true
     const existingMessage = await this.getDiscordMessage(id)

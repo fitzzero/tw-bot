@@ -8,7 +8,7 @@ interface TodoDashboardProps {
   item: Item
 }
 
-const getMessageOptions = ({ item }: TodoDashboardProps) => {
+export const getTodoPayload = ({ item }: TodoDashboardProps) => {
   const date = moment.tz(item?.due?.date, 'America/New_York')
   const due = date.unix()
 
@@ -46,8 +46,8 @@ const getMessageOptions = ({ item }: TodoDashboardProps) => {
     embeds: [
       {
         title: item?.content,
-        description: `Todo at <t:${due}> (<t:${due}:R>`,
-        color: date.isBefore() ? 0xfffd99 : 0xeb3d3d,
+        description: `Todo at <t:${due}> (<t:${due}:R>)`,
+        color: date.isAfter() ? 0xfffd99 : 0xeb3d3d,
       },
     ],
   }
@@ -60,7 +60,7 @@ export const syncTodoDashboard = async ({ item }: TodoDashboardProps) => {
   success = await messages.syncMessage({
     id: `todo-${item.id}`,
     channelId: WarRoomChannels.todo,
-    payload: getMessageOptions({ item }),
+    payload: getTodoPayload({ item }),
   })
   return success
 }

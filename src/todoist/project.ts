@@ -1,5 +1,5 @@
 import { Project } from 'todoist/dist/v8-types'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
 import { todoist } from './connect'
 import { syncItems } from './items'
 
@@ -15,9 +15,14 @@ export const syncProject = async (world: string) => {
   await todoist.sync()
 
   if (!projectInMemory) {
-    projectInMemory = todoist.projects
-      .get()
-      .find(project => project.name === world)
+    try {
+      projectInMemory = todoist.projects
+        .get()
+        .find(project => project.name === world)
+    } catch (err) {
+      logAlert(err, 'Todoist')
+      return
+    }
   }
   if (!projectInMemory) {
     logger({

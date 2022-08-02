@@ -1,8 +1,14 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
 import { ItemData } from '../@types/item'
-import { logger } from '../utility/logger'
-import { withinLastMinute } from '../utility/time'
+import { getTodoPayload } from '../discord/dashboardMessages/todo'
+import { messages } from '../sheet/messages'
+import { logAlert, logger } from '../utility/logger'
+import {
+  momentTimeZone,
+  momentUtcOffset,
+  withinLastMinute,
+} from '../utility/time'
 import { todoist } from './connect'
 import { getActiveProject } from './project'
 
@@ -13,13 +19,19 @@ export const getActiveItems = (): Item[] | undefined => itemsInMemory
 export const syncItems = async () => {
   const project = getActiveProject()
   if (!todoist || !project) return
-
-  itemsInMemory = todoist.items.get()
+  try {
+    itemsInMemory = todoist.items.get()
+  } catch (err) {
+    logAlert(err, 'Todoist')
+    return
+  }
 
   // Get items due this minute
   const items = itemsInMemory.filter(item => {
-    if (item.project_id != project.id) return
-    const due = moment(item?.due?.date)
+    if (item.project_id != project.id || item.is_deleted) return
+    console.log(item?.due?.date)
+    const due = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
+    console.log(due)
     if (!due) return false
     const active = withinLastMinute(due)
     if (active) {
@@ -29,9 +41,16 @@ export const syncItems = async () => {
   if (items.length > 0) {
     logger({ prefix: 'success', message: `Found ${items.length} active tasks` })
   }
-  items.forEach(item => {
-    // TODO: discordAlert({ message: `Todo: ${item?.content}` })
-  })
+  for (const item of items) {
+    const messageData = messages.getById(`todo-${item.id}`)
+    if (messageData) {
+      await messages.rebuildMessage({
+        id: messageData.id,
+        channelId: messageData.channelId,
+        payload: getTodoPayload({ item }),
+      })
+    }
+  }
 }
 
 export const addItem = async ({ content, projectId, dueString }: ItemData) => {
