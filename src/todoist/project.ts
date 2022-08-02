@@ -7,12 +7,6 @@ let projectInMemory: Project | undefined = undefined
 
 export const getActiveProject = () => projectInMemory
 
-export interface ProjectFnProps {
-  project: Project
-}
-
-export type ProjectFn = (props: ProjectFnProps) => Promise<void>
-
 export const syncProject = async (world: string) => {
   if (!todoist) {
     logger({ prefix: 'alert', message: 'Todoist: Error connecting' })
@@ -33,7 +27,7 @@ export const syncProject = async (world: string) => {
     return
   }
 
-  await syncItems({ project: projectInMemory })
+  await syncItems()
 
   logger({
     prefix: 'success',

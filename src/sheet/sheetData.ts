@@ -117,6 +117,7 @@ export class SheetData<data extends RowStructure> {
    * Create a new sheet if not found
    */
   private getOrCreateSheet = async () => {
+    if (!doc) return
     const title = this.title
     let sheet = doc.sheetsByTitle[title]
     if (!sheet) {

@@ -3,7 +3,7 @@ import { RateLimiter } from 'limiter'
 import { botConfig } from '../config'
 import { logger } from '../utility/logger'
 
-export const doc = new GoogleSpreadsheet(botConfig.coreDoc)
+export var doc: GoogleSpreadsheet | undefined = undefined
 
 export const limiter = new RateLimiter({ tokensPerInterval: 1, interval: 400 })
 
@@ -13,6 +13,7 @@ const auth = {
 }
 
 export const loadDoc = async () => {
+  doc = new GoogleSpreadsheet(botConfig.coreDoc)
   await doc.useServiceAccountAuth(auth)
   await doc.loadInfo()
 

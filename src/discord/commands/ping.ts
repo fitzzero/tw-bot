@@ -1,11 +1,12 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { Command, CommandFn } from '../commands'
+import { CommandInteraction } from 'discord.js'
+import { Command } from '../commands'
 
 const documentation = new SlashCommandBuilder()
   .setName('ping')
   .setDescription('Replies with Pong!')
 
-const controller: CommandFn = async interaction => {
+const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isCommand()) return
 
   const content = `Pong`

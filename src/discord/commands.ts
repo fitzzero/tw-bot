@@ -13,14 +13,12 @@ const token = process.env.WRTOKEN
 
 const rest = new REST({ version: '9' }).setToken(token || '')
 
-export type CommandFn = (interaction: CommandInteraction) => Promise<void>
-
 export interface Command {
   documentation:
     | SlashCommandBuilder
     | SlashCommandSubcommandsOnlyBuilder
     | ContextMenuCommandBuilder
-  controller: CommandFn
+  controller: (interaction: CommandInteraction) => Promise<void>
 }
 
 export const activeCommands = (): Command[] => botConfig.commands

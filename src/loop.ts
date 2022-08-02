@@ -12,6 +12,7 @@ import { tribes } from './sheet/tribes'
 import { channels } from './sheet/channels'
 import { messages } from './sheet/messages'
 import { syncDashboard } from './discord/dashboard'
+import { syncProject } from './todoist/project'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -33,17 +34,17 @@ export const startLoop = async () => {
 
 const loop = async () => {
   const world = settings.getById('world')
+  if (!world) {
+    logAlert('No active world set', 'TW')
+    return
+  }
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
   // Re-sync if it's been more than hour since last sync
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
-    if (world) {
-      settings.updateOrAdd(world, true)
-      syncTw(world.value)
-      channels.syncChannels()
-    } else {
-      logAlert('No active world set', 'TW')
-    }
+    settings.updateOrAdd(world, true)
+    syncTw(world.value)
+    channels.syncChannels()
   }
 
   // Log queue size if active
@@ -53,7 +54,8 @@ const loop = async () => {
   }
 
   // Sync Todoist Projects
-  // syncProject({ world })
+  syncProject(world.value)
+
   return
 }
 

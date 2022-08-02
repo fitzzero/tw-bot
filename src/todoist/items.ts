@@ -4,23 +4,25 @@ import { ItemData } from '../@types/item'
 import { logger } from '../utility/logger'
 import { withinLastMinute } from '../utility/time'
 import { todoist } from './connect'
-import { ProjectFn } from './project'
+import { getActiveProject } from './project'
 
 let itemsInMemory: Item[] | undefined = undefined
 
 export const getActiveItems = (): Item[] | undefined => itemsInMemory
 
-export const syncItems: ProjectFn = async ({ project }) => {
-  if (!todoist) return
+export const syncItems = async () => {
+  const project = getActiveProject()
+  if (!todoist || !project) return
 
   itemsInMemory = todoist.items.get()
 
   // Get items due this minute
   const items = itemsInMemory.filter(item => {
-    const due = item?.due?.date
+    if (item.project_id != project.id) return
+    const due = moment(item?.due?.date)
     if (!due) return false
     const active = withinLastMinute(due)
-    if (item.project_id === project.id && active) {
+    if (active) {
       return true
     } else return false
   })

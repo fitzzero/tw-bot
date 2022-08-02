@@ -48,7 +48,7 @@ const overview = () => {
     ],
     embeds: [
       {
-        title: `Welcome to War Room v${BotInfo.version}`,
+        title: `War Room v${BotInfo.version}`,
         description,
         color: 0xdb8dff,
         fields: [
