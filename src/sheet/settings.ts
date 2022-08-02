@@ -18,14 +18,15 @@ class Settings extends SheetData<SettingsData> {
   }
 
   getAlertSettings = () => {
-    const startX = this.getSettingValue('startX')
-    const startY = this.getSettingValue('startY')
+    const coordinates = this.getSettingValue('startCoordinates')
     const playerRadius = this.getSettingValue('playerRadius')
     const barbRadius = this.getSettingValue('barbRadius')
-    if (!startX || !startY || !playerRadius || !barbRadius) return
+    if (!coordinates || !playerRadius || !barbRadius) return
+    const coordsSplit = coordinates.split('|')
+    if (!coordsSplit?.[1]) return
     return {
-      x: parseInt(startX),
-      y: parseInt(startY),
+      x: parseInt(coordsSplit[0]),
+      y: parseInt(coordsSplit[1]),
       playerRadius: parseInt(playerRadius),
       barbRadius: parseInt(barbRadius),
     }

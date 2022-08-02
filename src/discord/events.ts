@@ -1,8 +1,14 @@
-import { ButtonInteraction, CommandInteraction } from 'discord.js'
+import {
+  ButtonInteraction,
+  CommandInteraction,
+  ModalSubmitInteraction,
+} from 'discord.js'
 import { botConfig } from '../config'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
+import { activeButtons } from './buttons'
 import { activeCommands } from './commands'
 import { discordClient as discord } from './connect'
+import { activeModals } from './modals'
 
 export const DiscordEvents = () => {
   discord.on('ready', () => {
@@ -10,7 +16,6 @@ export const DiscordEvents = () => {
       prefix: 'success',
       message: `Discord: Connected as ${discord.user?.username}`,
     })
-    // TODO: Load Active Channels/Threads/Messages?
   })
 
   try {
@@ -21,6 +26,9 @@ export const DiscordEvents = () => {
       }
       if (interaction.isButton()) {
         handleButton(interaction)
+      }
+      if (interaction.isModalSubmit()) {
+        handleModalSubmit(interaction)
       }
     })
   } catch (err) {
@@ -34,9 +42,31 @@ export const DiscordEvents = () => {
 const handleCommand = (interaction: CommandInteraction) => {
   activeCommands().forEach(command => {
     if (interaction.commandName === command.documentation.name) {
-      if (interaction.isCommand()) command.controller(interaction)
+      command.controller(interaction)
     }
   })
 }
 
-const handleButton = (interaction: ButtonInteraction) => {}
+const handleButton = (interaction: ButtonInteraction) => {
+  activeButtons.forEach(button => {
+    if (interaction.customId === button.customId) {
+      try {
+        button.controller(interaction)
+      } catch (err) {
+        logAlert(err, 'Discord Button')
+      }
+    }
+  })
+}
+
+const handleModalSubmit = (interaction: ModalSubmitInteraction) => {
+  activeModals.forEach(modal => {
+    if (interaction.customId === modal.customId) {
+      try {
+        modal.controller(interaction)
+      } catch (err) {
+        logAlert(err, 'Discord Button')
+      }
+    }
+  })
+}
