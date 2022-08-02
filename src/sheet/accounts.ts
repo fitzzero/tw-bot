@@ -8,8 +8,8 @@ import { RowStructure, SheetData } from './sheetData'
 export interface AccountsData extends RowStructure {
   id: string
   handle: string
-  browser: boolean
-  mobile: boolean
+  browser: string
+  mobile: string
   lastSignOn: string
   minutesActive: number
   todos: number
@@ -27,24 +27,22 @@ class Accounts extends SheetData<AccountsData> {
     const accountData = this.getById(id)
     if (accountData) {
       // Update data
-      success = this.update({
-        ...accountData,
-        [property]: true,
-        lastSignOn: nowString(),
-      })
+      const updateData = { ...accountData, lastSignOn: nowString() }
+      updateData[property] = 'TRUE'
+      success = this.update(updateData)
     } else {
       const member = await this.getDiscordMember(id)
       if (!member) return
       const newAccount: AccountsData = {
         id: member.id,
         handle: member.displayName,
-        browser: false,
-        mobile: false,
+        browser: 'FALSE',
+        mobile: 'FALSE',
         lastSignOn: nowString(),
         minutesActive: 0,
         todos: 0,
       }
-      newAccount[property] = true
+      newAccount[property] = 'TRUE'
       success = await this.add(newAccount)
     }
 
@@ -64,10 +62,10 @@ class Accounts extends SheetData<AccountsData> {
 
   clearAccount = async (id: string) => {
     const accountData = this.getById(id)
-    if (accountData?.browser) {
+    if (accountData?.browser == 'TRUE') {
       await this.clearRole('browser')
     }
-    if (accountData?.mobile) {
+    if (accountData?.mobile == 'TRUE') {
       await this.clearRole('mobile')
     }
   }
@@ -79,12 +77,10 @@ class Accounts extends SheetData<AccountsData> {
     const timeOnline = getMinutesSince(accountData.lastSignOn) || 0
     const minutesActive = accountData.minutesActive + timeOnline
 
+    const newData = { ...accountData, minutesActive }
+    newData[property] = 'FALSE'
     // Update data
-    this.update({
-      ...accountData,
-      [property]: false,
-      minutesActive,
-    })
+    this.update(newData)
 
     // Update discord
     const role = await this.getDiscordRole(property)
