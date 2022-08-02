@@ -29,6 +29,12 @@ export const getUnix = (date?: Moment | string) => {
   return date.tz(momentTimeZone).unix()
 }
 
+export const getMinutesSince = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return date.diff(moment.tz(momentTimeZone), 'minutes')
+}
+
 export const nowString = () => {
   return moment().tz(momentTimeZone).format(momentStringFormat)
 }

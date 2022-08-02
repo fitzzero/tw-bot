@@ -63,6 +63,19 @@ export class SheetData<data extends RowStructure> {
   }
 
   /*
+   * Get row by id
+   */
+  getByProperty = (property: string, value: RowData) => {
+    const found = this.rows?.find(row => row[property] == value)
+    if (!found) return
+    const foundObj: any = {}
+    this.headers.forEach(header => {
+      foundObj[header] = found[header]
+    })
+    return foundObj as data & BaseSheetModel
+  }
+
+  /*
    * Update existing
    */
   update = (values: data, changes = false) => {

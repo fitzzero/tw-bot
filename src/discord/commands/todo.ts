@@ -48,9 +48,7 @@ const controller = async (interaction: CommandInteraction) => {
     const success = await syncTodoDashboard({ item: newItem })
     if (success) {
       const todoChannelData = channels.getById(WarRoomChannels.todo)
-      await interaction.editReply(
-        `New todo added to <#${todoChannelData?.channelId}>`
-      )
+      await interaction.editReply(`New <#${todoChannelData?.channelId}> added`)
     } else {
       closeCommand(interaction)
     }

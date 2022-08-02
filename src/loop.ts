@@ -13,6 +13,7 @@ import { channels } from './sheet/channels'
 import { messages } from './sheet/messages'
 import { syncDashboard } from './discord/dashboard'
 import { syncProject } from './todoist/project'
+import { accounts } from './sheet/accounts'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -67,6 +68,7 @@ const preLoadAndSyncData = async () => {
   await villages.loadData()
 
   // Discord Data
+  await accounts.loadData()
   await channels.loadData()
   await messages.loadData()
 

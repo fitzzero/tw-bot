@@ -13,6 +13,8 @@ export const enum WarRoomSettings {
   startCoords = 'startCoordinates',
   playerR = 'playerRadius',
   barbR = 'barbRadius',
+  browserId = 'browserRoleId',
+  mobileId = 'mobileRoleId',
 }
 
 class Settings extends SheetData<SettingsData> {

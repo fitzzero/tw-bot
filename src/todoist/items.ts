@@ -29,9 +29,7 @@ export const syncItems = async () => {
   // Get items due this minute
   const items = itemsInMemory.filter(item => {
     if (item.project_id != project.id || item.is_deleted) return
-    console.log(item?.due?.date)
     const due = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
-    console.log(due)
     if (!due) return false
     const active = withinLastMinute(due)
     if (active) {

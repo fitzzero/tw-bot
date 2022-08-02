@@ -1,4 +1,5 @@
 import { ButtonInteraction } from 'discord.js'
+import { onlineBrowser, onlineMobile, onlineOffline } from './buttons/online'
 import { settingsButton } from './buttons/settings'
 
 export interface Button {
@@ -6,4 +7,9 @@ export interface Button {
   controller: (interaction: ButtonInteraction) => Promise<void>
 }
 
-export const activeButtons: Button[] = [settingsButton]
+export const activeButtons: Button[] = [
+  settingsButton,
+  onlineBrowser,
+  onlineMobile,
+  onlineOffline,
+]

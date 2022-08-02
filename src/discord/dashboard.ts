@@ -2,6 +2,7 @@ import { MessageOptions } from 'discord.js'
 import { WarRoomChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
+import { onlineDashboard } from './dashboardMessages/online'
 import { overviewDashboard } from './dashboardMessages/overview'
 
 export interface DashboardMessage {
@@ -9,7 +10,10 @@ export interface DashboardMessage {
   getPayload: () => MessageOptions
 }
 
-const activeDashboards: DashboardMessage[] = [overviewDashboard]
+const activeDashboards: DashboardMessage[] = [
+  overviewDashboard,
+  onlineDashboard,
+]
 
 export const syncDashboard = async (single?: DashboardMessage) => {
   let success = true
