@@ -17,24 +17,21 @@ const overview = () => {
         type: 1,
         components: [
           {
-            style: !!accountBrowser ? 2 : 3,
+            style: !!accountBrowser ? 4 : 3,
             label: `Browser`,
             custom_id: `online-browser`,
-            disabled: !!accountBrowser,
             type: 2,
           },
           {
-            style: !!accountMobile ? 2 : 3,
+            style: !!accountMobile ? 4 : 3,
             label: `Mobile`,
             custom_id: `online-mobile`,
-            disabled: !!accountMobile,
             type: 2,
           },
           {
-            style: 4,
+            style: 1,
             label: `Sign Off`,
             custom_id: `online-offline`,
-            disabled: !accountMobile && !accountBrowser,
             type: 2,
           },
         ],
