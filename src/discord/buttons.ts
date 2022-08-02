@@ -1,6 +1,7 @@
 import { ButtonInteraction } from 'discord.js'
 import { onlineBrowser, onlineMobile, onlineOffline } from './buttons/online'
 import { settingsButton } from './buttons/settings'
+import { todoComplete, todoDelete } from './buttons/todo'
 
 export interface Button {
   customId: string
@@ -12,4 +13,6 @@ export const activeButtons: Button[] = [
   onlineBrowser,
   onlineMobile,
   onlineOffline,
+  todoComplete,
+  todoDelete,
 ]

@@ -4,11 +4,7 @@ import { ItemData } from '../@types/item'
 import { getTodoPayload } from '../discord/dashboardMessages/todo'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
-import {
-  momentTimeZone,
-  momentUtcOffset,
-  withinLastMinute,
-} from '../utility/time'
+import { momentUtcOffset, withinLastMinute } from '../utility/time'
 import { todoist } from './connect'
 import { getActiveProject } from './project'
 
@@ -16,15 +12,29 @@ let itemsInMemory: Item[] | undefined = undefined
 
 export const getActiveItems = (): Item[] | undefined => itemsInMemory
 
-export const syncItems = async () => {
-  const project = getActiveProject()
-  if (!todoist || !project) return
+export const getItemById = (id: string) => {
+  if (!todoist) return
+  loadItems()
+  if (!itemsInMemory) return
+
+  return itemsInMemory.find(item => item.id.toString() == id)
+}
+
+export const loadItems = () => {
+  if (!todoist) return
   try {
     itemsInMemory = todoist.items.get()
   } catch (err) {
     logAlert(err, 'Todoist')
     return
   }
+}
+
+export const syncItems = async () => {
+  const project = getActiveProject()
+  if (!todoist || !project) return
+  loadItems()
+  if (!itemsInMemory) return
 
   // Get items due this minute
   const items = itemsInMemory.filter(item => {

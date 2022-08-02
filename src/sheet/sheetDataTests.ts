@@ -22,6 +22,16 @@ export const runSheetDataTests = async () => {
 
   const test1 = testData.getById('test1')
   if (test1?.name != 'Two') return false
+
+  await testData.updateOrAdd({
+    id: 'test2',
+    name: 'Three',
+    points: 5,
+  })
+
+  const test2 = testData.getByProperty('name', 'Three')
+  if (test2?.name != 'Three') return false
+
   await testData.updateOrAdd({
     id: 'test1',
     name: 'One',

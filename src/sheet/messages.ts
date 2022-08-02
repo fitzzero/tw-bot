@@ -47,6 +47,21 @@ class Messages extends SheetData<MessageData> {
     }
   }
 
+  deleteMessage = async (id: string) => {
+    let success = true
+    const existingMessage = await this.getDiscordMessage(id)
+    if (existingMessage) {
+      try {
+        success = !!(await existingMessage.delete())
+        if (success) success = !!(await this.removeById(id))
+      } catch (err) {
+        logAlert(err, 'Discord')
+        success = false
+      }
+    }
+    return success
+  }
+
   getDiscordMessage = async (id: string) => {
     const messageData = this.getById(id)
     if (!messageData) return

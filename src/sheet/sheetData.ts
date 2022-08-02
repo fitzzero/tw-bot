@@ -42,6 +42,7 @@ export class SheetData<data extends RowStructure> {
     await limiter.removeTokens(1)
     try {
       await this.sheet.addRow({ ...values, lastUpdate: nowString() })
+      this.rows = await this.sheet.getRows()
       return true
     } catch (err) {
       logAlert(err, 'Sheet Add')
@@ -73,6 +74,23 @@ export class SheetData<data extends RowStructure> {
       foundObj[header] = found[header]
     })
     return foundObj as data & BaseSheetModel
+  }
+
+  /*
+   * Add new row
+   */
+  removeById = async (id: string) => {
+    const found = this.rows?.find(row => row.id == id)
+    if (!found) return
+    await limiter.removeTokens(1)
+    try {
+      await found.delete()
+      this.rows = await this.sheet.getRows()
+      return true
+    } catch (err) {
+      logAlert(err, 'Sheet Remove')
+      return false
+    }
   }
 
   /*
