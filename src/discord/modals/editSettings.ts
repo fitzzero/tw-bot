@@ -9,7 +9,7 @@ import { settings } from '../../sheet/settings'
 import { Modal } from '../modals'
 
 const controller = async (interaction: ModalSubmitInteraction) => {
-  await interaction.deferReply({ ephemeral: true })
+  await interaction.deferReply()
   await interaction.deleteReply()
 }
 
