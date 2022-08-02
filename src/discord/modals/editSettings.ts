@@ -20,9 +20,9 @@ export const modalBuilder = () => {
 
   const rows = [
     textRow('world', 'World short identifier (ie us60)'),
-    textRow('startCoordinates', 'Starting coordinates (for radius alerts)'),
-    textRow('playerRadius', 'Number of fields for player alerts (from start)'),
-    textRow('barbRadius', 'Number of fields for player alerts (from start)'),
+    textRow('startCoordinates', 'Starting coordinates'),
+    textRow('playerRadius', 'Number of fields for player alerts'),
+    textRow('barbRadius', 'Number of fields for barbarian alerts'),
   ]
 
   modal.addComponents(rows)
@@ -31,7 +31,7 @@ export const modalBuilder = () => {
 
 const textRow = (settingId: string, label: string) => {
   const input: TextInputBuilder = new TextInputBuilder()
-    .setCustomId('world')
+    .setCustomId(settingId)
     .setValue(settings.getSettingValue(settingId) || '')
     .setLabel(label)
     .setStyle(TextInputStyle.Short)
