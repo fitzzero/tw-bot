@@ -7,9 +7,16 @@ import { DashboardMessages } from '../dashboard'
 
 const overview = () => {
   const world = settings.getById('world')
-  const map = settings.getById('map')?.value
+  const map = settings.getSettingValue('map')
+
+  let content = ''
+  const alertSettings = settings.getAlertSettings()
+  if (alertSettings) {
+    content = `Watching Players within __${alertSettings.playerRadius}__, Barbs within __${alertSettings.barbRadius}__ of **(${alertSettings.x}|${alertSettings.y})**`
+  }
+
   const options: MessageOptions = {
-    content: '',
+    content,
     tts: false,
     components: [
       {

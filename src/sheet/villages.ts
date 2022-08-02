@@ -1,4 +1,5 @@
 import { keys } from 'ts-transformer-keys'
+import { settings } from './settings'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface VillageData extends RowStructure {
