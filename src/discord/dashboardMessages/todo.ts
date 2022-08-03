@@ -46,13 +46,6 @@ export const getTodoPayload = ({ item }: TodoDashboardProps) => {
             custom_id: `todo-delete`,
             type: 2,
           },
-          {
-            style: 2,
-            label: `Edit (coming soon)`,
-            custom_id: `todo-edit`,
-            type: 2,
-            disabled: true,
-          },
         ],
       },
     ],

@@ -1,6 +1,5 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
-import { ItemData } from '../@types/item'
 import { getTodoPayload } from '../discord/dashboardMessages/todo'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
@@ -59,18 +58,4 @@ export const syncItems = async () => {
       })
     }
   }
-}
-
-export const addItem = async ({ content, projectId, dueString }: ItemData) => {
-  if (!todoist?.items) return
-
-  const newItem = (await todoist.items.add({
-    content,
-    project_id: projectId,
-    // Problem with 'todoist' Type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    due: { string: dueString } as any,
-  })) as Item
-
-  return newItem
 }
