@@ -3,6 +3,7 @@ import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
 import { Button } from '../buttons'
+import { getTodoPayload } from '../dashboardMessages/todo'
 
 const handleClose = async (
   interaction: ButtonInteraction,
@@ -17,11 +18,21 @@ const handleClose = async (
 
   if (!todoist || !item) return
   if (complete) {
-    await todoist.items.complete({ ...item, date_completed: undefined })
+    await todoist.items.close({ ...item })
+    const newItem = getItemById(todoId)
+    if (newItem) {
+      await messages.syncMessage({
+        id: messageData.id,
+        channelId: messageData.channelId,
+        payload: getTodoPayload({ item: newItem }),
+      })
+    } else {
+      await todoist.items.delete({ ...item })
+    }
   } else {
     await todoist.items.delete({ ...item })
+    await messages.deleteMessage(messageData.id)
   }
-  await messages.deleteMessage(messageData.id)
 }
 
 const handleComplete = async (interaction: ButtonInteraction) => {
