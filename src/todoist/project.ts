@@ -12,7 +12,11 @@ export const syncProject = async (world: string) => {
     logger({ prefix: 'alert', message: 'Todoist: Error connecting' })
     return
   }
-  await todoist.sync()
+  try {
+    await todoist.sync()
+  } catch (err) {
+    logAlert(err, 'Todoist')
+  }
 
   if (!projectInMemory) {
     try {
