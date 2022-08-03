@@ -28,7 +28,9 @@ export const runSaveQueue = async () => {
     const row = rowSaveQueue.shift()
     if (!row) break
     try {
-      if (botConfig.writeEnabled) await row.save()
+      // https://theoephraim.github.io/node-google-spreadsheet/#/classes/google-spreadsheet-row?id=fn-save
+      // @ts-ignore
+      if (botConfig.writeEnabled) await row.save({ raw: true })
       else {
         logger({ prefix: 'start', message: `${row.id} updated` })
       }

@@ -34,7 +34,7 @@ export const runSheetDataTests = async () => {
 
   await testData.updateOrAdd({
     id: 'test1',
-    name: 'One',
+    name: '0001',
     points: '5',
   })
   return true
