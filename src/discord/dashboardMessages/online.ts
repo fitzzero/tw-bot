@@ -10,11 +10,11 @@ const overview = () => {
   const mobileUnix = getUnix(accountMobile?.lastSignOn)
 
   const browserU = !!accountBrowser
-    ? `:computer: <@${accountBrowser.id}>`
-    : ':computer: Browser Open'
+    ? `<@${accountBrowser.id}> - <t:${browserUnix}:R>`
+    : 'Open'
   const mobileU = !!accountMobile
-    ? `:mobile_phone: <@${accountMobile.id}>`
-    : ':mobile_phone: App Open'
+    ? `<@${accountMobile.id}> - <t:${mobileUnix}:R>`
+    : 'Open'
 
   const options: MessageOptions = {
     content: '',
@@ -51,13 +51,13 @@ const overview = () => {
         color: 0xeb3d3d,
         fields: [
           {
-            name: browserU,
-            value: `since <t:${browserUnix}:R>`,
+            name: `:computer: Browser`,
+            value: browserU,
             inline: true,
           },
           {
-            name: mobileU,
-            value: `since <t:${mobileUnix}:R>`,
+            name: `:mobile_phone: Mobile`,
+            value: mobileU,
             inline: true,
           },
         ],
