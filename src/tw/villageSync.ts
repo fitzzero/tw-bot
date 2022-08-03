@@ -14,12 +14,12 @@ export const syncVillages = async (world: string) => {
     const villageData: VillageData = {
       id: data[0],
       name: data[1],
-      x,
-      y,
-      k: Math.floor(y / 100) * 10 + Math.floor(x / 100),
+      x: x.toString(),
+      y: y.toString(),
+      k: Math.floor(y / 100) * 10 + Math.floor(x / 100).toString(),
       playerId: data[4],
-      points: parseInt(data[5]),
-      rank: parseInt(data[6]) || 0,
+      points: data[5],
+      rank: data[6] || '0',
     }
     if (villageData?.id) {
       await villages.updateOrAdd({ ...villageData })
@@ -47,7 +47,7 @@ const fetchVillages = async (world: string): Promise<string[][]> => {
   }
   logger({
     prefix: 'start',
-    message: `TW: Loading ${villages?.length} villages...`,
+    message: `TW: Loading ${villages?.length - 1} villages...`,
   })
 
   return villages

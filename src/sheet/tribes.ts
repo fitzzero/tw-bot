@@ -5,14 +5,14 @@ export interface TribeData extends RowStructure {
   id: string
   name: string
   tag: string
-  members: number
-  villages: number
-  points: number
-  allPoints: number
-  rank: number
-  od: number
-  oda: number
-  odd: number
+  members: string
+  villages: string
+  points: string
+  allPoints: string
+  rank: string
+  od: string
+  oda: string
+  odd: string
 }
 
 const headers = keys<TribeData>().map(key => key.toString())

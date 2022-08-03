@@ -25,13 +25,13 @@ export const syncPlayers = async (world: string) => {
       id: playerId,
       name: data[1],
       tribe: data[2],
-      villages: parseInt(data[3]),
-      points: parseInt(data[4]),
-      rank: parseInt(data[5]) || 0,
-      od: playerOd ? parseInt(playerOd[2]) : 0,
-      oda: playerOda ? parseInt(playerOda[2]) : 0,
-      odd: playerOdd ? parseInt(playerOdd[2]) : 0,
-      ods: playerOds ? parseInt(playerOds[2]) : 0,
+      villages: data[3],
+      points: data[4],
+      rank: data[5] || '0',
+      od: playerOd ? playerOd[2] : '0',
+      oda: playerOda ? playerOda[2] : '0',
+      odd: playerOdd ? playerOdd[2] : '0',
+      ods: playerOds ? playerOds[2] : '0',
     }
     if (playerData?.id) {
       await players.updateOrAdd({ ...playerData })

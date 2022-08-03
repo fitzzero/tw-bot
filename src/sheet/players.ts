@@ -5,13 +5,13 @@ export interface PlayerData extends RowStructure {
   id: string
   name: string
   tribe: string
-  villages: number
-  points: number
-  rank: number
-  od: number
-  oda: number
-  odd: number
-  ods: number
+  villages: string
+  points: string
+  rank: string
+  od: string
+  oda: string
+  odd: string
+  ods: string
 }
 
 const headers = keys<PlayerData>().map(key => key.toString())

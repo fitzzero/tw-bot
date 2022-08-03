@@ -23,14 +23,14 @@ export const syncTribes = async (world: string) => {
       id: data[0],
       name: data[1],
       tag: data[2],
-      members: parseInt(data[3]),
-      villages: parseInt(data[4]),
-      points: parseInt(data[5]),
-      allPoints: parseInt(data[6]),
-      rank: parseInt(data[7]) || 0,
-      od: tribeOd ? parseInt(tribeOd[2]) : 0,
-      oda: tribeOda ? parseInt(tribeOda[2]) : 0,
-      odd: tribeOdd ? parseInt(tribeOdd[2]) : 0,
+      members: data[3],
+      villages: data[4],
+      points: data[5],
+      allPoints: data[6],
+      rank: data[7] || '0',
+      od: tribeOd ? tribeOd[2] : '0',
+      oda: tribeOda ? tribeOda[2] : '0',
+      odd: tribeOdd ? tribeOdd[2] : '0',
     }
     if (tribeData.id) {
       await tribes.updateOrAdd({ ...tribeData })
@@ -59,7 +59,7 @@ export const fetchTribes = async (world: string): Promise<string[][]> => {
   }
   logger({
     prefix: 'start',
-    message: `TW: Loading ${tribes?.length} tribes...`,
+    message: `TW: Loading ${tribes?.length - 1} tribes...`,
   })
 
   return tribes
