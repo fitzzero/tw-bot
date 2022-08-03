@@ -15,6 +15,7 @@ export const enum WarRoomSettings {
   barbR = 'barbRadius',
   browserId = 'browserRoleId',
   mobileId = 'mobileRoleId',
+  map = 'map',
 }
 
 class Settings extends SheetData<SettingsData> {

@@ -1,13 +1,13 @@
 import { MessageOptions } from 'discord.js'
 import { BotInfo } from '../..'
 import { botConfig } from '../../config'
-import { settings } from '../../sheet/settings'
+import { settings, WarRoomSettings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
 import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
   const world = settings.getById('world')
-  const map = settings.getSettingValue('map')
+  const map = settings.getSettingValue(WarRoomSettings.map)
 
   let description = ''
   const alertSettings = settings.getAlertSettings()
