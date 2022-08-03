@@ -1,4 +1,4 @@
-import { ChannelType } from 'discord.js'
+import { ChannelType, MessageOptions } from 'discord.js'
 import { keys } from 'ts-transformer-keys'
 import { getActiveCategory, getActiveGuild } from '../discord/guild'
 import { logAlert, logger } from '../utility/logger'
@@ -71,6 +71,17 @@ class Channels extends SheetData<ChannelData> {
     } catch (err) {}
     logAlert(`Failed to find channel ${id}`, 'Discord')
     return
+  }
+
+  sendMessage = async (id: string, options: MessageOptions) => {
+    let discordChannel = await this.getDiscordChannelById(id)
+    if (!discordChannel) return false
+    try {
+      return !!discordChannel.send(options)
+    } catch (err) {
+      logAlert(err, 'Discord')
+      return
+    }
   }
 
   syncChannels = async () => {
