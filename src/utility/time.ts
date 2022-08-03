@@ -1,22 +1,49 @@
 import moment from 'moment-timezone'
 import { Moment } from 'moment'
 
-export const withinLastDay = (date?: Moment): boolean => {
-  if (!moment.isMoment(date)) return false
-  return !!date.isSame(moment.tz('America/New_York'), 'day')
+export const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss'
+export const momentTimeZone = 'America/New_York'
+export const momentUtcOffset = '-0400'
+
+export const withinLastDay = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return !!date.isSame(moment.tz(momentTimeZone), 'day')
 }
 
-export const withinLastHour = (date?: Moment): boolean => {
-  if (!moment.isMoment(date)) return false
-  return !!date.isSame(moment.tz('America/New_York'), 'hour')
+export const withinLastHour = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return !!date.isSame(moment.tz(momentTimeZone), 'hour')
 }
 
-export const withinLastMinute = (date?: Moment): boolean => {
-  if (!moment.isMoment(date)) return false
-  return !!date.isSame(moment.tz('America/New_York'), 'minute')
+export const withinLastMinute = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return !!date.isSame(moment.tz(momentTimeZone), 'minute')
 }
 
-export const getUnix = (time?: Moment): number => {
-  if (time) return time.tz('America/New_York').unix()
-  return moment.tz('America/New_York').unix()
+export const getUnix = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return moment.tz(momentTimeZone).unix()
+  return date.tz(momentTimeZone).unix()
+}
+
+export const getMinutesSince = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return date.diff(moment.tz(momentTimeZone), 'minutes')
+}
+
+export const nowString = () => {
+  return moment().tz(momentTimeZone).format(momentStringFormat)
+}
+
+export const validateMoment = (date?: Moment | string) => {
+  if (!date) return
+  if (typeof date === 'string') {
+    date = moment(date, momentStringFormat).utcOffset(momentUtcOffset, true)
+  }
+  if (!moment.isMoment(date)) return
+  return date
 }

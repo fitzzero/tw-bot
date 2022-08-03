@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
@@ -18,10 +18,16 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "sourceMap": true,
+    "strictPropertyInitialization": false,
     "outDir": "./dist/tsc/",
     "types": ["node", "jest"],
-    "lib": ["ES6", "DOM"]
+    "lib": ["ES6", "DOM"],
+    "plugins": [
+      {
+        "transform": "ts-transformer-keys/transformer"
+      }
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/examples/sum/sum.test.js"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

@@ -1,12 +1,18 @@
-import { LoopFn } from '../loop'
 import { logger } from '../utility/logger'
 import { syncPlayers } from './playerSync'
 import { syncTribes } from './tribeSync'
 import { syncVillages } from './villageSync'
 
-export const syncTw: LoopFn = async ({ world }) => {
-  logger({ prefix: 'start', message: `TW: Starting ${world.name} sync` })
-  await syncTribes({ world })
-  await syncPlayers({ world })
-  await syncVillages({ world })
+let inProgress = false
+
+export const syncTwInProgress = () => inProgress
+
+export const syncTw = async (world: string) => {
+  inProgress = true
+  logger({ prefix: 'start', message: `TW: Starting ${world} sync` })
+  await syncTribes(world)
+  await syncPlayers(world)
+  await syncVillages(world)
+  inProgress = false
+  logger({ prefix: 'success', message: `TW: Sync completed` })
 }

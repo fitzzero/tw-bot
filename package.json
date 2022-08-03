@@ -1,37 +1,41 @@
 {
   "name": "war-room",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "",
+  "main": "dist/index.js",
+  "repository": "https://github.com/fitzzero/tw-bot",
   "author": "loganfishel@gmail.com",
   "license": "MIT",
   "private": true,
-  "dependencies": {
-    "@discordjs/rest": "^0.1.0-canary.0",
-    "@types/express": "^4.17.13",
-    "@types/moment-timezone": "^0.5.30",
-    "axios": "^0.22.0",
-    "cross-fetch": "^3.1.4",
-    "discord-api-types": "^0.24.0",
-    "discord.js": "^13.2.0",
-    "express": "^4.17.1",
-    "http-proxy-middleware": "^2.0.1",
-    "moment": "^2.29.1",
-    "mongoose": "^5.12.14",
-    "nodemon": "^2.0.7",
-    "todoist": "^0.5.1",
-    "typescript": "^4.3.4"
-  },
   "scripts": {
     "test": "jest",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "start": "node dist/tsc/index.js",
+    "start": "ttsc && node dist/tsc/index.js",
     "start:dev": "nodemon"
   },
+  "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "@types/express": "^4.17.13",
+    "@types/lodash": "^4.14.182",
+    "@types/moment-timezone": "^0.5.30",
+    "axios": "^0.22.0",
+    "cross-fetch": "^3.1.4",
+    "discord-api-types": "^0.24.0",
+    "discord.js": "^14.1.1",
+    "express": "^4.17.1",
+    "google-spreadsheet": "^3.3.0",
+    "limiter": "^2.1.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "nodemon": "^2.0.7",
+    "todoist": "^0.5.1",
+    "ttypescript": "^1.5.13",
+    "typescript": "^4.3.4"
+  },
   "devDependencies": {
+    "@types/google-spreadsheet": "^3.3.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.4",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
@@ -39,6 +43,7 @@
     "eslint": "^7.29.0",
     "jest": "^27.0.4",
     "ts-jest": "^27.0.3",
-    "ts-node": "^10.2.1"
+    "ts-node": "^10.2.1",
+    "ts-transformer-keys": "^0.4.3"
   }
 }

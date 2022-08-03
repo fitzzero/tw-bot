@@ -1,12 +1,14 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import moment from 'moment-timezone'
+import { ChatInputCommandInteraction, CommandInteraction } from 'discord.js'
 import { Item } from 'todoist/dist/v8-types'
+import { channels, WarRoomChannels } from '../../sheet/channels'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
 import { wait } from '../../utility/wait'
 import { cannedResponses } from '../canned'
-import { Command, CommandFn } from '../commands'
+import { Command } from '../commands'
+import { syncTodoDashboard } from '../dashboardMessages/todo'
 
 const documentation = new SlashCommandBuilder()
   .setName('todo')
@@ -24,8 +26,8 @@ const documentation = new SlashCommandBuilder()
   )
   .setDescription('Add a new todo item')
 
-const controller: CommandFn = async interaction => {
-  if (!interaction.isCommand()) return
+const controller = async (interaction: CommandInteraction) => {
+  if (!interaction.isChatInputCommand()) return
   const what = interaction.options.getString('what')
   const when = interaction.options.getString('when')
   const project = getActiveProject()
@@ -43,18 +45,32 @@ const controller: CommandFn = async interaction => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       due: { string: when } as any,
     })) as Item
-
-    const due = moment.tz(newItem?.due?.date, 'America/New_York').unix()
-    await interaction.editReply(
-      `Created **${newItem?.content}** at <t:${due}> (<t:${due}:R>)`
-    )
+    const success = await syncTodoDashboard({ item: newItem })
+    if (success) {
+      const todoChannelData = channels.getById(WarRoomChannels.todo)
+      if (interaction.channelId == todoChannelData?.channelId) {
+        interaction.deleteReply()
+      } else {
+        await interaction.editReply(
+          `New <#${todoChannelData?.channelId}> added`
+        )
+      }
+    } else {
+      closeCommand(interaction)
+    }
     return
   } catch (err) {
     logger({ prefix: 'alert', message: `Todoist: ${err}` })
-    await interaction.editReply('Something went wrong, closing command...')
-    await wait(5000)
-    await interaction.deleteReply()
+    await closeCommand(interaction)
   }
+}
+
+export const closeCommand = async (
+  interaction: ChatInputCommandInteraction
+) => {
+  await interaction.editReply('Something went wrong, closing command...')
+  await wait(5000)
+  await interaction.deleteReply()
 }
 
 export const todo: Command = {

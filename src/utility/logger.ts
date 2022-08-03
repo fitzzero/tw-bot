@@ -1,5 +1,4 @@
-import moment from 'moment-timezone'
-import { Fn } from '../@types/methods'
+import { nowString } from './time'
 
 export interface LoggerProps {
   message: string
@@ -14,16 +13,13 @@ const prefixIcons = {
   none: '',
 }
 
-export const logger: Fn<LoggerProps, void> = async ({
-  message,
-  logTime,
-  prefix = 'none',
-}) => {
-  const timeString = ` (${moment.tz('America/New_York').toString()})`
-  console.log(`${prefixIcons[prefix]}${message}${logTime ? timeString : ''}`)
+export const logger = ({ message, logTime, prefix = 'none' }: LoggerProps) => {
+  console.log(
+    `${prefixIcons[prefix]}${message}${logTime ? ' ' + nowString() : ''}`
+  )
 }
 
-export const logSuccess = (message: string, where?: string): void => {
+export const logSuccess = (message: string, where?: string) => {
   if (where) {
     message = `${where}: ${message}`
   }
@@ -35,7 +31,7 @@ export const logSuccess = (message: string, where?: string): void => {
   return
 }
 
-export const logAlert = (message: string, where?: string): void => {
+export const logAlert = (message: any, where?: string) => {
   if (where) {
     message = `${where}: ${message}`
   }

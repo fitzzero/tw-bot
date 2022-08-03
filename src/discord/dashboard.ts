@@ -1,27 +1,38 @@
-import { TextChannel } from 'discord.js'
-import { discordConfig } from '../config'
-import { PromiseFn } from '../@types/methods'
-import { logger } from '../utility/logger'
-import { getActiveGuild } from './guild'
+import { MessageOptions } from 'discord.js'
+import { WarRoomChannels } from '../sheet/channels'
+import { messages } from '../sheet/messages'
+import { logAlert, logger } from '../utility/logger'
+import { onlineDashboard } from './dashboardMessages/online'
+import { overviewDashboard } from './dashboardMessages/overview'
 
-let channel: TextChannel | undefined = undefined
+export interface DashboardMessage {
+  id: string
+  getPayload: () => MessageOptions
+}
 
-export const getDashboardChannel: PromiseFn<void, TextChannel | undefined> =
-  async () => {
-    if (channel) {
-      return channel
+const activeDashboards: DashboardMessage[] = [
+  overviewDashboard,
+  onlineDashboard,
+]
+
+export const syncDashboard = async (single?: DashboardMessage) => {
+  let success = true
+  if (single) {
+    success = await messages.syncMessage({
+      id: single.id,
+      channelId: WarRoomChannels.dash,
+      payload: single.getPayload(),
+    })
+  } else {
+    for (const dashboard of activeDashboards) {
+      success = await messages.syncMessage({
+        id: dashboard.id,
+        channelId: WarRoomChannels.dash,
+        payload: dashboard.getPayload(),
+      })
     }
-
-    try {
-      const guild = await getActiveGuild()
-      const channelId = discordConfig().guild.dashboard
-      const someChannel = await guild?.channels.fetch(channelId)
-      if (someChannel?.isText) {
-        channel = someChannel as TextChannel
-      }
-    } catch (err) {
-      logger({ prefix: 'alert', message: `Discord: ${err}` })
-    }
-
-    return channel
   }
+  if (success) {
+    logger({ message: 'Discord: Synced dashboard messages', prefix: 'success' })
+  } else logAlert('Discord: Something went wrong syncing dashboard messages ')
+}

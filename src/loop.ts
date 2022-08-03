@@ -1,43 +1,30 @@
-import moment from 'moment'
-import { worldId } from './config'
-import { connectDb } from './db/connect'
-import { loadActivePlayers } from './db/player/playerController'
-import { loadActiveTribes } from './db/tribe/tribeController.ts'
-import { loadActiveAccounts } from './db/account/accountController'
-import { loadActiveVillages } from './db/village/villageController'
-import {
-  updateLastSync,
-  loadActiveWorld,
-  getActiveWorld,
-} from './db/world/worldController'
-import { syncProject } from './todoist/project'
-import { syncTw } from './tw/tribalWars'
-import { PromiseFn } from './@types/methods'
-import { World } from './@types/world'
+import { isDev } from './config'
+import { syncTw, syncTwInProgress } from './tw/tribalWars'
 import { logAlert, logger } from './utility/logger'
 import { withinLastHour } from './utility/time'
-import { loadActiveTrackers } from './db/tracker/trackerController'
+import { players } from './sheet/players'
+import { runDevTests } from './devTests'
+import { loadDoc } from './sheet/connect'
+import { settings } from './sheet/settings'
+import { getQueueLength } from './sheet/saveQueue'
+import { villages } from './sheet/villages'
+import { tribes } from './sheet/tribes'
+import { channels } from './sheet/channels'
+import { messages } from './sheet/messages'
+import { syncDashboard } from './discord/dashboard'
+import { syncProject } from './todoist/project'
+import { accounts } from './sheet/accounts'
 
-export interface LoopFnProps {
-  world: World
-}
+export const startLoop = async () => {
+  await loadDoc()
 
-export type LoopFn = (props: LoopFnProps) => Promise<void>
+  // Dev Pre Loop Tests
+  if (isDev) {
+    const testPass = await runDevTests()
+    if (!testPass) return
+  }
 
-const loadData: PromiseFn<void, void> = async () => {
-  connectDb(worldId)
-  await loadActiveWorld()
-  await loadActiveAccounts()
-  await loadActiveTrackers()
-  await loadActiveTribes()
-  await loadActivePlayers()
-  await loadActiveVillages()
-  return
-}
-
-export const startLoop: PromiseFn<void, void> = async () => {
-  // Load data
-  await loadData()
+  await preLoadAndSyncData()
 
   loop()
   setInterval(function () {
@@ -46,26 +33,46 @@ export const startLoop: PromiseFn<void, void> = async () => {
   return
 }
 
-const loop: PromiseFn<void, void> = async () => {
-  const world = getActiveWorld()
-
+const loop = async () => {
+  const world = settings.getById('world')
   if (!world) {
-    logAlert('Unable to load active world, stopping loop', 'Loop')
+    logAlert('No active world set', 'TW')
     return
   }
-  const lastSync = world.lastSync ? moment(world.lastSync) : undefined
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
+  // Re-sync if it's been more than hour since last sync
+  if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
+    settings.updateOrAdd(world, true)
+    syncTw(world.value)
+    channels.syncChannels()
+  }
 
-  // Sync TW if it's been more than hour since last sync
-  if (!withinLastHour(lastSync)) {
-    syncTw({ world })
-    updateLastSync()
-  } else {
-    logger({ prefix: 'success', message: 'TW: In Sync (Skipped)' })
+  // Log queue size if active
+  const saveQueue = getQueueLength()
+  if (saveQueue > 0) {
+    logger({ prefix: 'start', message: `${saveQueue} Updates queued to save` })
   }
 
   // Sync Todoist Projects
-  syncProject({ world })
+  syncProject(world.value)
+
   return
+}
+
+const preLoadAndSyncData = async () => {
+  // TW Data
+  await settings.loadData()
+  await tribes.loadData()
+  await players.loadData()
+  await villages.loadData()
+
+  // Discord Data
+  await accounts.loadData()
+  await channels.loadData()
+  await messages.loadData()
+
+  // Discord Sync
+  await channels.syncChannels()
+  await syncDashboard()
 }

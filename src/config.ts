@@ -1,38 +1,36 @@
-import { alertCommand } from './discord/commands/alertTest'
 import { ping } from './discord/commands/ping'
-import { sync } from './discord/commands/sync'
 import { todo } from './discord/commands/todo'
-import { track } from './discord/commands/track'
-import { updateWorld } from './discord/commands/updateWorld'
-import { DiscordConfig } from './@types/config'
+import { Command } from './discord/commands'
 
 export const isDev = !!process.argv[2]
 
 export const worldId = isDev ? 1 : 56
 
-export const devDiscordConfig = {
-  client: '896860363541348413',
-  commands: [alertCommand, ping, todo, updateWorld, sync, track],
-  guild: {
-    id: '620484161974566922',
-    alerts: '904963008525107250',
-    dashboard: '904963008525107250',
-    villages: '904963022089515090',
-  },
+export interface BotConfig {
+  category: string
+  client: string
+  commands: Command[]
+  coreDoc: string
+  guild: string
+  writeEnabled: boolean
 }
 
-export const prodDiscordConfig: DiscordConfig = {
+export const devDiscordConfig: BotConfig = {
+  category: '904962974635130880',
   client: '896860363541348413',
-  commands: [todo, updateWorld],
-  guild: {
-    id: '855057085719642134',
-    alerts: '904407658558275636',
-    dashboard: '904905248051720193',
-    villages: '904881978044710962',
-  },
+  commands: [ping, todo],
+  coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
+  guild: '620484161974566922',
+  writeEnabled: true,
 }
 
-export const discordConfig = (): DiscordConfig => {
-  const config = isDev ? devDiscordConfig : prodDiscordConfig
-  return config
+export const prodDiscordConfig: BotConfig = {
+  category: '904857595272114240',
+  client: '896860363541348413',
+  commands: [todo],
+  coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
+  guild: '855057085719642134',
+  writeEnabled: true,
 }
+
+export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig

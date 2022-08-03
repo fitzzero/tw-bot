@@ -1,32 +1,34 @@
-import { ButtonInteraction, CommandInteraction } from 'discord.js'
-import { discordConfig } from '../config'
-import { Fn } from '../@types/methods'
-import { logger } from '../utility/logger'
 import {
-  activeButtonIds,
-  handleActiveInteraction,
-  loadActiveMessage,
-} from './active'
+  ButtonInteraction,
+  CommandInteraction,
+  ModalSubmitInteraction,
+} from 'discord.js'
+import { botConfig } from '../config'
+import { logAlert, logger } from '../utility/logger'
+import { activeButtons } from './buttons'
 import { activeCommands } from './commands'
-import { discord } from './connect'
+import { discordClient as discord } from './connect'
+import { activeModals } from './modals'
 
-export const DiscordEvents = (): void => {
+export const DiscordEvents = () => {
   discord.on('ready', () => {
     logger({
       prefix: 'success',
       message: `Discord: Connected as ${discord.user?.username}`,
     })
-    loadActiveMessage()
   })
 
   try {
-    discord.on('interactionCreate', async interaction => {
-      if (interaction.guildId != discordConfig().guild.id) return
+    discord.on('interactionCreate', interaction => {
+      if (interaction.guildId != botConfig.guild) return
       if (interaction.isCommand()) {
         handleCommand(interaction)
       }
       if (interaction.isButton()) {
         handleButton(interaction)
+      }
+      if (interaction.isModalSubmit()) {
+        handleModalSubmit(interaction)
       }
     })
   } catch (err) {
@@ -37,16 +39,34 @@ export const DiscordEvents = (): void => {
   }
 }
 
-const handleCommand: Fn<CommandInteraction, void> = interaction => {
+const handleCommand = (interaction: CommandInteraction) => {
   activeCommands().forEach(command => {
     if (interaction.commandName === command.documentation.name) {
-      if (interaction.isCommand()) command.controller(interaction)
+      command.controller(interaction)
     }
   })
 }
 
-const handleButton: Fn<ButtonInteraction, void> = interaction => {
-  if (activeButtonIds.includes(interaction.customId)) {
-    handleActiveInteraction(interaction)
-  }
+const handleButton = (interaction: ButtonInteraction) => {
+  activeButtons.forEach(button => {
+    if (interaction.customId === button.customId) {
+      try {
+        button.controller(interaction)
+      } catch (err) {
+        logAlert(err, 'Discord Button')
+      }
+    }
+  })
+}
+
+const handleModalSubmit = (interaction: ModalSubmitInteraction) => {
+  activeModals.forEach(modal => {
+    if (interaction.customId === modal.customId) {
+      try {
+        modal.controller(interaction)
+      } catch (err) {
+        logAlert(err, 'Discord Button')
+      }
+    }
+  })
 }
