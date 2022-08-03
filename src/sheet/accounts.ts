@@ -76,7 +76,7 @@ class Accounts extends SheetData<AccountsData> {
 
     const timeOnline = getMinutesSince(accountData.lastSignOn) || 0
     const total = parseInt(accountData.minutesActive) || 0
-    const minutesActive = (total + timeOnline).toString()
+    const minutesActive = `${total + timeOnline}`
 
     const newData = { ...accountData, minutesActive }
     newData[property] = 'FALSE'

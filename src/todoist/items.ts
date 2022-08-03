@@ -17,7 +17,7 @@ export const getItemById = (id: string) => {
   loadItems()
   if (!itemsInMemory) return
 
-  return itemsInMemory.find(item => item.id.toString() == id)
+  return itemsInMemory.find(item => `${item.id}` == id)
 }
 
 export const loadItems = () => {

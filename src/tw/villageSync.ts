@@ -14,9 +14,9 @@ export const syncVillages = async (world: string) => {
     const villageData: VillageData = {
       id: data[0],
       name: data[1],
-      x: x.toString(),
-      y: y.toString(),
-      k: Math.floor(y / 100) * 10 + Math.floor(x / 100).toString(),
+      x: data[2],
+      y: data[3],
+      k: `${Math.floor(y / 100) * 10 + Math.floor(x / 100)}`,
       playerId: data[4],
       points: data[5],
       rank: data[6] || '0',
