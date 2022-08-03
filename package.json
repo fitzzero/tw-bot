@@ -12,7 +12,7 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "start": "node dist/tsc/index.js",
+    "start": "ttsc && node dist/tsc/index.js",
     "start:dev": "nodemon"
   },
   "dependencies": {
