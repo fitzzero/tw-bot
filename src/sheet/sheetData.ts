@@ -15,10 +15,8 @@ export interface BaseSheetModel {
 const addedHeaders = keys<BaseSheetModel>()
 
 export interface RowStructure {
-  [propName: string]: RowData
+  [propName: string]: string
 }
-
-type RowData = string | number | boolean
 
 export class SheetData<data extends RowStructure> {
   title: string
@@ -66,7 +64,7 @@ export class SheetData<data extends RowStructure> {
   /*
    * Get row by id
    */
-  getByProperty = (property: string, value: RowData) => {
+  getByProperty = (property: string, value: string) => {
     const found = this.rows?.find(row => row[property] == value)
     if (!found) return
     const foundObj: any = {}

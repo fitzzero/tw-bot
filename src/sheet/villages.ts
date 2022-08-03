@@ -1,16 +1,15 @@
 import { keys } from 'ts-transformer-keys'
-import { settings } from './settings'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface VillageData extends RowStructure {
   id: string
   name: string
-  x: number
-  y: number
-  k: number
+  x: string
+  y: string
+  k: string
   playerId: string
-  points: number
-  rank: number
+  points: string
+  rank: string
 }
 
 const headers = keys<VillageData>().map(key => key.toString())

@@ -11,8 +11,8 @@ export interface AccountsData extends RowStructure {
   browser: string
   mobile: string
   lastSignOn: string
-  minutesActive: number
-  todos: number
+  minutesActive: string
+  todos: string
 }
 
 const headers = keys<AccountsData>().map(key => key.toString())
@@ -39,8 +39,8 @@ class Accounts extends SheetData<AccountsData> {
         browser: 'FALSE',
         mobile: 'FALSE',
         lastSignOn: nowString(),
-        minutesActive: 0,
-        todos: 0,
+        minutesActive: '0',
+        todos: '0',
       }
       newAccount[property] = 'TRUE'
       success = await this.add(newAccount)
@@ -75,7 +75,8 @@ class Accounts extends SheetData<AccountsData> {
     if (!accountData) return
 
     const timeOnline = getMinutesSince(accountData.lastSignOn) || 0
-    const minutesActive = accountData.minutesActive + timeOnline
+    const total = parseInt(accountData.minutesActive) || 0
+    const minutesActive = (total + timeOnline).toString()
 
     const newData = { ...accountData, minutesActive }
     newData[property] = 'FALSE'

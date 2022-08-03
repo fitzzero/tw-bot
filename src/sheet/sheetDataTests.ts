@@ -4,7 +4,7 @@ import { RowStructure, SheetData } from './sheetData'
 interface TestData extends RowStructure {
   id: string
   name: string
-  points: number
+  points: string
 }
 
 const headers = keys<TestData>().map(key => key.toString())
@@ -17,7 +17,7 @@ export const runSheetDataTests = async () => {
   await testData.updateOrAdd({
     id: 'test1',
     name: 'Two',
-    points: 5,
+    points: '5',
   })
 
   const test1 = testData.getById('test1')
@@ -26,7 +26,7 @@ export const runSheetDataTests = async () => {
   await testData.updateOrAdd({
     id: 'test2',
     name: 'Three',
-    points: 5,
+    points: '5',
   })
 
   const test2 = testData.getByProperty('name', 'Three')
@@ -35,7 +35,7 @@ export const runSheetDataTests = async () => {
   await testData.updateOrAdd({
     id: 'test1',
     name: 'One',
-    points: 5,
+    points: '5',
   })
   return true
 }

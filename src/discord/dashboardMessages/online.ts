@@ -1,13 +1,20 @@
 import { MessageOptions } from 'discord.js'
 import { accounts } from '../../sheet/accounts'
+import { getUnix } from '../../utility/time'
 import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
   const accountBrowser = accounts.getByProperty('browser', 'TRUE')
   const accountMobile = accounts.getByProperty('mobile', 'TRUE')
+  const browserUnix = getUnix(accountBrowser?.lastSignOn)
+  const mobileUnix = getUnix(accountMobile?.lastSignOn)
 
-  const browserU = !!accountBrowser ? `<@${accountBrowser.id}>` : 'Open'
-  const mobileU = !!accountMobile ? `<@${accountMobile.id}>` : 'Open'
+  const browserU = !!accountBrowser
+    ? `<@${accountBrowser.id}> - <t:${browserUnix}:R>`
+    : 'Open'
+  const mobileU = !!accountMobile
+    ? `<@${accountMobile.id}> - <t:${mobileUnix}:R>`
+    : 'Open'
 
   const options: MessageOptions = {
     content: '',
