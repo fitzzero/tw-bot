@@ -45,7 +45,7 @@ const loop = async () => {
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
     settings.updateOrAdd(world, true)
     syncTw(world.value)
-    channels.syncChannels()
+    await syncDashboard()
   }
 
   // Log queue size if active
