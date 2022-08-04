@@ -50,18 +50,27 @@ const accountChangeAlerts = async (
   let update = false
   let goodChanges = 0
   const fields: APIEmbedField[] = []
-  const propsToCheck = ['villages', 'rank', 'od']
+
+  const propsToCheck = [
+    { name: 'villages', increaseGood: true },
+    { name: 'rank', increaseGood: false },
+    { name: 'od', increaseGood: true },
+  ]
   propsToCheck.forEach(prop => {
-    const oldVal = parseInt(oldData[prop])
-    const newVal = parseInt(newData[prop])
+    const oldVal = parseInt(oldData[prop.name])
+    const newVal = parseInt(newData[prop.name])
     if (oldVal != newVal) {
       update = true
       fields.push({
-        name: prop,
-        value: `~~${oldData[prop]}~~ -> **${newData[prop]}**`,
+        name: prop.name,
+        value: `~~${oldVal}~~ -> **${newVal}**`,
         inline: true,
       })
-      newVal > oldVal ? ++goodChanges : --goodChanges
+      if (prop.increaseGood) {
+        newVal > oldVal ? ++goodChanges : --goodChanges
+      } else {
+        newVal > oldVal ? --goodChanges : ++goodChanges
+      }
     }
   })
   if (!update) return
