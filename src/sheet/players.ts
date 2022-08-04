@@ -59,9 +59,10 @@ const accountChangeAlerts = async (
       fields.push({
         name: prop,
         value: `~~${oldData[prop]}~~ -> **${newData[prop]}**`,
+        inline: true,
       })
+      newVal > oldVal ? ++goodChanges : --goodChanges
     }
-    newVal > oldVal ? ++goodChanges : --goodChanges
   })
   if (!update) return
 
