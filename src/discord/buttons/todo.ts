@@ -1,9 +1,10 @@
 import { ButtonInteraction } from 'discord.js'
+import { WarRoomChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
 import { Button } from '../buttons'
-import { getTodoPayload } from '../dashboardMessages/todo'
+import { getTodoPayload, syncTodoDashboard } from '../dashboardMessages/todo'
 
 const handleClose = async (
   interaction: ButtonInteraction,
@@ -34,11 +35,7 @@ const handleClose = async (
     }
     // Item not in history (reoccuring task)
     else {
-      await messages.syncMessage({
-        id: messageData.id,
-        channelId: messageData.channelId,
-        payload: getTodoPayload({ item: newItem }),
-      })
+      await syncTodoDashboard(newItem)
     }
   }
   // Action: Delete

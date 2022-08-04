@@ -7,14 +7,9 @@ import { messages } from '../../sheet/messages'
 import { momentUtcOffset, withinLastMinute } from '../../utility/time'
 import { colors } from '../colors'
 
-interface TodoDashboardProps {
-  item: Item
-}
-
-export const getTodoPayload = ({ item }: TodoDashboardProps) => {
+export const getTodoPayload = (item: Item, upcoming: boolean) => {
   const date = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
   const due = date.unix()
-  const upcoming = date.isAfter() && !withinLastMinute(date)
 
   let content = ''
   if (!upcoming) {
@@ -62,12 +57,16 @@ export const getTodoPayload = ({ item }: TodoDashboardProps) => {
   return options
 }
 
-export const syncTodoDashboard = async ({ item }: TodoDashboardProps) => {
+export const syncTodoDashboard = async (item: Item) => {
   let success = true
-  success = await messages.syncMessage({
+
+  const date = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
+  const upcoming = date.isAfter() && !withinLastMinute(date)
+
+  success = await messages.rebuildMessage({
     id: `todo-${item.id}`,
-    channelId: WarRoomChannels.todo,
-    payload: getTodoPayload({ item }),
+    channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
+    payload: getTodoPayload(item, upcoming),
   })
   return success
 }

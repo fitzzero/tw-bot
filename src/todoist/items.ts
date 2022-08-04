@@ -1,6 +1,10 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
-import { getTodoPayload } from '../discord/dashboardMessages/todo'
+import {
+  getTodoPayload,
+  syncTodoDashboard,
+} from '../discord/dashboardMessages/todo'
+import { WarRoomChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
 import { momentUtcOffset, withinLastMinute } from '../utility/time'
@@ -50,13 +54,6 @@ export const syncItems = async () => {
     logger({ prefix: 'success', message: `Found ${items.length} active tasks` })
   }
   for (const item of items) {
-    const messageData = messages.getById(`todo-${item.id}`)
-    if (messageData) {
-      await messages.rebuildMessage({
-        id: messageData.id,
-        channelId: messageData.channelId,
-        payload: getTodoPayload({ item }),
-      })
-    }
+    syncTodoDashboard(item)
   }
 }

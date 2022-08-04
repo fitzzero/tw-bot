@@ -45,7 +45,7 @@ const controller = async (interaction: CommandInteraction) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       due: { string: when } as any,
     })) as Item
-    const success = await syncTodoDashboard({ item: newItem })
+    const success = await syncTodoDashboard(newItem)
     if (success) {
       const todoChannelData = channels.getById(WarRoomChannels.todo)
       if (interaction.channelId == todoChannelData?.channelId) {
