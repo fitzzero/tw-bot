@@ -1,5 +1,6 @@
 import { keys } from 'ts-transformer-keys'
 import { RowStructure, SheetData } from './sheetData'
+import { settings, WarRoomSettings } from './settings'
 
 export interface VillageData extends RowStructure {
   id: string
@@ -25,9 +26,17 @@ class Villages extends SheetData<VillageData> {
       await this.add(newData)
       return
     }
+    // Update data
+    this.update({ ...newData })
 
-    // Point drop
+    // If player village within radius
+
+    // If barb village within radius
   }
 }
 
 export const villages = new Villages('villages', headers)
+
+const villageDistance = (village: VillageData) => {
+  const startCoordinates = settings.getValue(WarRoomSettings.startCoords)
+}

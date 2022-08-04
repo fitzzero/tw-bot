@@ -82,7 +82,7 @@ export const modalBuilder = () => {
 const textRow = ({ id, label, maxLength, required = false }: SettingField) => {
   const input: TextInputBuilder = new TextInputBuilder()
     .setCustomId(id)
-    .setValue(settings.getSettingValue(id) || '')
+    .setValue(settings.getValue(id) || '')
     .setLabel(label)
     .setStyle(TextInputStyle.Short)
     .setRequired(required)

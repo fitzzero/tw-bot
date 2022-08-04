@@ -107,7 +107,7 @@ class Accounts extends SheetData<AccountsData> {
   }
 
   getDiscordRole = async (property: 'browser' | 'mobile') => {
-    const roleId = settings.getSettingValue(
+    const roleId = settings.getValue(
       property == 'browser'
         ? WarRoomSettings.browserId
         : WarRoomSettings.mobileId

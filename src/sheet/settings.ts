@@ -24,14 +24,14 @@ class Settings extends SheetData<SettingsData> {
     super(tabTitle, tabHeaders)
   }
 
-  getSettingValue = (id: string) => {
+  getValue = (id: string) => {
     return this.getById(id)?.value
   }
 
   getAlertSettings = () => {
-    const coordinates = this.getSettingValue(WarRoomSettings.startCoords)
-    const playerRadius = this.getSettingValue(WarRoomSettings.playerR)
-    const barbRadius = this.getSettingValue(WarRoomSettings.barbR)
+    const coordinates = this.getValue(WarRoomSettings.startCoords)
+    const playerRadius = this.getValue(WarRoomSettings.playerR)
+    const barbRadius = this.getValue(WarRoomSettings.barbR)
     if (!coordinates || !playerRadius || !barbRadius) return
     const coordsSplit = coordinates.split('|')
     if (!coordsSplit?.[0]) return

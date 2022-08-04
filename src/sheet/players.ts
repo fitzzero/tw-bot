@@ -35,7 +35,7 @@ class Players extends SheetData<PlayerData> {
     this.update({ ...newData })
 
     // If account
-    if (newData.name == settings.getSettingValue(WarRoomSettings.account)) {
+    if (newData.name == settings.getValue(WarRoomSettings.account)) {
       accountChangeAlerts(newData, existingData)
     }
   }

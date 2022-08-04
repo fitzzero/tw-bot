@@ -9,7 +9,7 @@ import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
   const world = settings.getById('world')
-  const map = settings.getSettingValue(WarRoomSettings.map)
+  const map = settings.getValue(WarRoomSettings.map)
 
   let description = ''
   const alertSettings = settings.getAlertSettings()
