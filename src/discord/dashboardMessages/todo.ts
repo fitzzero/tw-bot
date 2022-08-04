@@ -5,6 +5,7 @@ import { accounts } from '../../sheet/accounts'
 import { WarRoomChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { momentUtcOffset, withinLastMinute } from '../../utility/time'
+import { colors } from '../colors'
 
 interface TodoDashboardProps {
   item: Item
@@ -53,7 +54,7 @@ export const getTodoPayload = ({ item }: TodoDashboardProps) => {
       {
         title: item?.content,
         description: `Todo at <t:${due}> (<t:${due}:R>)`,
-        color: upcoming ? 0xfffd99 : 0xeb3d3d,
+        color: upcoming ? colors.warning : colors.error,
       },
     ],
   }

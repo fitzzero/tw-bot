@@ -2,33 +2,53 @@ import { MessageOptions } from 'discord.js'
 import { WarRoomChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
+import { availableDashboard } from './dashboardMessages/available'
 import { onlineDashboard } from './dashboardMessages/online'
 import { overviewDashboard } from './dashboardMessages/overview'
 
 export interface DashboardMessage {
   id: string
-  getPayload: () => MessageOptions
+  getPayload: () => MessageOptions | undefined
+  channel: WarRoomChannels
+  rebuild?: boolean
 }
 
 const activeDashboards: DashboardMessage[] = [
   overviewDashboard,
   onlineDashboard,
+  availableDashboard,
 ]
 
 export const syncDashboard = async (single?: DashboardMessage) => {
   let success = true
   if (single) {
-    success = await messages.syncMessage({
+    const payload = single.getPayload()
+    if (!payload) {
+      await messages.deleteMessage(single.id)
+      return
+    }
+    const handleFn = single.rebuild
+      ? messages.rebuildMessage
+      : messages.syncMessage
+    success = await handleFn({
       id: single.id,
-      channelId: WarRoomChannels.dash,
-      payload: single.getPayload(),
+      channelId: single.channel,
+      payload: payload,
     })
   } else {
     for (const dashboard of activeDashboards) {
-      success = await messages.syncMessage({
+      const payload = dashboard.getPayload()
+      if (!payload) {
+        await messages.deleteMessage(dashboard.id)
+        return
+      }
+      const handleFn = dashboard.rebuild
+        ? messages.rebuildMessage
+        : messages.syncMessage
+      success = await handleFn({
         id: dashboard.id,
-        channelId: WarRoomChannels.dash,
-        payload: dashboard.getPayload(),
+        channelId: dashboard.channel,
+        payload: payload,
       })
     }
   }

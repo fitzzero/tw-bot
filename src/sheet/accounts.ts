@@ -1,9 +1,7 @@
-import { MessageOptions } from 'discord.js'
 import { keys } from 'ts-transformer-keys'
 import { getActiveGuild } from '../discord/guild'
 import { logAlert } from '../utility/logger'
-import { getMinutesSince, getUnix, nowString } from '../utility/time'
-import { channels, WarRoomChannels } from './channels'
+import { getMinutesSince, nowString } from '../utility/time'
 import { settings, WarRoomSettings } from './settings'
 import { RowStructure, SheetData } from './sheetData'
 
@@ -60,16 +58,6 @@ class Accounts extends SheetData<AccountsData> {
       logAlert(err, 'Discord Accounts')
     }
 
-    // Update message
-    const message: MessageOptions = {
-      content: `<@${id}> is on <@&${role.id}> (<t:${getUnix()}:R>)`,
-      allowedMentions: {
-        users: [],
-        roles: [],
-      },
-    }
-    await channels.sendMessage(WarRoomChannels.news, message)
-
     return success
   }
 
@@ -105,19 +93,6 @@ class Accounts extends SheetData<AccountsData> {
     } catch (err) {
       logAlert(err, 'Discord Accounts')
     }
-
-    // Update message
-    const dashData = channels.getById(WarRoomChannels.dash)
-    const message: MessageOptions = {
-      content: `<@&${role.id}> is open <#${
-        dashData?.channelId
-      }>(<t:${getUnix()}:R>)`,
-      allowedMentions: {
-        users: [],
-        roles: [],
-      },
-    }
-    await channels.sendMessage(WarRoomChannels.news, message)
   }
 
   getDiscordMember = async (id: string) => {

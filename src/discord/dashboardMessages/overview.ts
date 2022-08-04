@@ -1,8 +1,10 @@
 import { MessageOptions } from 'discord.js'
 import { BotInfo } from '../..'
 import { botConfig } from '../../config'
+import { WarRoomChannels } from '../../sheet/channels'
 import { settings, WarRoomSettings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
+import { colors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
@@ -50,7 +52,7 @@ const overview = () => {
       {
         title: `War Room v${BotInfo.version}`,
         description,
-        color: 0xdb8dff,
+        color: colors.purple,
         fields: [
           {
             name: `World`,
@@ -82,4 +84,5 @@ const overview = () => {
 export const overviewDashboard: DashboardMessage = {
   id: 'overview',
   getPayload: overview,
+  channel: WarRoomChannels.dash,
 }
