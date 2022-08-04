@@ -35,6 +35,12 @@ export const getMinutesSince = (date?: Moment | string) => {
   return moment.tz(momentTimeZone).diff(date, 'minutes')
 }
 
+export const getHoursSince = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return
+  return moment.tz(momentTimeZone).diff(date, 'hours')
+}
+
 export const nowString = () => {
   return moment().tz(momentTimeZone).format(momentStringFormat)
 }

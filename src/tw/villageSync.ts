@@ -22,7 +22,7 @@ export const syncVillages = async (world: string) => {
       rank: data[6] || '0',
     }
     if (villageData?.id) {
-      await villages.updateOrAdd({ ...villageData })
+      await villages.auditAndUpdate(villageData)
     }
   }
   logger({
