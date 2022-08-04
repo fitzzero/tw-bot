@@ -34,7 +34,7 @@ export const syncPlayers = async (world: string) => {
       ods: playerOds ? playerOds[2] : '0',
     }
     if (playerData?.id) {
-      await players.updateOrAdd({ ...playerData })
+      await players.auditAndUpdate({ ...playerData })
     }
   }
   logger({

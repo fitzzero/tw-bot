@@ -10,6 +10,7 @@ const headers = keys<SettingsData>().map(key => key.toString())
 
 export const enum WarRoomSettings {
   world = 'world',
+  account = 'account',
   startCoords = 'startCoordinates',
   playerR = 'playerRadius',
   barbR = 'barbRadius',

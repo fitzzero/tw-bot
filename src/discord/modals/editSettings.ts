@@ -25,6 +25,12 @@ const settingsToSync: SettingField[] = [
     required: true,
   },
   {
+    id: WarRoomSettings.account,
+    label: 'Account name',
+    maxLength: 20,
+    required: false,
+  },
+  {
     id: WarRoomSettings.startCoords,
     label: 'Starting coordinates x|y',
     maxLength: 7,

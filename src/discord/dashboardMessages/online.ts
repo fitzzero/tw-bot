@@ -48,7 +48,7 @@ const overview = () => {
       {
         title: `Online Status`,
         description: '',
-        color: 0xeb3d3d,
+        color: !!accountBrowser || !!accountMobile ? 0x5efd4c : 0xeb3d3d,
         fields: [
           {
             name: `:computer: Browser`,
