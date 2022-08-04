@@ -17,19 +17,32 @@ const handleClose = async (
   const item = getItemById(todoId)
 
   if (!todoist || !item) return
+  // Action Complete
   if (complete) {
     await todoist.items.close({ ...item })
     const newItem = getItemById(todoId)
-    if (newItem) {
+    // If issue, simply complete the task
+    if (!newItem) {
+      await todoist.items.complete({ ...item, date_completed: undefined })
+      await messages.deleteMessage(messageData.id)
+      return
+    }
+    // If item archived (completed) remove the message
+    if (newItem?.in_history) {
+      await messages.deleteMessage(messageData.id)
+      return
+    }
+    // Item not in history (reoccuring task)
+    else {
       await messages.syncMessage({
         id: messageData.id,
         channelId: messageData.channelId,
         payload: getTodoPayload({ item: newItem }),
       })
-    } else {
-      await todoist.items.delete({ ...item })
     }
-  } else {
+  }
+  // Action: Delete
+  else {
     await todoist.items.delete({ ...item })
     await messages.deleteMessage(messageData.id)
   }
