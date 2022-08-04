@@ -34,9 +34,12 @@ export const runSaveQueue = async () => {
       else {
         logger({ prefix: 'start', message: `${row.id} updated` })
       }
-    } catch (err) {
+    } catch (err: any) {
       logAlert(err, 'Sheet Queue')
-      queueRowSave(row)
+      // Attempt to re-save unless deleted
+      if (!err.message.includes('This row has been deleted')) {
+        queueRowSave(row)
+      }
     }
   }
   queueInProgress = false
