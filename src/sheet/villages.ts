@@ -1,6 +1,6 @@
 import { keys } from 'ts-transformer-keys'
 import { RowStructure, SheetData } from './sheetData'
-import { settings, WarRoomSettings } from './settings'
+import { settings } from './settings'
 import { villageMessage } from '../discord/messages/village'
 import { channels, WarRoomChannels } from './channels'
 
