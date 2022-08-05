@@ -6,7 +6,6 @@ import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
 import { settings } from './sheet/settings'
-import { getQueueLength } from './sheet/saveQueue'
 import { villages } from './sheet/villages'
 import { tribes } from './sheet/tribes'
 import { channels } from './sheet/channels'
@@ -46,12 +45,6 @@ const loop = async () => {
     settings.updateOrAdd(world, true)
     syncTw(world.value)
     await syncDashboard()
-  }
-
-  // Log queue size if active
-  const saveQueue = getQueueLength()
-  if (saveQueue > 0) {
-    logger({ prefix: 'start', message: `${saveQueue} Updates queued to save` })
   }
 
   // Sync Todoist Projects
