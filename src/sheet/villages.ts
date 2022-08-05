@@ -72,7 +72,6 @@ class Villages extends SheetData<VillageData> {
       color = colors.error
     }
     const hoursSince = getHoursSince(oldData.lastUpdate)
-    console.log(`${newData.id} ${hoursSince} hours inactive`)
     if (
       newData.playerId != '0' &&
       !this.hasChanges(newData) &&
