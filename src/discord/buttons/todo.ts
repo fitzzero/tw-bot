@@ -28,7 +28,7 @@ const handleClose = async (
       return
     }
     // If item archived (completed) remove the message
-    if (newItem?.in_history) {
+    if (newItem?.checked) {
       await messages.deleteMessage(messageData.id)
       return
     }

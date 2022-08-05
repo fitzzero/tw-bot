@@ -10,8 +10,8 @@ const documentation = new SlashCommandBuilder()
   .setName('village')
   .addStringOption(option =>
     option
-      .setName('coords')
-      .setDescription('Coords of village (123|456)')
+      .setName('coordinates')
+      .setDescription('Coordinates of village (123|456)')
       .setRequired(true)
   )
   .setDescription('Get village info')
@@ -19,7 +19,7 @@ const documentation = new SlashCommandBuilder()
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
-  const coords = interaction.options.getString('coords')
+  const coords = interaction.options.getString('coordinates')
   if (coords == null) {
     closeCommand(interaction, 'Coordinates missing')
     return

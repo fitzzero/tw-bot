@@ -47,7 +47,7 @@ export const getTodoPayload = (item: Item, upcoming: boolean) => {
     ],
     embeds: [
       {
-        title: item?.content,
+        title: `${upcoming ? 'Upcoming: ' : 'Due: '} ${item?.content}`,
         description: `Todo at <t:${due}> (<t:${due}:R>)`,
         color: upcoming ? colors.warning : colors.error,
       },
@@ -61,12 +61,16 @@ export const syncTodoDashboard = async (item: Item) => {
   let success = true
 
   const date = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
+  const due = date.unix()
   const upcoming = date.isAfter() && !withinLastMinute(date)
 
-  success = await messages.rebuildMessage({
-    id: `todo-${item.id}`,
-    channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
-    payload: getTodoPayload(item, upcoming),
-  })
+  if (false) {
+  } else {
+    success = await messages.rebuildMessage({
+      id: `todo-${item.id}`,
+      channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
+      payload: getTodoPayload(item, upcoming),
+    })
+  }
   return success
 }

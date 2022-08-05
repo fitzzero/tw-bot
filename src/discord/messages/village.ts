@@ -8,7 +8,8 @@ import { colors } from '../colors'
 export const villageMessage = (
   village: VillageData,
   description?: string,
-  color = colors.purple
+  color = colors.purple,
+  prefix?: string
 ) => {
   const world = settings.getValue(WarRoomSettings.world)
   const points = parseInt(village.points)
@@ -27,6 +28,7 @@ export const villageMessage = (
   } else if (points >= 1000) {
     imageSuffix = 'Med'
   }
+  const villageName = village.name.replace('+', ' ')
   const image = `https://fitzzero.sirv.com/tribalwars/tw-bot/${imagePrefix}${imageSuffix}.png`
   const url = `https://us${world}.tribalwars.us/game.php?village=${village.id}&screen=info_village&id=53#${village.x};${village.y}`
 
@@ -51,9 +53,7 @@ export const villageMessage = (
     tts: false,
     embeds: [
       {
-        title: `${village.name.replace('+', ' ')} ${village.x}|${village.y} (${
-          village.points
-        } pts)`,
+        title: `${villageName} ${village.x}|${village.y} (${village.points} pts)`,
         description,
         color,
         thumbnail: {

@@ -1,15 +1,18 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { ChatInputCommandInteraction, CommandInteraction } from 'discord.js'
+import { CommandInteraction } from 'discord.js'
 import { Item } from 'todoist/dist/v8-types'
 import { channels, WarRoomChannels } from '../../sheet/channels'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
-import { wait } from '../../utility/wait'
 import { cannedResponses } from '../canned'
 import { Command } from '../commands'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
 import { closeCommand } from './canned'
+
+export interface TodoExtraData {
+  villageId?: string
+}
 
 const documentation = new SlashCommandBuilder()
   .setName('todo')
