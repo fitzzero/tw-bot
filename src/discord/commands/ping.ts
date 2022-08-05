@@ -7,8 +7,6 @@ const documentation = new SlashCommandBuilder()
   .setDescription('Replies with Pong!')
 
 const controller = async (interaction: CommandInteraction) => {
-  if (!interaction.isCommand()) return
-
   const content = `Pong`
 
   await interaction.reply({ content })
