@@ -38,7 +38,10 @@ export class SheetData<data extends RowStructure> {
   add = async (values: data) => {
     await limiter.removeTokens(1)
     try {
-      await this.sheet.addRow({ ...values, lastUpdate: nowString() })
+      await this.sheet.addRow(
+        { ...values, lastUpdate: nowString() },
+        { raw: true, insert: false }
+      )
       this.rows = await this.sheet.getRows()
       return true
     } catch (err) {
