@@ -1,8 +1,10 @@
 import { keys } from 'ts-transformer-keys'
-import { RowStructure, SheetData } from './sheetData'
+import { BaseSheetModel, RowStructure, SheetData } from './sheetData'
 import { settings } from './settings'
 import { villageMessage } from '../discord/messages/village'
 import { channels, WarRoomChannels } from './channels'
+import { colors } from '../discord/colors'
+import { getHoursSince } from '../utility/time'
 
 export interface VillageData extends RowStructure {
   id: string
@@ -44,7 +46,48 @@ class Villages extends SheetData<VillageData> {
     // Update data
     this.update(newData)
 
-    if (inAlertRange(newData)) await villageChangeAlerts(newData, existingData)
+    if (inAlertRange(newData)) {
+      await this.villageChangeAlerts(newData, existingData)
+    }
+  }
+
+  villageChangeAlerts = async (
+    newData: VillageData,
+    oldData: VillageData & BaseSheetModel
+  ) => {
+    let content: string | undefined = undefined
+    let color: colors | undefined = undefined
+    // Point alerts
+    const pointDif = parseInt(newData.points) - parseInt(oldData.points)
+    if (parseInt(newData.points) > 2000 && pointDif > 510) {
+      content = `Has increased **${pointDif}** points, could be Academy`
+    }
+    if (pointDif < 0) {
+      content = `Has dropped **${pointDif}** points`
+      color = colors.error
+    }
+
+    if (pointDif < 0) {
+      content = `Has dropped **${pointDif}** points`
+      color = colors.error
+    }
+    const hoursSince = getHoursSince(oldData.lastUpdate)
+    console.log(`${newData.id} ${hoursSince} hours inactive`)
+    if (
+      newData.playerId != '0' &&
+      !this.hasChanges(newData) &&
+      hoursSince &&
+      hoursSince == 48
+    ) {
+      content = `Inactive for 48 hours`
+      color = colors.error
+    }
+
+    if (content) {
+      const message = villageMessage(newData, content, color)
+      await channels.sendMessage(WarRoomChannels.news, message)
+    }
+    return
   }
 }
 
@@ -69,19 +112,6 @@ const inAlertRange = (village: VillageData) => {
     return true
   }
   return false
-}
-
-const villageChangeAlerts = async (
-  newData: VillageData,
-  oldData: VillageData
-) => {
-  // Point alerts
-  const pointDif = parseInt(newData.points) - parseInt(oldData.points)
-  if (parseInt(newData.points) > 2000 && pointDif > 510) {
-    const content = `Has increased ${pointDif}, could be Academy`
-    const message = villageMessage(newData, content)
-    await channels.sendMessage(WarRoomChannels.news, message)
-  }
 }
 
 export const splitCoords = (coords: string) => {

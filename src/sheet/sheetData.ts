@@ -75,6 +75,26 @@ export class SheetData<data extends RowStructure> {
   }
 
   /*
+   * See if data changed
+   */
+  hasChanges = (values: data, idx = -1) => {
+    let changes = false
+    if (idx === -1) idx = this.rows.findIndex(row => row.id === values.id)
+    if (idx === -1) return false
+    this.headers.forEach(header => {
+      if (
+        header != 'lastUpdate' &&
+        values[header] &&
+        this.rows[idx][header] != values[header]
+      ) {
+        this.rows[idx][header] = values[header]
+        changes = true
+      }
+    })
+    return changes
+  }
+
+  /*
    * Filter by Properties
    */
   filterByProperties = (searchPair: { prop: string; value: string }[]) => {
@@ -122,16 +142,8 @@ export class SheetData<data extends RowStructure> {
     const idx = this.rows.findIndex(row => row.id === values.id)
     if (idx === -1) return false
 
-    this.headers.forEach(header => {
-      if (
-        header != 'lastUpdate' &&
-        values[header] &&
-        this.rows[idx][header] != values[header]
-      ) {
-        this.rows[idx][header] = values[header]
-        changes = true
-      }
-    })
+    if (this.hasChanges(values)) changes = true
+
     if (changes) {
       this.rows[idx].lastUpdate = nowString()
       queueRowSave(this.rows[idx])
