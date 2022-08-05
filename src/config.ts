@@ -2,6 +2,7 @@ import { ping } from './discord/commands/ping'
 import { todo } from './discord/commands/todo'
 import { Command } from './discord/commands'
 import { village } from './discord/commands/village'
+import { playerTop } from './discord/commands/rankings'
 
 export const isDev = !!process.argv[2]
 
@@ -19,7 +20,7 @@ export interface BotConfig {
 export const devDiscordConfig: BotConfig = {
   category: '904962974635130880',
   client: '896860363541348413',
-  commands: [ping, todo, village],
+  commands: [ping, todo, village, playerTop],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   guild: '620484161974566922',
   writeEnabled: true,
