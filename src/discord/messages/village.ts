@@ -9,7 +9,8 @@ export const villageMessage = (
   village: VillageData,
   description?: string,
   color = colors.purple,
-  isTodo = false
+  isTodo = false,
+  content = ''
 ) => {
   const world = settings.getValue(WarRoomSettings.world)
   const points = parseInt(village.points)
@@ -49,7 +50,7 @@ export const villageMessage = (
   }
 
   const options: MessageOptions = {
-    content: '',
+    content,
     tts: false,
     embeds: [
       {

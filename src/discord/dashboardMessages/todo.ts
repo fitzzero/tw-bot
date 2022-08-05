@@ -87,7 +87,7 @@ export const syncTodoDashboard = async (item: Item) => {
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
       channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
-      payload: villageMessage(village, description, color, true),
+      payload: villageMessage(village, description, color, true, content),
     })
   } else {
     success = await messages.rebuildMessage({
