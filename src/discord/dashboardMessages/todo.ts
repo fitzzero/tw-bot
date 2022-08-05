@@ -10,21 +10,13 @@ import { momentUtcOffset, withinLastMinute } from '../../utility/time'
 import { colors } from '../colors'
 import { villageMessage } from '../messages/village'
 
-export const getTodoPayload = (item: Item, upcoming: boolean) => {
+export const getTodoPayload = (
+  item: Item,
+  content: string,
+  upcoming: boolean
+) => {
   const date = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
   const due = date.unix()
-
-  let content = ''
-  if (!upcoming) {
-    const accountBrowser = accounts.getByProperty('browser', 'TRUE')
-    if (accountBrowser) {
-      content += `<@${accountBrowser.id}>`
-    }
-    const accountMobile = accounts.getByProperty('mobile', 'TRUE')
-    if (accountMobile) {
-      content += `<@${accountMobile.id}>`
-    }
-  }
 
   const options: MessageOptions = {
     content,
@@ -68,6 +60,18 @@ export const syncTodoDashboard = async (item: Item) => {
   const due = date.unix()
   const upcoming = date.isAfter() && !withinLastMinute(date)
 
+  let content = ''
+  if (!upcoming) {
+    const accountBrowser = accounts.getByProperty('browser', 'TRUE')
+    if (accountBrowser) {
+      content += `<@${accountBrowser.id}>`
+    }
+    const accountMobile = accounts.getByProperty('mobile', 'TRUE')
+    if (accountMobile) {
+      content += `<@${accountMobile.id}>`
+    }
+  }
+
   if (item.content.includes('|')) {
     const idx = item.content.indexOf('|')
     const x = item.content.slice(idx - 3, idx)
@@ -89,7 +93,7 @@ export const syncTodoDashboard = async (item: Item) => {
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
       channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
-      payload: getTodoPayload(item, upcoming),
+      payload: getTodoPayload(item, content, upcoming),
     })
   }
   return success
