@@ -39,7 +39,7 @@ class Villages extends SheetData<VillageData> {
 
   auditAndUpdate = async (newData: VillageData) => {
     const existingData = this.getById(newData.id)
-    if (!existingData) {
+    if (!existingData || newData.id != existingData.id) {
       await this.add(newData)
       return
     }
@@ -67,10 +67,6 @@ class Villages extends SheetData<VillageData> {
       color = colors.error
     }
 
-    if (pointDif < 0) {
-      content = `Has dropped **${pointDif}** points`
-      color = colors.error
-    }
     const hoursSince = getHoursSince(oldData.lastUpdate)
     if (
       newData.playerId != '0' &&

@@ -51,7 +51,7 @@ export class SheetData<data extends RowStructure> {
    * Get row by id
    */
   getById = (id: string) => {
-    const found = this.rows?.find(row => row.id == id)
+    const found = this.rows?.find(row => row.id === id)
     if (!found) return
     const foundObj: any = {}
     this.headers.forEach(header => {
@@ -64,7 +64,7 @@ export class SheetData<data extends RowStructure> {
    * Get row by id
    */
   getByProperty = (property: string, value: string) => {
-    const found = this.rows?.find(row => row[property] == value)
+    const found = this.rows?.find(row => row[property] === value)
     if (!found) return
     const foundObj: any = {}
     this.headers.forEach(header => {
