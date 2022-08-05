@@ -30,7 +30,7 @@ export const villageMessage = (
   }
   const villageName = village.name.replace('+', ' ')
   const image = `https://fitzzero.sirv.com/tribalwars/tw-bot/${imagePrefix}${imageSuffix}.png`
-  const url = `https://us${world}.tribalwars.us/game.php?village=${village.id}&screen=info_village&id=53#${village.x};${village.y}`
+  const url = `https://us${world}.tribalwars.us/game.php?screen=info_village&id=${village.id}#${village.x};${village.y}`
 
   if (description && !isBarb) {
     description += '\n'
@@ -38,13 +38,13 @@ export const villageMessage = (
     description = ''
   }
   if (player) {
-    const playerUrl = `https://us${world}.tribalwars.us/game.php?village=${village.id}&screen=info_player&id=${village.playerId}#${village.x};${village.y}`
+    const playerUrl = `https://us${world}.tribalwars.us/game.php?screen=info_player&id=${village.playerId}#${village.x};${village.y}`
     description += `Owned by [${player.name} (${player.points} pts)](${playerUrl})`
   }
   if (player && player.tribe != '0') {
     const tribe = tribes.getById(player.tribe)
     const tribeTag = tribe?.tag?.split('%')[0]
-    const tribeUrl = `https://us${world}.tribalwars.us/game.php?village=${village.id}&screen=info_ally&id=${tribe?.id}`
+    const tribeUrl = `https://us${world}.tribalwars.us/game.php?screen=info_ally&id=${tribe?.id}`
     description += ` of [${tribeTag} (rank ${tribe?.rank})](${tribeUrl})`
   }
 
