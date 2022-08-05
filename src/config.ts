@@ -28,7 +28,7 @@ export const devDiscordConfig: BotConfig = {
 export const prodDiscordConfig: BotConfig = {
   category: '904857595272114240',
   client: '896860363541348413',
-  commands: [todo],
+  commands: [todo, village],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   guild: '855057085719642134',
   writeEnabled: true,
