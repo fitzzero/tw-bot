@@ -39,7 +39,7 @@ class Villages extends SheetData<VillageData> {
 
   auditAndUpdate = async (newData: VillageData) => {
     const existingData = this.getById(newData.id)
-    if (!existingData || newData.id != existingData.id) {
+    if (!existingData) {
       await this.add(newData)
       return
     }
@@ -58,12 +58,15 @@ class Villages extends SheetData<VillageData> {
     let content: string | undefined = undefined
     let color: colors | undefined = undefined
     // Point alerts
-    const pointDif = parseInt(newData.points) - parseInt(oldData.points)
-    if (parseInt(newData.points) > 2000 && pointDif > 510) {
+    const oldPoints = parseInt(oldData.points)
+    const newPoints = parseInt(newData.points)
+    if (!oldPoints || !newPoints) return
+    const pointDif = newPoints - oldPoints
+    if (newPoints > 2000 && pointDif > 510) {
       content = `Has increased **${pointDif}** points, could be Academy`
     }
     if (pointDif < 0) {
-      content = `Has dropped **${pointDif}** points`
+      content = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
       color = colors.error
     }
 

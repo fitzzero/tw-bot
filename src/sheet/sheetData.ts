@@ -155,7 +155,7 @@ export class SheetData<data extends RowStructure> {
         return true
       } catch (err) {
         logAlert(err, 'Sheets update')
-        return false
+        return true
       }
     } else {
       return true
