@@ -9,7 +9,7 @@ export const villageMessage = (
   village: VillageData,
   description?: string,
   color = colors.purple,
-  prefix?: string
+  isTodo = false
 ) => {
   const world = settings.getValue(WarRoomSettings.world)
   const points = parseInt(village.points)
@@ -64,6 +64,28 @@ export const villageMessage = (
         url,
       },
     ],
+  }
+
+  if (isTodo) {
+    options.components = [
+      {
+        type: 1,
+        components: [
+          {
+            style: 3,
+            label: `Complete`,
+            custom_id: `todo-complete`,
+            type: 2,
+          },
+          {
+            style: 4,
+            label: `Delete`,
+            custom_id: `todo-delete`,
+            type: 2,
+          },
+        ],
+      },
+    ]
   }
 
   return options
