@@ -42,7 +42,7 @@ const loop = async () => {
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
   // Re-sync if it's been more than hour since last sync
   if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
-    settings.updateOrAdd(world, true)
+    await settings.updateOrAdd(world, true)
     syncTw(world.value)
     await syncDashboard()
   }
