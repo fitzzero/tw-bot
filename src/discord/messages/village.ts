@@ -2,7 +2,7 @@ import { MessageOptions } from 'discord.js'
 import { PlayerData, players } from '../../sheet/players'
 import { settings, WarRoomSettings } from '../../sheet/settings'
 import { tribes } from '../../sheet/tribes'
-import { VillageData } from '../../sheet/villages'
+import { VillageData, villages } from '../../sheet/villages'
 import { colors } from '../colors'
 
 export const villageMessage = (

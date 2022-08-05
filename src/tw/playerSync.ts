@@ -4,6 +4,7 @@ import { logger } from '../utility/logger'
 import { PlayerData, players } from '../sheet/players'
 
 export const syncPlayers = async (world: string) => {
+  await players.loadRows()
   // Data: id, name, ally, villages, points, rank
   const playerData = await fetchPlayers(world)
 

@@ -32,7 +32,7 @@ class Players extends SheetData<PlayerData> {
       return
     }
     // Update data
-    this.update({ ...newData })
+    await this.update({ ...newData })
 
     // If account
     if (newData.name == settings.getValue(WarRoomSettings.account)) {

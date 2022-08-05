@@ -29,7 +29,7 @@ class Accounts extends SheetData<AccountsData> {
       // Update data
       const updateData = { ...accountData, lastSignOn: nowString() }
       updateData[property] = 'TRUE'
-      success = this.update(updateData)
+      success = await this.update(updateData)
     } else {
       const member = await this.getDiscordMember(id)
       if (!member) return

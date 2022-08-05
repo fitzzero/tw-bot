@@ -44,7 +44,7 @@ class Villages extends SheetData<VillageData> {
       return
     }
     // Update data
-    this.update(newData)
+    await this.update(newData)
 
     if (inAlertRange(newData)) {
       await this.villageChangeAlerts(newData, existingData)

@@ -4,6 +4,7 @@ import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 
 export const syncTribes = async (world: string) => {
+  await tribes.loadRows()
   // Data: id, name, tag, members, villages, points, all_points, rank
   const tribeData = await fetchTribes(world)
 

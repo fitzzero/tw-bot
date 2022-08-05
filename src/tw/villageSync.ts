@@ -4,6 +4,7 @@ import { logger } from '../utility/logger'
 import { VillageData, villages } from '../sheet/villages'
 
 export const syncVillages = async (world: string) => {
+  await villages.loadRows()
   const villageData = await fetchVillages(world)
 
   for (const data of villageData) {

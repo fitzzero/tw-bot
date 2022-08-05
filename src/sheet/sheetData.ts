@@ -6,7 +6,6 @@ import { keys } from 'ts-transformer-keys'
 import { logAlert, logger } from '../utility/logger'
 import { nowString } from '../utility/time'
 import { doc, limiter } from './connect'
-import { queueRowSave } from './saveQueue'
 
 export interface BaseSheetModel {
   lastUpdate: string
@@ -138,16 +137,23 @@ export class SheetData<data extends RowStructure> {
   /*
    * Update existing
    */
-  update = (values: data, changes = false) => {
-    const idx = this.rows.findIndex(row => row.id === values.id)
+  update = async (values: data, changes = false) => {
+    const idx = this.rows.findIndex(row => row.id == values.id)
     if (idx === -1) return false
 
     if (this.hasChanges(values)) changes = true
 
     if (changes) {
-      this.rows[idx].lastUpdate = nowString()
-      queueRowSave(this.rows[idx])
-      return true
+      try {
+        await limiter.removeTokens(1)
+        this.rows[idx].lastUpdate = nowString()
+        // @ts-ignore
+        await this.rows[idx].save({ raw: true })
+        return true
+      } catch (err) {
+        logAlert(err, 'Sheets update')
+        return false
+      }
     } else {
       return true
     }
@@ -158,7 +164,7 @@ export class SheetData<data extends RowStructure> {
    * Or add if new
    */
   updateOrAdd = async (values: data, changes = false) => {
-    const updateExisting = this.update(values, changes)
+    const updateExisting = await this.update(values, changes)
     if (updateExisting) return true
     else return await this.add(values as data)
   }
@@ -175,6 +181,17 @@ export class SheetData<data extends RowStructure> {
       prefix: 'success',
       message: `Sheet: Loaded ${this.title}`,
     })
+  }
+
+  /*
+   * Reload rows
+   */
+  loadRows = async () => {
+    try {
+      this.rows = await this.sheet.getRows()
+    } catch (err) {
+      logAlert(err, 'Sheet loadRows')
+    }
   }
 
   /*
