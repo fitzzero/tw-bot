@@ -9,6 +9,7 @@ import { wait } from '../../utility/wait'
 import { cannedResponses } from '../canned'
 import { Command } from '../commands'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
+import { closeCommand } from './canned'
 
 const documentation = new SlashCommandBuilder()
   .setName('todo')
@@ -63,14 +64,6 @@ const controller = async (interaction: CommandInteraction) => {
     logger({ prefix: 'alert', message: `Todoist: ${err}` })
     await closeCommand(interaction)
   }
-}
-
-export const closeCommand = async (
-  interaction: ChatInputCommandInteraction
-) => {
-  await interaction.editReply('Something went wrong, closing command...')
-  await wait(5000)
-  await interaction.deleteReply()
 }
 
 export const todo: Command = {

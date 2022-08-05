@@ -1,10 +1,9 @@
 import { ButtonInteraction } from 'discord.js'
-import { WarRoomChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
 import { Button } from '../buttons'
-import { getTodoPayload, syncTodoDashboard } from '../dashboardMessages/todo'
+import { syncTodoDashboard } from '../dashboardMessages/todo'
 
 const handleClose = async (
   interaction: ButtonInteraction,

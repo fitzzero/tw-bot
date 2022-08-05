@@ -1,4 +1,5 @@
 import { MessageOptions } from 'discord.js'
+import { settings, WarRoomSettings } from '../../sheet/settings'
 import { VillageData } from '../../sheet/villages'
 import { colors } from '../colors'
 
@@ -7,6 +8,7 @@ export const villageMessage = (
   description: string,
   color = colors.purple
 ) => {
+  const world = settings.getValue(WarRoomSettings.world)
   const points = parseInt(village.points)
   const imagePrefix = village.playerId == '0' ? 'barb' : 'village'
   let imageSuffix = 'Small'
@@ -18,7 +20,6 @@ export const villageMessage = (
     imageSuffix = 'Med'
   }
   const image = `https://fitzzero.sirv.com/tribalwars/tw-bot/${imagePrefix}${imageSuffix}.png`
-
   const options: MessageOptions = {
     content: '',
     tts: false,
@@ -32,7 +33,7 @@ export const villageMessage = (
           height: 0,
           width: 0,
         },
-        url: `https://usc1.tribalwars.us/game.php?village=107&screen=info_village&id=53#508;499`,
+        url: `https://us${world}.tribalwars.us/game.php?village=${village.id}&screen=info_village&id=53#${village.x};${village.y}`,
       },
     ],
   }
