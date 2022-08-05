@@ -76,8 +76,9 @@ export const syncTodoDashboard = async (item: Item) => {
   }
 
   if (village) {
-    let description = `${upcoming ? 'Upcoming: ' : 'Todo:'} ${item.content}`
-    description += ` at <t:${due}> (<t:${due}:R>)`
+    let description = `${upcoming ? 'Upcoming: ' : 'Todo:'} ${
+      item.content
+    } (<t:${due}:R>)`
     const color = upcoming ? colors.warning : colors.error
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
