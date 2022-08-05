@@ -50,7 +50,7 @@ export const runSheetDataTests = async () => {
     { prop: 'x', value: '23' },
     { prop: 'y', value: '9' },
   ])
-  if (test3[0]?.name != 'blah') return false
+  if (test3?.[0].name != 'blah') return false
 
   return true
 }

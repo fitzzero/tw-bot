@@ -18,6 +18,7 @@ const documentation = new SlashCommandBuilder()
 
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
+  await interaction.deferReply()
   const coords = interaction.options.getString('coords')
   if (coords == null) {
     closeCommand(interaction, 'Coordinates missing')
