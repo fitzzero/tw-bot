@@ -75,6 +75,30 @@ export class SheetData<data extends RowStructure> {
   }
 
   /*
+   * Filter by Properties
+   */
+  filterByProperties = (searchPair: { prop: string; value: string }[]) => {
+    const found = this.rows
+      ?.filter(row => {
+        let isMatch = true
+        // If all props don't match value, match is false
+        searchPair.forEach(pair => {
+          if (row[pair.prop] != pair.value) isMatch = false
+        })
+        return isMatch
+      })
+      ?.map(match => {
+        const foundObj: any = {}
+        this.headers.forEach(header => {
+          foundObj[header] = match[header]
+        })
+        return foundObj as data & BaseSheetModel
+      })
+    if (found.length == 0) return
+    else return found
+  }
+
+  /*
    * Add new row
    */
   removeById = async (id: string) => {

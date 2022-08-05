@@ -5,6 +5,8 @@ interface TestData extends RowStructure {
   id: string
   name: string
   points: string
+  x: string
+  y: string
 }
 
 const headers = keys<TestData>().map(key => key.toString())
@@ -18,6 +20,8 @@ export const runSheetDataTests = async () => {
     id: 'test1',
     name: 'Two',
     points: '5',
+    x: '4',
+    y: '7',
   })
 
   const test1 = testData.getById('test1')
@@ -27,6 +31,8 @@ export const runSheetDataTests = async () => {
     id: 'test2',
     name: 'Three',
     points: '5',
+    x: '5',
+    y: '8',
   })
 
   const test2 = testData.getByProperty('name', 'Three')
@@ -36,6 +42,15 @@ export const runSheetDataTests = async () => {
     id: 'test1',
     name: '0001',
     points: '5',
+    x: '4',
+    y: '7',
   })
+
+  const test3 = testData.filterByProperties([
+    { prop: 'x', value: '23' },
+    { prop: 'y', value: '9' },
+  ])
+  if (test3[0]?.name != 'blah') return false
+
   return true
 }

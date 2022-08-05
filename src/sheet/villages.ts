@@ -15,11 +15,24 @@ export interface VillageData extends RowStructure {
   rank: string
 }
 
+export interface Coordinates {
+  x: string
+  y: string
+}
+
 const headers = keys<VillageData>().map(key => key.toString())
 
 class Villages extends SheetData<VillageData> {
   constructor(tabTitle: string, tabHeaders: string[]) {
     super(tabTitle, tabHeaders)
+  }
+
+  getByCoords = ({ x, y }: Coordinates) => {
+    const found = this.filterByProperties([
+      { prop: 'x', value: x },
+      { prop: 'y', value: y },
+    ])
+    return found?.[0]
   }
 
   auditAndUpdate = async (newData: VillageData) => {
@@ -68,5 +81,14 @@ const villageChangeAlerts = async (
     const content = `Has increased ${pointDif}, could be Academy`
     const message = villageMessage(newData, content)
     await channels.sendMessage(WarRoomChannels.news, message)
+  }
+}
+
+export const splitCoords = (coords: string) => {
+  const coordsSplit = coords.split('|')
+  if (!coordsSplit?.[1]) return
+  return {
+    x: coordsSplit[0],
+    y: coordsSplit[1],
   }
 }

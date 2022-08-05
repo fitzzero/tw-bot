@@ -5,7 +5,7 @@ import { colors } from '../colors'
 
 export const villageMessage = (
   village: VillageData,
-  description: string,
+  description?: string,
   color = colors.purple
 ) => {
   const world = settings.getValue(WarRoomSettings.world)
@@ -26,7 +26,7 @@ export const villageMessage = (
     embeds: [
       {
         title: `${village.name} (${village.x}|${village.y})`,
-        description: description,
+        description,
         color: 0x070a06,
         thumbnail: {
           url: image,

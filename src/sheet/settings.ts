@@ -1,5 +1,6 @@
 import { keys } from 'ts-transformer-keys'
 import { RowStructure, SheetData } from './sheetData'
+import { splitCoords } from './villages'
 
 export interface SettingsData extends RowStructure {
   id: string
@@ -30,14 +31,14 @@ class Settings extends SheetData<SettingsData> {
 
   getAlertSettings = () => {
     const coordinates = this.getValue(WarRoomSettings.startCoords)
+    if (!coordinates) return
+    const coordsSplit = splitCoords(coordinates)
     const playerRadius = this.getValue(WarRoomSettings.playerR)
     const barbRadius = this.getValue(WarRoomSettings.barbR)
-    if (!coordinates || !playerRadius || !barbRadius) return
-    const coordsSplit = coordinates.split('|')
-    if (!coordsSplit?.[0]) return
+    if (!coordsSplit || !playerRadius || !barbRadius) return
     return {
-      x: parseInt(coordsSplit[0]),
-      y: parseInt(coordsSplit[1]),
+      x: parseInt(coordsSplit.x),
+      y: parseInt(coordsSplit.y),
       playerRadius: parseInt(playerRadius),
       barbRadius: parseInt(barbRadius),
     }
