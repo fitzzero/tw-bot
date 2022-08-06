@@ -1,5 +1,6 @@
 import { APIEmbedField } from 'discord-api-types'
 import { MessageOptions } from 'discord.js'
+import { storagePath } from '../../config'
 import { WRColors } from '../colors'
 
 interface stonksMessageProps {
@@ -25,9 +26,7 @@ export const stonksMessage = ({
         color: positive ? WRColors.success : WRColors.error,
         fields: fields,
         thumbnail: {
-          url: `https://fitzzero.sirv.com/tribalwars/tw-bot/stonks${
-            positive ? 'up' : 'down'
-          }.png`,
+          url: `${storagePath}stonks${positive ? 'up' : 'down'}.png`,
           height: 0,
           width: 0,
         },

@@ -1,8 +1,10 @@
 import { MessageOptions } from 'discord.js'
+import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
 import { settings, WRSettings } from '../../sheet/settings'
-import { tribes } from '../../sheet/tribes'
-import { VillageData } from '../../sheet/villages'
+import { TribeData, tribes } from '../../sheet/tribes'
+import { getVillageSize, VillageData } from '../../sheet/villages'
+import { worldPath } from '../../tw/world'
 import { WRColors } from '../colors'
 
 export interface VillageMessageProps {
@@ -10,50 +12,56 @@ export interface VillageMessageProps {
   content?: string
   description?: string
   isTodo?: boolean
+  player?: PlayerData
+  tribe?: TribeData
   village: VillageData
 }
 
 export const villageMessage = ({
-  village,
-  description,
   color = WRColors.purple,
-  isTodo = false,
   content = '',
+  description = '',
+  isTodo = false,
+  player,
+  tribe,
+  village,
 }: VillageMessageProps) => {
+  // Meta data
   const world = settings.getValue(WRSettings.world)
-  const points = parseInt(village.points)
   const isBarb = village.playerId == '0'
-  let player: PlayerData | undefined = undefined
-  if (!isBarb) {
+  const imagePrefix = isBarb ? 'barb' : 'village'
+  const imageSuffix = getVillageSize(village.points)
+  const villageName = village.name.replace('+', ' ')
+  const image = `${storagePath}${imagePrefix}${imageSuffix}.png`
+  const url = `${worldPath()}game.php?screen=info_village&id=${village.id}#${
+    village.x
+  };${village.y}`
+
+  // Get PlayerData if exists (and override not provided)
+  if (!player || !isBarb) {
     player = players.getById(village.playerId)
   }
-  const imagePrefix = isBarb ? 'barb' : 'village'
-  if (!color && isBarb) color = WRColors.gray
-  let imageSuffix = 'Small'
-  if (points >= 9000) {
-    imageSuffix = 'Max'
-  } else if (points >= 3000) {
-    imageSuffix = 'Large'
-  } else if (points >= 1000) {
-    imageSuffix = 'Med'
+  // Get TribeData if Exists (and override not provided)
+  if (!tribe && player && player.tribe != '0') {
+    tribe = tribes.getById(player.tribe)
   }
-  const villageName = village.name.replace('+', ' ')
-  const image = `https://fitzzero.sirv.com/tribalwars/tw-bot/${imagePrefix}${imageSuffix}.png`
-  const url = `https://us${world}.tribalwars.us/game.php?screen=info_village&id=${village.id}#${village.x};${village.y}`
 
-  if (description && !isBarb) {
-    description += '\n'
-  } else if (!isBarb) {
-    description = ''
+  // Set Default Color if not provided
+  if (!color && isBarb) {
+    color = WRColors.gray
   }
+
+  // Append PlayerData to description
   if (player) {
-    const playerUrl = `https://us${world}.tribalwars.us/game.php?screen=info_player&id=${village.playerId}#${village.x};${village.y}`
-    description += `Owned by [${player.name} (${player.points} pts)](${playerUrl})`
+    const playerUrl = `${worldPath()}game.php?screen=info_player&id=${
+      village.playerId
+    }#${village.x};${village.y}`
+    description += `\nOwned by [${player.name} (${player.points} pts)](${playerUrl})`
   }
-  if (player && player.tribe != '0') {
-    const tribe = tribes.getById(player.tribe)
+  // Append TribeData to description
+  if (tribe) {
     const tribeTag = tribe?.tag?.split('%')[0]
-    const tribeUrl = `https://us${world}.tribalwars.us/game.php?screen=info_ally&id=${tribe?.id}`
+    const tribeUrl = `${worldPath()}game.php?screen=info_ally&id=${tribe?.id}`
     description += ` of [${tribeTag} (rank ${tribe?.rank})](${tribeUrl})`
   }
 

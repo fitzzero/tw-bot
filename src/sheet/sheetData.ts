@@ -178,7 +178,7 @@ export class SheetData<data extends RowStructure> {
   loadData = async () => {
     await this.getOrCreateSheet()
     await this.syncSheetHeaders()
-    this.rows = await this.sheet.getRows()
+    await this.loadRows()
 
     logger({
       prefix: 'success',

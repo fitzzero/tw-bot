@@ -1,6 +1,6 @@
 import { MessageOptions } from 'discord.js'
 import { BotInfo } from '../..'
-import { botConfig } from '../../config'
+import { botConfig, storagePath } from '../../config'
 import { WRChannels } from '../../sheet/channels'
 import { settings, WRSettings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
@@ -71,7 +71,7 @@ const overview = () => {
           },
         ],
         thumbnail: {
-          url: `https://fitzzero.sirv.com/tribalwars/tw-bot/war-room.jpg`,
+          url: `${storagePath}war-room.jpg`,
           height: 0,
           width: 0,
         },

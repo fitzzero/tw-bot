@@ -112,6 +112,14 @@ const inAlertRange = (village: VillageData) => {
   return false
 }
 
+export const getVillageSize = (points: string) => {
+  const value = parseInt(points)
+  if (value >= 9000) return 'Max'
+  if (value >= 3000) return 'Large'
+  if (value >= 1000) return 'Med'
+  return 'Small'
+}
+
 export const splitCoords = (coords: string) => {
   const coordsSplit = coords.split('|')
   if (!coordsSplit?.[1]) return

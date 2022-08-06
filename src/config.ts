@@ -6,7 +6,7 @@ import { playerTop } from './discord/commands/rankings'
 
 export const isDev = !!process.argv[2]
 
-export const worldId = isDev ? 1 : 56
+export const storagePath = 'https://fitzzero.sirv.com/tribalwars/tw-bot/'
 
 export interface BotConfig {
   category: string

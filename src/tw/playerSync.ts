@@ -2,6 +2,7 @@ import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
 import { logger } from '../utility/logger'
 import { PlayerData, players } from '../sheet/players'
+import { worldPath } from './world'
 
 export const syncPlayers = async (world: string) => {
   await players.loadRows()
@@ -46,7 +47,7 @@ export const syncPlayers = async (world: string) => {
 }
 
 const fetchPlayers = async (world: string): Promise<string[][]> => {
-  let api = `https://us${world}.tribalwars.us/map/player.txt`
+  let api = `${worldPath(world)}map/player.txt`
   if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/player.txt'
   }
@@ -70,7 +71,7 @@ const fetchOd = async (
   world: string,
   type: 'att' | 'def' | 'sup' | 'all'
 ): Promise<string[][]> => {
-  let api = `https://us${world}.tribalwars.us/map/kill_${type}.txt`
+  let api = `${worldPath(world)}map/kill_${type}.txt`
   if (world == 'dev') {
     api = `https://fitzzero.sirv.com/tribalwars/example-data/kill_${type}.txt`
   }
