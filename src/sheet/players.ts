@@ -1,8 +1,8 @@
 import { APIEmbedField } from 'discord-api-types'
 import { keys } from 'ts-transformer-keys'
 import { stonksMessage } from '../discord/messages/stonks'
-import { channels, WarRoomChannels } from './channels'
-import { settings, WarRoomSettings } from './settings'
+import { channels, WRChannels } from './channels'
+import { settings, WRSettings } from './settings'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface PlayerData extends RowStructure {
@@ -35,7 +35,7 @@ class Players extends SheetData<PlayerData> {
     await this.update({ ...newData })
 
     // If account
-    if (newData.name == settings.getValue(WarRoomSettings.account)) {
+    if (newData.name == settings.getValue(WRSettings.account)) {
       accountChangeAlerts(newData, existingData)
     }
   }
@@ -81,5 +81,5 @@ const accountChangeAlerts = async (
     fields,
     positive: goodChanges > 0,
   })
-  await channels.sendMessage(WarRoomChannels.news, message)
+  await channels.sendMessage(WRChannels.news, message)
 }

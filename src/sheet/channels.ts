@@ -16,16 +16,16 @@ export interface CreateChannelProps {
 
 const headers = keys<ChannelData>().map(key => key.toString())
 
-export const enum WarRoomChannels {
+export const enum WRChannels {
   dash = 'dashboard',
   news = 'news-feed',
   todo = 'todo',
 }
 
 const initialChannels: CreateChannelProps[] = [
-  { id: WarRoomChannels.dash, topic: 'War Room Command Center' },
-  { id: WarRoomChannels.news, topic: 'War Room Updates' },
-  { id: WarRoomChannels.todo, topic: 'War Room Todo' },
+  { id: WRChannels.dash, topic: 'War Room Command Center' },
+  { id: WRChannels.news, topic: 'War Room Updates' },
+  { id: WRChannels.todo, topic: 'War Room Todo' },
 ]
 
 class Channels extends SheetData<ChannelData> {

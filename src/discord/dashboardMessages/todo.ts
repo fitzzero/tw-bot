@@ -2,12 +2,12 @@ import { MessageOptions } from 'discord.js'
 import moment from 'moment'
 import { Item } from 'todoist/dist/v8-types'
 import { accounts } from '../../sheet/accounts'
-import { WarRoomChannels } from '../../sheet/channels'
+import { WRChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { BaseSheetModel } from '../../sheet/sheetData'
 import { VillageData, villages } from '../../sheet/villages'
 import { momentUtcOffset, withinLastMinute } from '../../utility/time'
-import { colors } from '../colors'
+import { WRColors } from '../colors'
 import { villageMessage } from '../messages/village'
 
 export const getTodoPayload = (
@@ -44,7 +44,7 @@ export const getTodoPayload = (
       {
         title: `${upcoming ? 'Upcoming: ' : 'Todo: '} ${item?.content}`,
         description: `Todo at <t:${due}> (<t:${due}:R>)`,
-        color: upcoming ? colors.warning : colors.error,
+        color: upcoming ? WRColors.warning : WRColors.error,
       },
     ],
   }
@@ -83,16 +83,22 @@ export const syncTodoDashboard = async (item: Item) => {
     let description = `${upcoming ? 'Upcoming: ' : 'Todo:'} ${
       item.content
     } (<t:${due}:R>)`
-    const color = upcoming ? colors.warning : colors.error
+    const color = upcoming ? WRColors.warning : WRColors.error
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
-      channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
-      payload: villageMessage(village, description, color, true, content),
+      channelId: upcoming ? WRChannels.todo : WRChannels.news,
+      payload: villageMessage({
+        color,
+        content,
+        description,
+        isTodo: true,
+        village,
+      }),
     })
   } else {
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
-      channelId: upcoming ? WarRoomChannels.todo : WarRoomChannels.news,
+      channelId: upcoming ? WRChannels.todo : WRChannels.news,
       payload: getTodoPayload(item, content, upcoming),
     })
   }

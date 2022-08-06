@@ -5,13 +5,13 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js'
-import { settings, WarRoomSettings } from '../../sheet/settings'
+import { settings, WRSettings } from '../../sheet/settings'
 import { syncDashboard } from '../dashboard'
 import { overviewDashboard } from '../dashboardMessages/overview'
 import { Modal } from '../modals'
 
 interface SettingField {
-  id: WarRoomSettings
+  id: WRSettings
   label: string
   maxLength: number
   required?: boolean
@@ -19,29 +19,29 @@ interface SettingField {
 
 const settingsToSync: SettingField[] = [
   {
-    id: WarRoomSettings.world,
+    id: WRSettings.world,
     label: 'World short identifier (ie us60)',
     maxLength: 4,
     required: true,
   },
   {
-    id: WarRoomSettings.account,
+    id: WRSettings.account,
     label: 'Account name',
     maxLength: 20,
     required: false,
   },
   {
-    id: WarRoomSettings.startCoords,
+    id: WRSettings.startCoords,
     label: 'Starting coordinates x|y',
     maxLength: 7,
   },
   {
-    id: WarRoomSettings.playerR,
+    id: WRSettings.playerR,
     label: 'Number of fields for player alerts',
     maxLength: 3,
   },
   {
-    id: WarRoomSettings.barbR,
+    id: WRSettings.barbR,
     label: 'Number of fields for barbarian alerts',
     maxLength: 3,
   },

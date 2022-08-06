@@ -1,18 +1,26 @@
 import { MessageOptions } from 'discord.js'
 import { PlayerData, players } from '../../sheet/players'
-import { settings, WarRoomSettings } from '../../sheet/settings'
+import { settings, WRSettings } from '../../sheet/settings'
 import { tribes } from '../../sheet/tribes'
-import { VillageData, villages } from '../../sheet/villages'
-import { colors } from '../colors'
+import { VillageData } from '../../sheet/villages'
+import { WRColors } from '../colors'
 
-export const villageMessage = (
-  village: VillageData,
-  description?: string,
-  color = colors.purple,
+export interface VillageMessageProps {
+  color?: WRColors
+  content?: string
+  description?: string
+  isTodo?: boolean
+  village: VillageData
+}
+
+export const villageMessage = ({
+  village,
+  description,
+  color = WRColors.purple,
   isTodo = false,
-  content = ''
-) => {
-  const world = settings.getValue(WarRoomSettings.world)
+  content = '',
+}: VillageMessageProps) => {
+  const world = settings.getValue(WRSettings.world)
   const points = parseInt(village.points)
   const isBarb = village.playerId == '0'
   let player: PlayerData | undefined = undefined
@@ -20,7 +28,7 @@ export const villageMessage = (
     player = players.getById(village.playerId)
   }
   const imagePrefix = isBarb ? 'barb' : 'village'
-  if (!color && isBarb) color = colors.gray
+  if (!color && isBarb) color = WRColors.gray
   let imageSuffix = 'Small'
   if (points >= 9000) {
     imageSuffix = 'Max'

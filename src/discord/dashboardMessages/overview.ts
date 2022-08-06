@@ -1,15 +1,15 @@
 import { MessageOptions } from 'discord.js'
 import { BotInfo } from '../..'
 import { botConfig } from '../../config'
-import { WarRoomChannels } from '../../sheet/channels'
-import { settings, WarRoomSettings } from '../../sheet/settings'
+import { WRChannels } from '../../sheet/channels'
+import { settings, WRSettings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
-import { colors } from '../colors'
+import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
   const world = settings.getById('world')
-  const map = settings.getValue(WarRoomSettings.map)
+  const map = settings.getValue(WRSettings.map)
 
   let description = ''
   const alertSettings = settings.getAlertSettings()
@@ -52,7 +52,7 @@ const overview = () => {
       {
         title: `War Room v${BotInfo.version}`,
         description,
-        color: colors.purple,
+        color: WRColors.purple,
         fields: [
           {
             name: `World`,
@@ -84,5 +84,5 @@ const overview = () => {
 export const overviewDashboard: DashboardMessage = {
   id: 'overview',
   getPayload: overview,
-  channel: WarRoomChannels.dash,
+  channel: WRChannels.dash,
 }

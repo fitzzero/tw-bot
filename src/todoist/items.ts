@@ -4,7 +4,7 @@ import {
   getTodoPayload,
   syncTodoDashboard,
 } from '../discord/dashboardMessages/todo'
-import { WarRoomChannels } from '../sheet/channels'
+import { WRChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
 import { momentUtcOffset, withinLastMinute } from '../utility/time'

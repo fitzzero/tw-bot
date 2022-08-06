@@ -2,7 +2,7 @@ import { keys } from 'ts-transformer-keys'
 import { getActiveGuild } from '../discord/guild'
 import { logAlert } from '../utility/logger'
 import { getMinutesSince, nowString } from '../utility/time'
-import { settings, WarRoomSettings } from './settings'
+import { settings, WRSettings } from './settings'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface AccountsData extends RowStructure {
@@ -108,9 +108,7 @@ class Accounts extends SheetData<AccountsData> {
 
   getDiscordRole = async (property: 'browser' | 'mobile') => {
     const roleId = settings.getValue(
-      property == 'browser'
-        ? WarRoomSettings.browserId
-        : WarRoomSettings.mobileId
+      property == 'browser' ? WRSettings.browserId : WRSettings.mobileId
     )
     if (!roleId) {
       logAlert('No browser roleId set', 'Settings')

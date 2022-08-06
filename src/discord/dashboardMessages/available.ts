@@ -1,8 +1,8 @@
 import { MessageOptions } from 'discord.js'
 import { accounts } from '../../sheet/accounts'
-import { WarRoomChannels } from '../../sheet/channels'
+import { WRChannels } from '../../sheet/channels'
 import { getUnix } from '../../utility/time'
-import { colors } from '../colors'
+import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
 const available = () => {
@@ -47,7 +47,7 @@ const available = () => {
       {
         title,
         description: `<t:${getUnix()}:R>`,
-        color: oneOnline ? colors.warning : colors.error,
+        color: oneOnline ? WRColors.warning : WRColors.error,
       },
     ],
     components: [
@@ -63,6 +63,6 @@ const available = () => {
 export const availableDashboard: DashboardMessage = {
   id: 'available',
   getPayload: available,
-  channel: WarRoomChannels.news,
+  channel: WRChannels.news,
   rebuild: true,
 }

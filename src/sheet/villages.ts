@@ -2,8 +2,8 @@ import { keys } from 'ts-transformer-keys'
 import { BaseSheetModel, RowStructure, SheetData } from './sheetData'
 import { settings } from './settings'
 import { villageMessage } from '../discord/messages/village'
-import { channels, WarRoomChannels } from './channels'
-import { colors } from '../discord/colors'
+import { channels, WRChannels } from './channels'
+import { WRColors } from '../discord/colors'
 import { getHoursSince } from '../utility/time'
 
 export interface VillageData extends RowStructure {
@@ -56,7 +56,7 @@ class Villages extends SheetData<VillageData> {
     oldData: VillageData & BaseSheetModel
   ) => {
     let content: string | undefined = undefined
-    let color: colors | undefined = undefined
+    let color: WRColors | undefined = undefined
     // Point alerts
     const oldPoints = parseInt(oldData.points)
     const newPoints = parseInt(newData.points)
@@ -67,7 +67,7 @@ class Villages extends SheetData<VillageData> {
     }
     if (pointDif < 0) {
       content = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
-      color = colors.error
+      color = WRColors.error
     }
 
     const hoursSince = getHoursSince(oldData.lastUpdate)
@@ -78,12 +78,12 @@ class Villages extends SheetData<VillageData> {
       hoursSince == 48
     ) {
       content = `Inactive for 48 hours`
-      color = colors.error
+      color = WRColors.error
     }
 
     if (content) {
-      const message = villageMessage(newData, content, color)
-      await channels.sendMessage(WarRoomChannels.news, message)
+      const message = villageMessage({ village: newData, content, color })
+      await channels.sendMessage(WRChannels.news, message)
     }
     return
   }

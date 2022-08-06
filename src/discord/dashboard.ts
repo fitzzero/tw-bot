@@ -1,5 +1,5 @@
 import { MessageOptions } from 'discord.js'
-import { WarRoomChannels } from '../sheet/channels'
+import { WRChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
 import { availableDashboard } from './dashboardMessages/available'
@@ -9,7 +9,7 @@ import { overviewDashboard } from './dashboardMessages/overview'
 export interface DashboardMessage {
   id: string
   getPayload: () => MessageOptions | undefined
-  channel: WarRoomChannels
+  channel: WRChannels
   rebuild?: boolean
 }
 

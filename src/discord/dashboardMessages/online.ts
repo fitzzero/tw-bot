@@ -1,8 +1,8 @@
 import { MessageOptions } from 'discord.js'
 import { accounts } from '../../sheet/accounts'
-import { WarRoomChannels } from '../../sheet/channels'
+import { WRChannels } from '../../sheet/channels'
 import { getUnix } from '../../utility/time'
-import { colors } from '../colors'
+import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
 const overview = () => {
@@ -51,7 +51,9 @@ const overview = () => {
         title: `Online Status`,
         description: '',
         color:
-          !!accountBrowser || !!accountMobile ? colors.success : colors.error,
+          !!accountBrowser || !!accountMobile
+            ? WRColors.success
+            : WRColors.error,
         fields: [
           {
             name: `:computer: Browser`,
@@ -73,5 +75,5 @@ const overview = () => {
 export const onlineDashboard: DashboardMessage = {
   id: 'online',
   getPayload: overview,
-  channel: WarRoomChannels.dash,
+  channel: WRChannels.dash,
 }

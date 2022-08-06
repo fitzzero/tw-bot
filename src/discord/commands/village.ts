@@ -35,7 +35,7 @@ const controller = async (interaction: CommandInteraction) => {
     closeCommand(interaction, 'Village not found')
     return
   }
-  const message = villageMessage(village)
+  const message = villageMessage({ village })
   await interaction.editReply(message)
   return
 }

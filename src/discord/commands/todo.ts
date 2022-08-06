@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { Item } from 'todoist/dist/v8-types'
-import { channels, WarRoomChannels } from '../../sheet/channels'
+import { channels, WRChannels } from '../../sheet/channels'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
@@ -51,7 +51,7 @@ const controller = async (interaction: CommandInteraction) => {
     })) as Item
     const success = await syncTodoDashboard(newItem)
     if (success) {
-      const todoChannelData = channels.getById(WarRoomChannels.todo)
+      const todoChannelData = channels.getById(WRChannels.todo)
       if (interaction.channelId == todoChannelData?.channelId) {
         interaction.deleteReply()
       } else {
