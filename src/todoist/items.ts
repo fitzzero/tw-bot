@@ -1,11 +1,6 @@
 import moment from 'moment-timezone'
 import { Item } from 'todoist/dist/v8-types'
-import {
-  getTodoPayload,
-  syncTodoDashboard,
-} from '../discord/dashboardMessages/todo'
-import { WRChannels } from '../sheet/channels'
-import { messages } from '../sheet/messages'
+import { syncTodoDashboard } from '../discord/dashboardMessages/todo'
 import { logAlert, logger } from '../utility/logger'
 import { momentUtcOffset, withinLastMinute } from '../utility/time'
 import { todoist } from './connect'

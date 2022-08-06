@@ -30,7 +30,7 @@ export const villageMessage = ({
   const isBarb = village.playerId == '0'
   const imagePrefix = isBarb ? 'barb' : 'village'
   const imageSuffix = getVillageSize(village.points)
-  const villageName = village.name.replace('+', ' ')
+  const villageName = village.name.replaceAll('+', ' ')
   const image = `${storagePath}${imagePrefix}${imageSuffix}.png`
   const url = getVillageUrl(village)
 
