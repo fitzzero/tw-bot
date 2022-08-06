@@ -9,7 +9,7 @@ export const villageChangeAlerts = async (
   newData: VillageData,
   oldData: VillageData & BaseSheetModel
 ) => {
-  let content: string | undefined = undefined
+  let description: string | undefined = undefined
   let color: WRColors | undefined = undefined
   // Point alerts
   const oldPoints = parseInt(oldData.points)
@@ -17,11 +17,11 @@ export const villageChangeAlerts = async (
   if (!oldPoints || !newPoints) return
   const pointDif = newPoints - oldPoints
   if (newPoints > 2000 && pointDif > 510) {
-    content = `Has increased **${pointDif}** points, could be Academy`
+    description = `Has increased **${pointDif}** points, could be Academy`
     color = WRColors.warning
   }
   if (pointDif < 0) {
-    content = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
+    description = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
     color = WRColors.gray
   }
 
@@ -32,12 +32,12 @@ export const villageChangeAlerts = async (
     hoursSince &&
     hoursSince == 48
   ) {
-    content = `Inactive for 48 hours`
+    description = `Inactive for 48 hours`
     color = WRColors.gray
   }
 
-  if (content) {
-    const message = villageMessage({ village: newData, content, color })
+  if (description) {
+    const message = villageMessage({ village: newData, description, color })
     await channels.sendMessage(WRChannels.news, message)
   }
   return
