@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { splitCoords, villages } from '../../sheet/villages'
+import { villages } from '../../sheet/villages'
+import { splitCoords } from '../../tw/village'
 
 import { Command } from '../commands'
 import { villageMessage } from '../messages/village'

@@ -5,7 +5,6 @@ import { channels, WRChannels } from '../../sheet/channels'
 import { todoist } from '../../todoist/connect'
 import { getActiveProject } from '../../todoist/project'
 import { logger } from '../../utility/logger'
-import { cannedResponses } from '../canned'
 import { Command } from '../commands'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
 import { closeCommand } from './canned'
@@ -36,7 +35,7 @@ const controller = async (interaction: CommandInteraction) => {
   const when = interaction.options.getString('when')
   const project = getActiveProject()
   if (!what || !when) {
-    cannedResponses.error(interaction)
+    interaction.deleteReply()
     return
   }
   await interaction.deferReply()

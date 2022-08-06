@@ -1,6 +1,6 @@
 import { keys } from 'ts-transformer-keys'
+import { splitCoords } from '../tw/village'
 import { RowStructure, SheetData } from './sheetData'
-import { splitCoords } from './villages'
 
 export interface SettingsData extends RowStructure {
   id: string
