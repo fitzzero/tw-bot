@@ -18,10 +18,11 @@ export const villageChangeAlerts = async (
   const pointDif = newPoints - oldPoints
   if (newPoints > 2000 && pointDif > 510) {
     content = `Has increased **${pointDif}** points, could be Academy`
+    color = WRColors.warning
   }
   if (pointDif < 0) {
     content = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
-    color = WRColors.error
+    color = WRColors.gray
   }
 
   const hoursSince = getHoursSince(oldData.lastUpdate)
@@ -32,7 +33,7 @@ export const villageChangeAlerts = async (
     hoursSince == 48
   ) {
     content = `Inactive for 48 hours`
-    color = WRColors.error
+    color = WRColors.gray
   }
 
   if (content) {
