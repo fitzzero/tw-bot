@@ -1,9 +1,9 @@
 import { MessageOptions } from 'discord.js'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
-import { settings, WRSettings } from '../../sheet/settings'
 import { TribeData, tribes } from '../../sheet/tribes'
-import { getVillageSize, VillageData } from '../../sheet/villages'
+import { VillageData } from '../../sheet/villages'
+import { getVillageSize, getVillageUrl } from '../../tw/village'
 import { worldPath } from '../../tw/world'
 import { WRColors } from '../colors'
 
@@ -27,15 +27,12 @@ export const villageMessage = ({
   village,
 }: VillageMessageProps) => {
   // Meta data
-  const world = settings.getValue(WRSettings.world)
   const isBarb = village.playerId == '0'
   const imagePrefix = isBarb ? 'barb' : 'village'
   const imageSuffix = getVillageSize(village.points)
   const villageName = village.name.replace('+', ' ')
   const image = `${storagePath}${imagePrefix}${imageSuffix}.png`
-  const url = `${worldPath()}game.php?screen=info_village&id=${village.id}#${
-    village.x
-  };${village.y}`
+  const url = getVillageUrl(village)
 
   // Get PlayerData if exists (and override not provided)
   if (!player || !isBarb) {

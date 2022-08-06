@@ -1,10 +1,7 @@
 import { keys } from 'ts-transformer-keys'
-import { BaseSheetModel, RowStructure, SheetData } from './sheetData'
-import { settings } from './settings'
-import { villageMessage } from '../discord/messages/village'
-import { channels, WRChannels } from './channels'
-import { WRColors } from '../discord/colors'
-import { getHoursSince } from '../utility/time'
+import { RowStructure, SheetData } from './sheetData'
+import { inAlertRange } from '../tw/village'
+import { villageChangeAlerts } from '../discord/alerts/villageAlerts'
 
 export interface VillageData extends RowStructure {
   id: string
@@ -47,84 +44,9 @@ class Villages extends SheetData<VillageData> {
     await this.update(newData)
 
     if (inAlertRange(newData)) {
-      await this.villageChangeAlerts(newData, existingData)
+      await villageChangeAlerts(newData, existingData)
     }
-  }
-
-  villageChangeAlerts = async (
-    newData: VillageData,
-    oldData: VillageData & BaseSheetModel
-  ) => {
-    let content: string | undefined = undefined
-    let color: WRColors | undefined = undefined
-    // Point alerts
-    const oldPoints = parseInt(oldData.points)
-    const newPoints = parseInt(newData.points)
-    if (!oldPoints || !newPoints) return
-    const pointDif = newPoints - oldPoints
-    if (newPoints > 2000 && pointDif > 510) {
-      content = `Has increased **${pointDif}** points, could be Academy`
-    }
-    if (pointDif < 0) {
-      content = `Has dropped **${pointDif}** points (~~${oldPoints}~~->${newPoints})`
-      color = WRColors.error
-    }
-
-    const hoursSince = getHoursSince(oldData.lastUpdate)
-    if (
-      newData.playerId != '0' &&
-      !this.hasChanges(newData) &&
-      hoursSince &&
-      hoursSince == 48
-    ) {
-      content = `Inactive for 48 hours`
-      color = WRColors.error
-    }
-
-    if (content) {
-      const message = villageMessage({ village: newData, content, color })
-      await channels.sendMessage(WRChannels.news, message)
-    }
-    return
   }
 }
 
 export const villages = new Villages('villages', headers)
-
-const inAlertRange = (village: VillageData) => {
-  const alertSettings = settings.getAlertSettings()
-  if (!alertSettings) return false
-  const xDistance = alertSettings.x - parseInt(village.x)
-  const yDistance = alertSettings.y - parseInt(village.y)
-  const distance = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
-  if (village.playerId == '0' && distance < alertSettings.barbRadius) {
-    // console.log(
-    //   `${village.name} (${village.x}|${village.y}) is ${distance} away`
-    // )
-    return true
-  }
-  if (distance < alertSettings.playerRadius) {
-    // console.log(
-    //   `${village.name} (${village.x}|${village.y}) is ${distance} away`
-    // )
-    return true
-  }
-  return false
-}
-
-export const getVillageSize = (points: string) => {
-  const value = parseInt(points)
-  if (value >= 9000) return 'Max'
-  if (value >= 3000) return 'Large'
-  if (value >= 1000) return 'Med'
-  return 'Small'
-}
-
-export const splitCoords = (coords: string) => {
-  const coordsSplit = coords.split('|')
-  if (!coordsSplit?.[1]) return
-  return {
-    x: coordsSplit[0],
-    y: coordsSplit[1],
-  }
-}
