@@ -71,10 +71,7 @@ export const villageMessage = ({
     tts: false,
     embeds: [
       {
-        author: {
-          name: `${villageName} ${village.x}|${village.y} (${village.points} pts)`,
-          url,
-        },
+        title: `${villageName} ${village.x}|${village.y} (${village.points} pts)`,
         description,
         color,
         thumbnail: {
@@ -82,7 +79,7 @@ export const villageMessage = ({
           height: 0,
           width: 0,
         },
-
+        url,
         footer: footer
           ? {
               text: footer,
