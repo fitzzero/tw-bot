@@ -29,6 +29,12 @@ export const getUnix = (date?: Moment | string) => {
   return date.tz(momentTimeZone).unix()
 }
 
+export const getIso = (date?: Moment | string) => {
+  date = validateMoment(date)
+  if (!date) return moment.tz(momentTimeZone).toISOString()
+  return date.tz(momentTimeZone).toISOString()
+}
+
 export const getMinutesSince = (date?: Moment | string) => {
   date = validateMoment(date)
   if (!date) return

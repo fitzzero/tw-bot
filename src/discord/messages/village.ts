@@ -11,8 +11,10 @@ export interface VillageMessageProps {
   color?: WRColors
   content?: string
   description?: string
-  isTodo?: boolean
+  footer?: string
   player?: PlayerData
+  timestamp?: string
+  todo?: boolean
   tribe?: TribeData
   village: VillageData
 }
@@ -21,8 +23,10 @@ export const villageMessage = ({
   color = WRColors.purple,
   content = '',
   description = '',
-  isTodo = false,
+  footer,
   player,
+  timestamp,
+  todo,
   tribe,
   village,
 }: VillageMessageProps) => {
@@ -76,11 +80,17 @@ export const villageMessage = ({
           width: 0,
         },
         url,
+        footer: footer
+          ? {
+              text: footer,
+            }
+          : undefined,
+        timestamp,
       },
     ],
   }
 
-  if (isTodo) {
+  if (todo) {
     options.components = [
       {
         type: 1,
