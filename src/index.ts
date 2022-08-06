@@ -6,7 +6,7 @@ import { startDiscord } from './discord/connect'
 import { nowString } from './utility/time'
 
 export const BotInfo = {
-  version: '1.5',
+  version: '1.6',
   started: nowString(),
 }
 

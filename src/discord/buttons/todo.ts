@@ -1,8 +1,10 @@
-import { ButtonInteraction } from 'discord.js'
+import { ButtonInteraction, MessageOptions } from 'discord.js'
+import { channels, WRChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
 import { Button } from '../buttons'
+import { WRColors } from '../colors'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
 
 const handleClose = async (
@@ -19,21 +21,35 @@ const handleClose = async (
   if (!todoist || !item) return
   // Action Complete
   if (complete) {
+    const completeMessage: MessageOptions = {
+      content: '',
+      embeds: [
+        {
+          color: WRColors.success,
+          description: `<@${interaction.user.id}> completed: ~~${item.content}~~`,
+        },
+      ],
+      components: [],
+    }
+    const newsChannel = channels.getById(WRChannels.news)
     await todoist.items.close({ ...item })
     const newItem = getItemById(todoId)
-    // If issue, simply complete the task
-    if (!newItem) {
+    // If issue or out of channel, simply complete the task
+    if (!newItem || interaction.channelId != newsChannel?.channelId) {
       await todoist.items.complete({ ...item, date_completed: undefined })
       await messages.deleteMessage(messageData.id)
       return
     }
-    // If item archived (completed) remove the message
+    // If item archived (completed) update message
     if (newItem?.checked) {
-      await messages.deleteMessage(messageData.id)
+      await interaction.editReply(completeMessage)
+      await messages.removeById(messageData.id)
       return
     }
     // Item not in history (reoccuring task)
+    // Re-sync message and post receipt
     else {
+      await channels.sendMessage(WRChannels.news, completeMessage)
       await syncTodoDashboard(newItem)
     }
   }
