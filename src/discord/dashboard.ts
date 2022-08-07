@@ -42,16 +42,16 @@ export const syncDashboard = async (single?: DashboardMessage) => {
       const payload = dashboard.getPayload()
       if (!payload) {
         await messages.deleteMessage(dashboard.id)
-        break
+      } else {
+        const handleFn = dashboard.rebuild
+          ? messages.rebuildMessage
+          : messages.syncMessage
+        success = await handleFn({
+          id: dashboard.id,
+          channelId: dashboard.channel,
+          payload: payload,
+        })
       }
-      const handleFn = dashboard.rebuild
-        ? messages.rebuildMessage
-        : messages.syncMessage
-      success = await handleFn({
-        id: dashboard.id,
-        channelId: dashboard.channel,
-        payload: payload,
-      })
     }
   }
   if (success) {
