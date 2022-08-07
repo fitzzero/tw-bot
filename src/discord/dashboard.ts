@@ -43,8 +43,9 @@ export const syncDashboard = async (single?: DashboardMessage) => {
       const payload = dashboard.getPayload()
       if (!payload) {
         await messages.deleteMessage(dashboard.id)
-        return
+        break
       }
+      console.log('here')
       const handleFn = dashboard.rebuild
         ? messages.rebuildMessage
         : messages.syncMessage
