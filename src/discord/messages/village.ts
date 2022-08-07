@@ -34,7 +34,6 @@ export const villageMessage = ({
   const isBarb = village.playerId == '0'
   const imagePrefix = isBarb ? 'barb' : 'village'
   const imageSuffix = getVillageSize(village.points)
-  const villageName = village.name.replaceAll('+', ' ')
   const image = `${storagePath}${imagePrefix}${imageSuffix}.png`
   const url = getVillageUrl(village)
 
@@ -61,9 +60,8 @@ export const villageMessage = ({
   }
   // Append TribeData to description
   if (tribe) {
-    const tribeTag = tribe?.tag?.split('%')[0]
     const tribeUrl = `${worldPath()}game.php?screen=info_ally&id=${tribe?.id}`
-    description += ` of [${tribeTag} (rank ${tribe?.rank})](${tribeUrl})`
+    description += ` of [${tribe?.tag} (rank ${tribe?.rank})](${tribeUrl})`
   }
 
   const options: MessageOptions = {
@@ -71,7 +69,7 @@ export const villageMessage = ({
     tts: false,
     embeds: [
       {
-        title: `${villageName} ${village.x}|${village.y} (${village.points} pts)`,
+        title: `${village.name} ${village.x}|${village.y} (${village.points} pts)`,
         description,
         color,
         thumbnail: {

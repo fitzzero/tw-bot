@@ -15,7 +15,7 @@ export const syncVillages = async (world: string) => {
 
     const villageData: VillageData = {
       id: data[0],
-      name: data[1],
+      name: decodeURIComponent(data[1]),
       x: data[2],
       y: data[3],
       k: `${Math.floor(y / 100) * 10 + Math.floor(x / 100)}`,
