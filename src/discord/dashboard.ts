@@ -39,13 +39,11 @@ export const syncDashboard = async (single?: DashboardMessage) => {
     })
   } else {
     for (const dashboard of activeDashboards) {
-      logger({ message: `Syncing ${dashboard.id}`, prefix: 'start' })
       const payload = dashboard.getPayload()
       if (!payload) {
         await messages.deleteMessage(dashboard.id)
         break
       }
-      console.log('here')
       const handleFn = dashboard.rebuild
         ? messages.rebuildMessage
         : messages.syncMessage
