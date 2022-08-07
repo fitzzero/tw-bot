@@ -25,7 +25,7 @@ export const syncPlayers = async (world: string) => {
 
     const playerData: PlayerData = {
       id: playerId,
-      name: decodeURIComponent(data[1]),
+      name: decodeURIComponent(data[1]).replaceAll('+', ' '),
       tribe: data[2],
       villages: data[3],
       points: data[4],

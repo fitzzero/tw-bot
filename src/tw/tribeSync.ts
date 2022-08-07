@@ -23,8 +23,8 @@ export const syncTribes = async (world: string) => {
 
     const tribeData: TribeData = {
       id: data[0],
-      name: decodeURIComponent(data[1]),
-      tag: decodeURIComponent(data[2]),
+      name: decodeURIComponent(data[1]).replaceAll('+', ' '),
+      tag: decodeURIComponent(data[2]).replaceAll('+', ' '),
       members: data[3],
       villages: data[4],
       points: data[5],
