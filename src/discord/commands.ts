@@ -3,21 +3,15 @@ import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { botConfig } from '../config'
 import { logger } from '../utility/logger'
-import {
-  SlashCommandBuilder,
-  SlashCommandSubcommandsOnlyBuilder,
-} from '@discordjs/builders'
-import { CommandInteraction, ContextMenuCommandBuilder } from 'discord.js'
+import { SlashCommandBuilder } from '@discordjs/builders'
+import { CommandInteraction } from 'discord.js'
 
 const token = process.env.WRTOKEN
 
 const rest = new REST({ version: '9' }).setToken(token || '')
 
 export interface Command {
-  documentation:
-    | SlashCommandBuilder
-    | SlashCommandSubcommandsOnlyBuilder
-    | ContextMenuCommandBuilder
+  documentation: SlashCommandBuilder
   controller: (interaction: CommandInteraction) => Promise<void>
 }
 

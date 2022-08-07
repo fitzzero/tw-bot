@@ -20,12 +20,14 @@ export const enum WRChannels {
   dash = 'dashboard',
   news = 'news-feed',
   todo = 'todo',
+  help = 'help',
 }
 
 const initialChannels: CreateChannelProps[] = [
   { id: WRChannels.dash, topic: 'War Room Command Center' },
   { id: WRChannels.news, topic: 'War Room Updates' },
   { id: WRChannels.todo, topic: 'War Room Todo' },
+  { id: WRChannels.help, topic: 'War Room Documenation' },
 ]
 
 class Channels extends SheetData<ChannelData> {
