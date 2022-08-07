@@ -18,6 +18,7 @@ export const enum WRSettings {
   browserId = 'browserRoleId',
   mobileId = 'mobileRoleId',
   map = 'map',
+  mapconfig = 'mapconfig',
 }
 
 class Settings extends SheetData<SettingsData> {

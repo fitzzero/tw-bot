@@ -2,12 +2,19 @@ import { settings } from '../sheet/settings'
 import { VillageData } from '../sheet/villages'
 import { worldPath } from './world'
 
-export const inAlertRange = (village: VillageData) => {
+export const getDistance = (village: VillageData) => {
   const alertSettings = settings.getAlertSettings()
-  if (!alertSettings) return false
+  if (!alertSettings) return
   const xDistance = alertSettings.x - parseInt(village.x)
   const yDistance = alertSettings.y - parseInt(village.y)
   const distance = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
+  return distance
+}
+
+export const inAlertRange = (village: VillageData) => {
+  const alertSettings = settings.getAlertSettings()
+  const distance = getDistance(village)
+  if (!distance || !alertSettings) return
   if (village.playerId == '0' && distance < alertSettings.barbRadius) {
     // console.log(
     //   `${village.name} (${village.x}|${village.y}) is ${distance} away`

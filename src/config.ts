@@ -3,6 +3,7 @@ import { todo } from './discord/commands/todo'
 import { Command } from './discord/commands'
 import { village } from './discord/commands/village'
 import { playerTop } from './discord/commands/rankings'
+import { map } from './discord/commands/map'
 
 export const isDev = !!process.argv[2]
 
@@ -20,7 +21,7 @@ export interface BotConfig {
 export const devDiscordConfig: BotConfig = {
   category: '904962974635130880',
   client: '896860363541348413',
-  commands: [ping, todo, village, playerTop],
+  commands: [ping, todo, village, playerTop, map],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   guild: '620484161974566922',
   writeEnabled: true,
@@ -29,7 +30,7 @@ export const devDiscordConfig: BotConfig = {
 export const prodDiscordConfig: BotConfig = {
   category: '904857595272114240',
   client: '896860363541348413',
-  commands: [todo, village, playerTop],
+  commands: [todo, village, playerTop, map],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   guild: '855057085719642134',
   writeEnabled: true,
