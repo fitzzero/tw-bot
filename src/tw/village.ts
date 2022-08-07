@@ -2,11 +2,17 @@ import { settings } from '../sheet/settings'
 import { VillageData } from '../sheet/villages'
 import { worldPath } from './world'
 
-export const getDistance = (village: VillageData) => {
+export const getDistance = (village: VillageData, origin?: VillageData) => {
   const alertSettings = settings.getAlertSettings()
   if (!alertSettings) return
-  const xDistance = alertSettings.x - parseInt(village.x)
-  const yDistance = alertSettings.y - parseInt(village.y)
+  let originX = alertSettings.x
+  let originY = alertSettings.y
+  if (origin) {
+    originX = parseInt(origin.x)
+    originY = parseInt(origin.y)
+  }
+  const xDistance = originX - parseInt(village.x)
+  const yDistance = originY - parseInt(village.y)
   const distance = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2))
   return distance
 }

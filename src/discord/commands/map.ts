@@ -16,20 +16,27 @@ const documentation = new SlashCommandBuilder()
   .setName('map')
   .addStringOption(option =>
     option
-      .setName('coordinates')
-      .setDescription('Coordinates of village (123|456)')
+      .setName('target')
+      .setDescription('Target coordinates (123|456)')
       .setRequired(true)
+  )
+  .addStringOption(option =>
+    option
+      .setName('origin')
+      .setDescription('Optional origin coordinates (123|456)')
+      .setRequired(false)
   )
   .setDescription('Get map and info of village')
 
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
-  const village = await parseInteractionCoordinates(interaction)
+  const village = await parseInteractionCoordinates(interaction, 'target')
+  const origin = await parseInteractionCoordinates(interaction, 'origin', false)
   if (!village) return
   // Meta data
   const mapConfig = settings.getValue(WRSettings.mapconfig)
-  const distance = getDistance(village)
+  const distance = getDistance(village, origin)
   const ram = units.getById('ram')
   const axe = units.getById('axe')
   const spy = units.getById('spy')
@@ -62,18 +69,29 @@ const controller = async (interaction: CommandInteraction) => {
       const urlParams = new URLSearchParams(queryString)
       const x = urlParams.get('x')
       const y = urlParams.get('y')
+      const startX = urlParams.get('sX')
+      const startY = urlParams.get('sY')
+      if (startX && startY) {
+        // @ts-ignore
+        manual(parseInt(startX), parseInt(startY), 1)
+      }
       // @ts-ignore
       manual(parseInt(x), parseInt(y))
     })
     await wait(600)
   }
 
+  let url = `${mapConfig}?x=${village.x}&y=${village.y}`
+  if (origin) {
+    url += `&sX=${origin.x}&sY=${origin.y}`
+  }
+
   const file = await saveScreenshot({
-    clip: { x: 40, y: 77, width: 1240, height: 723 },
+    clip: { x: 340, y: 259, width: 640, height: 360 },
     height: 800,
     id: 'map',
     pageFn,
-    url: `${mapConfig}?x=${village.x}&y=${village.y}`,
+    url,
     width: 1280,
   })
 

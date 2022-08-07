@@ -13,10 +13,15 @@ export const closeCommand = async (
 }
 
 export const parseInteractionCoordinates = async (
-  interaction: ChatInputCommandInteraction
+  interaction: ChatInputCommandInteraction,
+  optionLabel = 'coordinates',
+  required = true
 ) => {
-  const coords = interaction.options.getString('coordinates')
-  if (coords == null) {
+  const coords = interaction.options.getString(optionLabel)
+  if (!coords && !required) {
+    return
+  }
+  if (!coords) {
     closeCommand(interaction, 'Coordinates missing')
     return
   }
