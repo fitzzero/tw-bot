@@ -65,7 +65,7 @@ const controller = async (interaction: CommandInteraction) => {
       // @ts-ignore
       manual(parseInt(x), parseInt(y))
     })
-    await wait(300)
+    await wait(600)
   }
 
   const file = await saveScreenshot({
