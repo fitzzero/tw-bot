@@ -2,6 +2,7 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from 'google-spreadsheet'
+import { isEmpty } from 'lodash'
 import { keys } from 'ts-transformer-keys'
 import { logAlert, logger } from '../utility/logger'
 import { nowString } from '../utility/time'
@@ -48,6 +49,21 @@ export class SheetData<data extends RowStructure> {
       logAlert(err, 'Sheet Add')
       return false
     }
+  }
+
+  /*
+   * Get all
+   */
+  getAll = () => {
+    const allData = this.rows.map(row => {
+      const obj: any = {}
+      this.headers.forEach(header => {
+        obj[header] = row[header]
+      })
+      return obj as data & BaseSheetModel
+    })
+    if (isEmpty(allData)) return
+    return allData
   }
 
   /*

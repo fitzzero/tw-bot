@@ -1,7 +1,7 @@
 import { isDev } from './config'
 import { syncTw, syncTwInProgress } from './tw/tribalWars'
 import { logAlert, logger } from './utility/logger'
-import { withinLastHour } from './utility/time'
+import { momentTimeZone, validateMoment } from './utility/time'
 import { players } from './sheet/players'
 import { runDevTests } from './devTests'
 import { loadDoc } from './sheet/connect'
@@ -14,6 +14,8 @@ import { syncDashboard } from './discord/dashboard'
 import { syncProject } from './todoist/project'
 import { accounts } from './sheet/accounts'
 import { units } from './sheet/units'
+import { incomings } from './sheet/incomings'
+import moment from 'moment'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -41,8 +43,9 @@ const loop = async () => {
   }
 
   logger({ prefix: 'start', message: `Starting Loop`, logTime: true })
+
   // Re-sync if it's been more than hour since last sync
-  if (!withinLastHour(world?.lastUpdate) && !syncTwInProgress()) {
+  if (timeForLoop(world?.lastUpdate) && !syncTwInProgress()) {
     await settings.updateOrAdd(world, true)
     syncTw(world.value)
     await syncDashboard()
@@ -50,6 +53,8 @@ const loop = async () => {
 
   // Sync Todoist Projects
   syncProject(world.value)
+  // Sync incoming attacks
+  incomings.syncIncomings()
 
   return
 }
@@ -61,6 +66,7 @@ const preLoadAndSyncData = async () => {
   await players.loadData()
   await villages.loadData()
   await units.loadData()
+  await incomings.loadData()
 
   // Discord Data
   await accounts.loadData()
@@ -70,4 +76,13 @@ const preLoadAndSyncData = async () => {
   // Discord Sync
   await channels.syncChannels()
   await syncDashboard()
+}
+
+export const timeForLoop = (date: string) => {
+  const lastSync = validateMoment(date)
+  if (!lastSync) return true
+  return (
+    !lastSync.isSame(moment.tz(momentTimeZone), 'hour') &&
+    moment().minute() > 10
+  )
 }

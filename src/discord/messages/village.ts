@@ -11,6 +11,7 @@ export interface VillageMessageProps {
   color?: WRColors
   content?: string
   description?: string
+  extraContext?: boolean
   footer?: string
   player?: PlayerData
   timestamp?: string
@@ -23,6 +24,7 @@ export const villageMessage = ({
   color = WRColors.purple,
   content = '',
   description = '',
+  extraContext = true,
   footer,
   player,
   timestamp,
@@ -52,14 +54,14 @@ export const villageMessage = ({
   }
 
   // Append PlayerData to description
-  if (player) {
+  if (player && extraContext) {
     const playerUrl = `${worldPath()}game.php?screen=info_player&id=${
       village.playerId
     }#${village.x};${village.y}`
     description += `\nOwned by [${player.name} (${player.points} pts)](${playerUrl})`
   }
   // Append TribeData to description
-  if (tribe) {
+  if (tribe && extraContext) {
     const tribeUrl = `${worldPath()}game.php?screen=info_ally&id=${tribe?.id}`
     description += ` of [${tribe?.tag} (rank ${tribe?.rank})](${tribeUrl})`
   }
