@@ -19,6 +19,8 @@ export const syncIncomingDashboard = async ({
   if (!targetVillage) return
   const messageId = `incoming-${coords}`
 
+  let changes = false
+  let newIncomings = false
   let description = ''
 
   for (const incoming of villageIncomings) {
@@ -26,11 +28,17 @@ export const syncIncomingDashboard = async ({
     const sent = moment(new Date(incoming.sent))
     const arrival = parseArrival(incoming.arrival, sent)
     if (!arrival) continue
-
     // Remove old incomings and skip
     if (arrival.isBefore()) {
       await incomings.update({ ...incoming, status: 'old' })
+      changes = true
       continue
+    }
+
+    if (incoming.status == 'new') {
+      await incomings.update({ ...incoming, status: 'active' })
+      newIncomings = true
+      changes = true
     }
 
     // Add incoming target to message description
@@ -46,6 +54,9 @@ export const syncIncomingDashboard = async ({
     return
   }
 
+  // If no changes, do nothing
+  if (!changes) return
+
   const payload = villageMessage({
     color: WRColors.warning,
     description,
@@ -53,7 +64,9 @@ export const syncIncomingDashboard = async ({
     village: targetVillage,
   })
 
-  await messages.rebuildMessage({
+  const handleFn = newIncomings ? messages.rebuildMessage : messages.syncMessage
+
+  await handleFn({
     id: messageId,
     channelId: WRChannels.incoming,
     payload,
@@ -62,12 +75,13 @@ export const syncIncomingDashboard = async ({
 }
 
 const parseArrival = (dateGiven: string, sent: Moment) => {
+  const reference = moment(sent)
   if (dateGiven.includes('today at')) {
-    const sentToday = sent.format('MMMM Do YYYY')
+    const sentToday = reference.format('MMMM Do YYYY')
     dateGiven = dateGiven.replace('today at', sentToday + ',')
   }
   if (dateGiven.includes('tomorrow at')) {
-    const sentTomorrow = sent.add(1, 'days').format('MMMM Do YYYY')
+    const sentTomorrow = reference.add(1, 'days').format('MMMM Do YYYY')
     dateGiven = dateGiven.replace('tomorrow at', sentTomorrow + ',')
   }
   return validateMoment(dateGiven)

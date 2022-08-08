@@ -25,15 +25,17 @@ class Incomings extends SheetData<IncomingData> {
   }
 
   syncIncomings = async () => {
-    const newIncomings = this.filterByProperties([
-      { prop: 'status', value: 'new' },
-    ])
-    if (!newIncomings) return
+    const incomings = this.getAll()
+    const checkIncomings = incomings?.filter(
+      incoming => incoming.status != 'old'
+    )
+
+    if (!checkIncomings) return
     logger({
-      message: `Loading ${newIncomings.length} new incomings`,
+      message: `Checking ${checkIncomings.length} incomings`,
       prefix: 'start',
     })
-    const groupedIncomings = chain(newIncomings)
+    const groupedIncomings = chain(checkIncomings)
       .groupBy('target')
       .map((value, key) => ({ target: key, incomings: value }))
       .value()
@@ -44,6 +46,10 @@ class Incomings extends SheetData<IncomingData> {
         villageIncomings: incoming.incomings,
       })
     }
+    logger({
+      message: `Synced incomings`,
+      prefix: 'success',
+    })
   }
 
   //syncIncomingDashboard = async (id: string) => {}
