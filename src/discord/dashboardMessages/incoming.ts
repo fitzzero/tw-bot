@@ -1,50 +1,74 @@
-import { MessageOptions } from 'discord.js'
+import moment, { Moment } from 'moment'
+import { WRChannels } from '../../sheet/channels'
+import { IncomingData, incomings } from '../../sheet/incomings'
+import { messages } from '../../sheet/messages'
+import { villages } from '../../sheet/villages'
+import { getUnix, validateMoment } from '../../utility/time'
+import { WRColors } from '../colors'
+import { villageMessage } from '../messages/village'
 
-export interface IncomingPayloadProps {}
-export const getIncomingPayload = () => {
-  const options: MessageOptions = {
-    content: '',
-    tts: false,
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            style: 1,
-            label: `Add Origin`,
-            custom_id: `row_0_button_0`,
-            disabled: false,
-            type: 2,
-          },
-          {
-            style: 2,
-            label: `Todo`,
-            custom_id: `row_0_button_1`,
-            disabled: false,
-            type: 2,
-          },
-          {
-            style: 4,
-            label: `Remove`,
-            custom_id: `row_0_button_2`,
-            disabled: false,
-            type: 2,
-          },
-        ],
-      },
-    ],
-    embeds: [
-      {
-        title: '',
-        description: `[TT-001 (515|515)](https://google.com) ➔ [TT-001 (515|515)](https://google.com) at 00:00:00 (10 min from now)\nSent by [Player Name](https://google.com) (19000pts)`,
-        color: 0xf2ff00,
-        footer: {
-          text: `Attack Sent`,
-        },
-      },
-    ],
+export interface IncomingDashboardProps {
+  coords: string
+  villageIncomings: IncomingData[]
+}
+export const syncIncomingDashboard = async ({
+  coords,
+  villageIncomings,
+}: IncomingDashboardProps) => {
+  const targetVillage = villages.getByCoordString(coords)
+  if (!targetVillage) return
+  const messageId = `incoming-${coords}`
+
+  let description = ''
+
+  for (const incoming of villageIncomings) {
+    incoming.messageId = messageId
+    const sent = moment(new Date(incoming.sent))
+    const arrival = parseArrival(incoming.arrival, sent)
+    if (!arrival) continue
+
+    // Remove old incomings and skip
+    if (arrival.isBefore()) {
+      await incomings.update({ ...incoming, status: 'old' })
+      continue
+    }
+
+    // Add incoming target to message description
+    description += `:arrow_right: Arrives <t:${getUnix(arrival)}:R>\n`
+
+    // Add incoming origin to message description
+    description += `:arrow_left: Sent <t:${getUnix(sent)}:R>\n\n`
   }
-  return options
+
+  // If no incomings, remove dashboard
+  if (description == '') {
+    await messages.deleteMessage(messageId)
+    return
+  }
+
+  const payload = villageMessage({
+    color: WRColors.warning,
+    description,
+    extraContext: false,
+    village: targetVillage,
+  })
+
+  await messages.rebuildMessage({
+    id: messageId,
+    channelId: WRChannels.incoming,
+    payload,
+  })
+  return
 }
 
-//https://autocode.com/tools/discord/embed-builder/?embed=JTdCJTIyY2hhbm5lbF9pZCUyMiUzQSUyMiU2MCUyNCU3QmNvbnRleHQucGFyYW1zLmV2ZW50LmNoYW5uZWxfaWQlN0QlNjAlMjIlMkMlMjJjb250ZW50JTIyJTNBJTIyJTIyJTJDJTIydHRzJTIyJTNBZmFsc2UlMkMlMjJjb21wb25lbnRzJTIyJTNBJTVCJTdCJTIydHlwZSUyMiUzQTElMkMlMjJjb21wb25lbnRzJTIyJTNBJTVCJTdCJTIyc3R5bGUlMjIlM0ExJTJDJTIybGFiZWwlMjIlM0ElMjIlNjBBZGQlMjBPcmlnaW4lNjAlMjIlMkMlMjJjdXN0b21faWQlMjIlM0ElMjIlNjByb3dfMF9idXR0b25fMCU2MCUyMiUyQyUyMmRpc2FibGVkJTIyJTNBZmFsc2UlMkMlMjJ0eXBlJTIyJTNBMiU3RCUyQyU3QiUyMnN0eWxlJTIyJTNBMiUyQyUyMmxhYmVsJTIyJTNBJTIyJTYwVG9kbyU2MCUyMiUyQyUyMmN1c3RvbV9pZCUyMiUzQSUyMiU2MHJvd18wX2J1dHRvbl8xJTYwJTIyJTJDJTIyZGlzYWJsZWQlMjIlM0FmYWxzZSUyQyUyMnR5cGUlMjIlM0EyJTdEJTJDJTdCJTIyc3R5bGUlMjIlM0E0JTJDJTIybGFiZWwlMjIlM0ElMjIlNjBSZW1vdmUlNjAlMjIlMkMlMjJjdXN0b21faWQlMjIlM0ElMjIlNjByb3dfMF9idXR0b25fMiU2MCUyMiUyQyUyMmRpc2FibGVkJTIyJTNBZmFsc2UlMkMlMjJ0eXBlJTIyJTNBMiU3RCU1RCU3RCU1RCUyQyUyMmVtYmVkcyUyMiUzQSU1QiU3QiUyMnR5cGUlMjIlM0ElMjJyaWNoJTIyJTJDJTIydGl0bGUlMjIlM0ElMjIlMjIlMkMlMjJkZXNjcmlwdGlvbiUyMiUzQSUyMiU2MCU1QlRULTAwMSUyMCg1MTUlN0M1MTUpJTVEKGh0dHBzJTNBJTJGJTJGZ29vZ2xlLmNvbSklMjAlRTIlOUUlOTQlMjAlNUJUVC0wMDElMjAoNTE1JTdDNTE1KSU1RChodHRwcyUzQSUyRiUyRmdvb2dsZS5jb20pJTIwYXQlMjAwMCUzQTAwJTNBMDAlMjAoMTAlMjBtaW4lMjBmcm9tJTIwbm93KSU1Q25TZW50JTIwYnklMjAlNUJQbGF5ZXIlMjBOYW1lJTVEKGh0dHBzJTNBJTJGJTJGZ29vZ2xlLmNvbSklMjAoMTkwMDBwdHMpJTYwJTIyJTJDJTIyY29sb3IlMjIlM0ElMjIweGYyZmYwMCUyMiUyQyUyMmZvb3RlciUyMiUzQSU3QiUyMnRleHQlMjIlM0ElMjIlNjBBdHRhY2slMjBTZW50JTYwJTIyJTdEJTdEJTVEJTJDJTIyX2ZpbGUlMjIlM0ElMjJkYXRhJTNBaW1hZ2UlMkZwbmclM0JiYXNlNjQlMkNpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBU3dBQUFDV0NBWUFBQUJrVzdYU0FBQUFBWE5TUjBJQXJzNGM2UUFBQkdKSlJFRlVlRjd0MUFFSkFBQU1Bc0hadiUyRlJ5UE53U3lEbmNPUUlFQ0VRRUZza3BKZ0VDQk01Z2VRSUNCRElDQml0VGxhQUVDQmdzUDBDQVFFYkFZR1dxRXBRQUFZUGxCd2dReUFnWXJFeFZnaElnWUxEOEFBRUNHUUdEbGFsS1VBSUVESllmSUVBZ0kyQ3dNbFVKU29DQXdmSURCQWhrQkF4V3BpcEJDUkF3V0g2QUFJR01nTUhLVkNVb0FRSUd5dzhRSUpBUk1GaVpxZ1FsUU1CZyUyQlFFQ0JESUNCaXRUbGFBRUNCZ3NQMENBUUViQVlHV3FFcFFBQVlQbEJ3Z1F5QWdZckV4VmdoSWdZTEQ4QUFFQ0dRR0RsYWxLVUFJRURKWWZJRUFnSTJDd01sVUpTb0NBd2ZJREJBaGtCQXhXcGlwQkNSQXdXSDZBQUlHTWdNSEtWQ1VvQVFJR3l3OFFJSkFSTUZpWnFnUWxRTUJnJTJCUUVDQkRJQ0JpdFRsYUFFQ0Jnc1AwQ0FRRWJBWUdXcUVwUUFBWVBsQndnUXlBZ1lyRXhWZ2hJZ1lMRDhBQUVDR1FHRGxhbEtVQUlFREpZZklFQWdJMkN3TWxVSlNvQ0F3ZklEQkFoa0JBeFdwaXBCQ1JBd1dINkFBSUdNZ01IS1ZDVW9BUUlHeXc4UUlKQVJNRmlacWdRbFFNQmclMkJRRUNCRElDQml0VGxhQUVDQmdzUDBDQVFFYkFZR1dxRXBRQUFZUGxCd2dReUFnWXJFeFZnaElnWUxEOEFBRUNHUUdEbGFsS1VBSUVESllmSUVBZ0kyQ3dNbFVKU29DQXdmSURCQWhrQkF4V3BpcEJDUkF3V0g2QUFJR01nTUhLVkNVb0FRSUd5dzhRSUpBUk1GaVpxZ1FsUU1CZyUyQlFFQ0JESUNCaXRUbGFBRUNCZ3NQMENBUUViQVlHV3FFcFFBQVlQbEJ3Z1F5QWdZckV4VmdoSWdZTEQ4QUFFQ0dRR0RsYWxLVUFJRURKWWZJRUFnSTJDd01sVUpTb0NBd2ZJREJBaGtCQXhXcGlwQkNSQXdXSDZBQUlHTWdNSEtWQ1VvQVFJR3l3OFFJSkFSTUZpWnFnUWxRTUJnJTJCUUVDQkRJQ0JpdFRsYUFFQ0Jnc1AwQ0FRRWJBWUdXcUVwUUFBWVBsQndnUXlBZ1lyRXhWZ2hJZ1lMRDhBQUVDR1FHRGxhbEtVQUlFREpZZklFQWdJMkN3TWxVSlNvQ0F3ZklEQkFoa0JBeFdwaXBCQ1JBd1dINkFBSUdNZ01IS1ZDVW9BUUlHeXc4UUlKQVJNRmlacWdRbFFNQmclMkJRRUNCRElDQml0VGxhQUVDQmdzUDBDQVFFYkFZR1dxRXBRQUFZUGxCd2dReUFnWXJFeFZnaElnWUxEOEFBRUNHUUdEbGFsS1VBSUVESllmSUVBZ0kyQ3dNbFVKU29DQXdmSURCQWhrQkF4V3BpcEJDUkF3V0g2QUFJR01nTUhLVkNVb0FRSUd5dzhRSUpBUk1GaVpxZ1FsUU1CZyUyQlFFQ0JESUNCaXRUbGFBRUNCZ3NQMENBUUViQVlHV3FFcFFBQVlQbEJ3Z1F5QWdZckV4VmdoSWdZTEQ4QUFFQ0dRR0RsYWxLVUFJRURKWWZJRUFnSTJDd01sVUpTb0NBd2ZJREJBaGtCQXhXcGlwQkNSQXdXSDZBQUlHTWdNSEtWQ1VvQVFJR3l3OFFJSkFSTUZpWnFnUWxRTUJnJTJCUUVDQkRJQ0JpdFRsYUFFQ0Jnc1AwQ0FRRWJBWUdXcUVwUUFBWVBsQndnUXlBZ1lyRXhWZ2hJZ1lMRDhBQUVDR1FHRGxhbEtVQUlFREpZZklFQWdJMkN3TWxVSlNvQ0F3ZklEQkFoa0JBeFdwaXBCQ1JBd1dINkFBSUdNZ01IS1ZDVW9BUUlHeXc4UUlKQVJNRmlacWdRbFFNQmclMkJRRUNCRElDQml0VGxhQUVDQmdzUDBDQVFFYkFZR1dxRXBRQWdRZFdNUUNYNHlXOW93QUFBQUJKUlU1RXJrSmdnZyUzRCUzRCUyMiU3RA%3D%3D
+const parseArrival = (dateGiven: string, sent: Moment) => {
+  if (dateGiven.includes('today at')) {
+    const sentToday = sent.format('MMMM Do YYYY')
+    dateGiven = dateGiven.replace('today at', sentToday + ',')
+  }
+  if (dateGiven.includes('tomorrow at')) {
+    const sentTomorrow = sent.add(1, 'days').format('MMMM Do YYYY')
+    dateGiven = dateGiven.replace('tomorrow at', sentTomorrow + ',')
+  }
+  return validateMoment(dateGiven)
+}
