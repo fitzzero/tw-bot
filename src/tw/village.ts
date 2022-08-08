@@ -28,7 +28,7 @@ export const inAlertRange = (village: VillageData) => {
     )
     return true
   }
-  if (distance < alertSettings.playerRadius) {
+  if (village.playerId != '0' && distance < alertSettings.playerRadius) {
     logDev(
       `${village.id}: ${village.name} (${village.x}|${village.y}) is ${distance} away`
     )
