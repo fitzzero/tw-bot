@@ -25,6 +25,7 @@ class Incomings extends SheetData<IncomingData> {
   }
 
   syncIncomings = async () => {
+    await this.loadRows()
     const incomings = this.getAll()
     const checkIncomings = incomings?.filter(
       incoming => incoming.status != 'old'
