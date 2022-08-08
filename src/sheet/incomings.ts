@@ -33,7 +33,7 @@ class Incomings extends SheetData<IncomingData> {
     })
   }
 
-  syncIncomingDashboard = async (id: string) => {}
+  //syncIncomingDashboard = async (id: string) => {}
 }
 
 export const incomings = new Incomings('incomings', headers)

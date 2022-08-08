@@ -25,6 +25,7 @@ export interface BotConfig {
   coreDoc: string
   guild: string
   writeEnabled: boolean
+  extraLogging: boolean
 }
 
 export const devDiscordConfig: BotConfig = {
@@ -47,6 +48,7 @@ export const devDiscordConfig: BotConfig = {
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   guild: '620484161974566922',
   writeEnabled: true,
+  extraLogging: true,
 }
 
 export const prodDiscordConfig: BotConfig = {
@@ -68,6 +70,7 @@ export const prodDiscordConfig: BotConfig = {
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   guild: '855057085719642134',
   writeEnabled: true,
+  extraLogging: false,
 }
 
 export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig
