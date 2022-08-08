@@ -19,6 +19,7 @@ const headers = keys<ChannelData>().map(key => key.toString())
 export const enum WRChannels {
   dash = 'dashboard',
   news = 'news-feed',
+  incoming = 'incoming',
   todo = 'todo',
   help = 'help',
 }
@@ -26,6 +27,7 @@ export const enum WRChannels {
 const initialChannels: CreateChannelProps[] = [
   { id: WRChannels.dash, topic: 'War Room Command Center' },
   { id: WRChannels.news, topic: 'War Room Updates' },
+  { id: WRChannels.incoming, topic: 'War Room Incoming Attacks' },
   { id: WRChannels.todo, topic: 'War Room Todo' },
   { id: WRChannels.help, topic: 'War Room Documenation' },
 ]

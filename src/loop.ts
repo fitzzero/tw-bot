@@ -14,6 +14,7 @@ import { syncDashboard } from './discord/dashboard'
 import { syncProject } from './todoist/project'
 import { accounts } from './sheet/accounts'
 import { units } from './sheet/units'
+import { incomings } from './sheet/incomings'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -50,6 +51,8 @@ const loop = async () => {
 
   // Sync Todoist Projects
   syncProject(world.value)
+  // Sync incoming attacks
+  incomings.syncIncomings()
 
   return
 }
@@ -61,6 +64,7 @@ const preLoadAndSyncData = async () => {
   await players.loadData()
   await villages.loadData()
   await units.loadData()
+  await incomings.loadData()
 
   // Discord Data
   await accounts.loadData()

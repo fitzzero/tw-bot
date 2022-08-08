@@ -1,6 +1,6 @@
 import { keys } from 'ts-transformer-keys'
 import { RowStructure, SheetData } from './sheetData'
-import { inAlertRange } from '../tw/village'
+import { inAlertRange, splitCoords } from '../tw/village'
 import { villageChangeAlerts } from '../discord/alerts/villageAlerts'
 
 export interface VillageData extends RowStructure {
@@ -32,6 +32,12 @@ class Villages extends SheetData<VillageData> {
       { prop: 'y', value: y },
     ])
     return found?.[0]
+  }
+
+  getByCoordString = (coordString: string) => {
+    const coords = splitCoords(coordString)
+    if (!coords) return
+    return this.getByCoords(coords)
   }
 
   auditAndUpdate = async (newData: VillageData) => {
