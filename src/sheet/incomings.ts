@@ -41,10 +41,10 @@ class Incomings extends SheetData<IncomingData> {
       .map((value, key) => ({ target: key, incomings: value }))
       .value()
 
-    for (const incoming of groupedIncomings) {
+    for (const village of groupedIncomings) {
       await syncIncomingDashboard({
-        coords: incoming.target,
-        villageIncomings: incoming.incomings,
+        coords: village.target,
+        villageIncomings: village.incomings,
       })
     }
     logger({
@@ -52,8 +52,6 @@ class Incomings extends SheetData<IncomingData> {
       prefix: 'success',
     })
   }
-
-  //syncIncomingDashboard = async (id: string) => {}
 }
 
 export const incomings = new Incomings('incomings', headers)

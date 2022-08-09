@@ -3,7 +3,7 @@ import { WRChannels } from '../../sheet/channels'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
 import { villages } from '../../sheet/villages'
-import { getUnix, validateMoment } from '../../utility/time'
+import { formatDate, getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { villageMessage } from '../messages/village'
 
@@ -24,21 +24,31 @@ export const syncIncomingDashboard = async ({
   let description = ''
 
   for (const incoming of villageIncomings) {
-    incoming.messageId = messageId
-    const sent = moment(new Date(incoming.sent))
-    const arrival = parseArrival(incoming.arrival, sent)
-    if (!arrival) continue
+    // Meta data
+    let sent: Moment | undefined = undefined
+    let arrival: Moment | undefined = undefined
+
+    if (incoming.status == 'new') {
+      sent = moment(new Date(incoming.sent))
+      arrival = parseArrival(incoming.arrival, sent)
+      if (!arrival) continue
+
+      incoming.sent = formatDate(sent)
+      incoming.arrival = formatDate(arrival)
+      incoming.status = 'active'
+      await incomings.update(incoming)
+      newIncomings = true
+      changes = true
+    } else {
+      sent = validateMoment(incoming.sent)
+      arrival = validateMoment(incoming.arrival)
+    }
+
     // Remove old incomings and skip
-    if (arrival.isBefore()) {
+    if (arrival?.isBefore()) {
       await incomings.update({ ...incoming, status: 'old' })
       changes = true
       continue
-    }
-
-    if (incoming.status == 'new') {
-      await incomings.update({ ...incoming, status: 'active' })
-      newIncomings = true
-      changes = true
     }
 
     // Add incoming target to message description

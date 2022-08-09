@@ -1,6 +1,5 @@
 import { settings } from '../sheet/settings'
 import { VillageData } from '../sheet/villages'
-import { logDev } from '../utility/logger'
 import { worldPath } from './world'
 
 export const getDistance = (village: VillageData, origin?: VillageData) => {
@@ -23,15 +22,9 @@ export const inAlertRange = (village: VillageData) => {
   const distance = getDistance(village)
   if (!distance || !alertSettings) return
   if (village.playerId == '0' && distance < alertSettings.barbRadius) {
-    logDev(
-      `${village.id}: ${village.name} (${village.x}|${village.y}) is ${distance} away`
-    )
     return true
   }
   if (village.playerId != '0' && distance < alertSettings.playerRadius) {
-    logDev(
-      `${village.id}: ${village.name} (${village.x}|${village.y}) is ${distance} away`
-    )
     return true
   }
   return false
