@@ -7,10 +7,17 @@ import { formatDate, getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { villageMessage } from '../messages/village'
 
+interface MessageAttacks {
+  arrival: Moment
+  target: string
+  origin: string
+}
+
 export interface IncomingDashboardProps {
   coords: string
   villageIncomings: IncomingData[]
 }
+
 export const syncIncomingDashboard = async ({
   coords,
   villageIncomings,
@@ -19,9 +26,11 @@ export const syncIncomingDashboard = async ({
   if (!targetVillage) return
   const messageId = `incoming-${coords}`
 
-  let changes = false
-  let newIncomings = false
+  const messageAttacks: MessageAttacks[] | undefined = []
+
   let description = ''
+  let changes = true
+  let newIncomings = false
 
   for (const incoming of villageIncomings) {
     // Meta data
@@ -45,19 +54,29 @@ export const syncIncomingDashboard = async ({
       arrival = validateMoment(incoming.arrival)
     }
 
+    if (!arrival) continue
+
     // Remove old incomings and skip
-    if (arrival?.isBefore()) {
+    if (arrival.isBefore()) {
       await incomings.update({ ...incoming, status: 'old' })
       changes = true
       continue
     }
 
     // Add incoming target to message description
-    description += `:arrow_right: Arrives <t:${getUnix(arrival)}:R>\n`
-
-    // Add incoming origin to message description
-    description += `:arrow_left: Sent <t:${getUnix(sent)}:R>\n\n`
+    messageAttacks.push({
+      arrival,
+      target: `:arrow_right: Arrives <t:${getUnix(arrival)}:R>`,
+      origin: `:arrow_left: Sent <t:${getUnix(sent)}:R>`,
+    })
   }
+
+  // Build message description
+  messageAttacks
+    .sort((a, b) => a.arrival.unix() - b.arrival.unix())
+    .forEach(attack => {
+      description += `${attack.target}\n${attack.origin}\n\n`
+    })
 
   // If no incomings, remove dashboard
   if (description == '') {
