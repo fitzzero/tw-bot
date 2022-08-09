@@ -36,6 +36,7 @@ export const syncIncomingDashboard = async ({
       incoming.sent = formatDate(sent)
       incoming.arrival = formatDate(arrival)
       incoming.status = 'active'
+
       await incomings.update(incoming)
       newIncomings = true
       changes = true

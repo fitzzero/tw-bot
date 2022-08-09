@@ -1,4 +1,4 @@
-import { chain } from 'lodash'
+import { chain, isEmpty } from 'lodash'
 import { keys } from 'ts-transformer-keys'
 import { syncIncomingDashboard } from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
@@ -26,17 +26,16 @@ class Incomings extends SheetData<IncomingData> {
 
   syncIncomings = async () => {
     await this.loadRows()
-    const incomings = this.getAll()
-    const checkIncomings = incomings?.filter(
-      incoming => incoming.status != 'old'
-    )
+    let incomings = this.getAll()
+    incomings = incomings?.filter(incoming => incoming.status != 'old')
 
-    if (!checkIncomings) return
+    if (!incomings || isEmpty(incomings)) return
     logger({
-      message: `Checking ${checkIncomings.length} incomings`,
+      message: `Checking ${incomings.length} incomings`,
       prefix: 'start',
     })
-    const groupedIncomings = chain(checkIncomings)
+
+    const groupedIncomings = chain(incomings)
       .groupBy('target')
       .map((value, key) => ({ target: key, incomings: value }))
       .value()
