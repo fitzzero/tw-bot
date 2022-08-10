@@ -97,26 +97,26 @@ export const syncIncomingDashboard = async ({
     village: targetVillage,
   })
 
-  payload.components = [
-    {
-      type: 1,
-      components: [
-        {
-          style: 1,
-          label: `Update Origin`,
-          custom_id: `incoming-origin`,
-          type: 2,
-        },
-        {
-          style: 2,
-          label: `Set Reminder`,
-          custom_id: `incoming-reminder`,
-          disabled: false,
-          type: 2,
-        },
-      ],
-    },
-  ]
+  // payload.components = [
+  //   {
+  //     type: 1,
+  //     components: [
+  //       {
+  //         style: 1,
+  //         label: `Update Origin`,
+  //         custom_id: `incoming-origin`,
+  //         type: 2,
+  //       },
+  //       {
+  //         style: 2,
+  //         label: `Set Reminder`,
+  //         custom_id: `incoming-reminder`,
+  //         disabled: false,
+  //         type: 2,
+  //       },
+  //     ],
+  //   },
+  // ]
 
   const handleFn = newIncomings ? messages.rebuildMessage : messages.syncMessage
 
