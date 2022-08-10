@@ -1,4 +1,5 @@
 import moment, { Moment } from 'moment'
+import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
@@ -29,7 +30,7 @@ export const syncIncomingDashboard = async ({
   const messageAttacks: MessageAttacks[] | undefined = []
 
   let description = ''
-  let changes = true
+  let changes = isDev ? true : false
   let newIncomings = false
 
   for (const incoming of villageIncomings) {

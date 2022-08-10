@@ -10,6 +10,28 @@ let itemsInMemory: Item[] | undefined = undefined
 
 export const getActiveItems = (): Item[] | undefined => itemsInMemory
 
+export interface AddItemProps {
+  what: string
+  when: string
+}
+
+export const addItem = async ({ what, when }: AddItemProps) => {
+  const project = getActiveProject()
+  let newItem: Item | undefined = undefined
+  try {
+    newItem = (await todoist?.items.add({
+      content: what,
+      project_id: project?.id,
+      // @ts-ignore
+      due: { string: when },
+    })) as Item
+  } catch (err) {
+    logAlert(err, 'Todo addItem')
+  }
+
+  return newItem
+}
+
 export const getItemById = (id: string) => {
   if (!todoist) return
   loadItems()

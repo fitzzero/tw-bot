@@ -1,9 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { Item } from 'todoist/dist/v8-types'
 import { channels, WRChannels } from '../../sheet/channels'
-import { todoist } from '../../todoist/connect'
-import { getActiveProject } from '../../todoist/project'
+import { addItem } from '../../todoist/items'
 import { logger } from '../../utility/logger'
 import { Command } from '../commands'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
@@ -33,7 +31,6 @@ const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   const what = interaction.options.getString('what')
   const when = interaction.options.getString('when')
-  const project = getActiveProject()
   if (!what || !when) {
     interaction.deleteReply()
     return
@@ -41,13 +38,11 @@ const controller = async (interaction: CommandInteraction) => {
   await interaction.deferReply()
 
   try {
-    const newItem = (await todoist?.items.add({
-      content: what,
-      project_id: project?.id,
-      // Problem with 'todoist' Type
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      due: { string: when } as any,
-    })) as Item
+    const newItem = await addItem({ what, when })
+    if (!newItem) {
+      closeCommand(interaction, 'Oops something went wrong creating the todo')
+      return
+    }
     const success = await syncTodoDashboard(newItem)
     if (success) {
       const todoChannelData = channels.getById(WRChannels.todo)
