@@ -1,10 +1,17 @@
-import { ChatInputCommandInteraction } from 'discord.js'
+import {
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+  ModalSubmitInteraction,
+} from 'discord.js'
 import { villages } from '../../sheet/villages'
 import { splitCoords } from '../../tw/village'
 import { wait } from '../../utility/wait'
 
 export const closeCommand = async (
-  interaction: ChatInputCommandInteraction,
+  interaction:
+    | ChatInputCommandInteraction
+    | ButtonInteraction
+    | ModalSubmitInteraction,
   message = 'Something went wrong, closing command...'
 ) => {
   await interaction.editReply(message)

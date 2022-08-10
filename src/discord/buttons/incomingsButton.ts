@@ -1,10 +1,10 @@
 import { ButtonInteraction } from 'discord.js'
 import { Button } from '../buttons'
 import { closeCommand } from '../commands/canned'
-import { settingsModal } from '../modals/editSettings'
+import { incomingModal } from '../modals/editIncoming'
 
 const controller = async (interaction: ButtonInteraction) => {
-  const modal = settingsModal.modalBuilder()
+  const modal = incomingModal.modalBuilder(interaction)
   if (!modal) {
     closeCommand(interaction)
     return
@@ -12,7 +12,7 @@ const controller = async (interaction: ButtonInteraction) => {
   await interaction.showModal(modal)
 }
 
-export const settingsButton: Button = {
-  customId: 'dash-settings',
+export const incomingButton: Button = {
+  customId: 'incoming-origin',
   controller,
 }

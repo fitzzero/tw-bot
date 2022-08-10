@@ -29,8 +29,9 @@ export const syncIncomingDashboard = async ({
 
   const messageAttacks: MessageAttacks[] | undefined = []
 
-  let description = ''
+  // Does the message need to be edited because of data changes?
   let changes = isDev ? true : false
+  // Does the message need to be rebuild because of new incomings?
   let newIncomings = false
 
   for (const incoming of villageIncomings) {
@@ -73,6 +74,7 @@ export const syncIncomingDashboard = async ({
   }
 
   // Build message description
+  let description = ''
   messageAttacks
     .sort((a, b) => a.arrival.unix() - b.arrival.unix())
     .forEach(attack => {
@@ -94,6 +96,27 @@ export const syncIncomingDashboard = async ({
     extraContext: false,
     village: targetVillage,
   })
+
+  payload.components = [
+    {
+      type: 1,
+      components: [
+        {
+          style: 1,
+          label: `Update Origin`,
+          custom_id: `incoming-origin`,
+          type: 2,
+        },
+        {
+          style: 2,
+          label: `Set Reminder`,
+          custom_id: `incoming-reminder`,
+          disabled: false,
+          type: 2,
+        },
+      ],
+    },
+  ]
 
   const handleFn = newIncomings ? messages.rebuildMessage : messages.syncMessage
 

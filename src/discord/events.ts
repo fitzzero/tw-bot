@@ -61,7 +61,7 @@ const handleButton = (interaction: ButtonInteraction) => {
 
 const handleModalSubmit = (interaction: ModalSubmitInteraction) => {
   activeModals.forEach(modal => {
-    if (interaction.customId === modal.customId) {
+    if (interaction.customId.includes(modal.customId)) {
       try {
         modal.controller(interaction)
       } catch (err) {
