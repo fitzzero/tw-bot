@@ -2,6 +2,7 @@ import moment from 'moment-timezone'
 import { Moment } from 'moment'
 
 export const momentStringFormat = 'MMMM Do YYYY, HH:mm:ss'
+export const sheetsStringFormat = 'M/D HH:mm:ss'
 export const momentTimeZone = 'America/New_York'
 export const momentUtcOffset = '-0400'
 
