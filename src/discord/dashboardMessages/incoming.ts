@@ -3,6 +3,7 @@ import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
+import { players } from '../../sheet/players'
 import { UnitData, units } from '../../sheet/units'
 import { VillageData, villages } from '../../sheet/villages'
 import { getUnitByDistance } from '../../tw/village'
@@ -83,10 +84,11 @@ export const syncIncomingDashboard = async ({
         originSend: sent,
       })
     }
-    if (unit) {
+    if (unit && originVillage) {
       const emoji = await units.getDiscordEmoji(unit.id)
+      const player = players.getById(originVillage?.playerId)
       originMessage = `:arrow_left: ${emoji} Sent by ${
-        originVillage?.name
+        player?.name + ' ' + originVillage.name
       } <t:${getUnix(sent)}:R>`
     } else {
       originMessage = `:arrow_left: Sent <t:${getUnix(sent)}:R>`
