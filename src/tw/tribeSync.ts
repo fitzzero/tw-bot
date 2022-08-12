@@ -61,14 +61,14 @@ export const fetchTribes = async (
   try {
     const response = await fetch(api)
     if (response.status >= 400) {
-      throw new Error(`TW Server: ${response.status}`)
+      throw new Error(`TW Server ${response.status}`)
     }
     tribes = parseCsv(await response.text())
     if (!tribes || tribes.length == 0) {
-      throw new Error(`TW: Error loading world ${world} tribes`)
+      throw new Error(`Error loading world ${world} tribes`)
     }
   } catch (err) {
-    logAlert(err, 'TW Tribe Query')
+    logAlert(err, 'TW')
     return
   }
   logger({
@@ -91,16 +91,14 @@ const fetchTribeOd = async (
   try {
     const response = await fetch(api)
     if (response.status >= 400) {
-      throw new Error(`TW Server: ${response.status}`)
+      throw new Error(`TW Server ${response.status}`)
     }
     od = parseCsv(await response.text())
     if (!od || od.length == 0) {
-      throw new Error(
-        `TW: Error loading world ${world} opponents defeated tribe`
-      )
+      throw new Error(`Error loading world ${world} opponents defeated tribe`)
     }
   } catch (err) {
-    logAlert(err, 'TW Tribe Query')
+    logAlert(err, 'TW')
     return
   }
   return od

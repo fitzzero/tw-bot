@@ -49,14 +49,14 @@ const fetchVillages = async (
   try {
     const response = await fetch(api)
     if (response.status >= 400) {
-      throw new Error(`TW Server: ${response.status}`)
+      throw new Error(`TW Server ${response.status}`)
     }
     villages = parseCsv(await response.text())
     if (!villages || villages.length == 0) {
-      throw new Error(`TW: Error loading world ${world} villages`)
+      throw new Error(`Error loading world ${world} villages`)
     }
   } catch (err) {
-    logAlert('TW Village Query')
+    logAlert('TW')
     return
   }
   logger({

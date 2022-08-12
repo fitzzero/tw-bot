@@ -60,14 +60,14 @@ const fetchPlayers = async (world: string): Promise<string[][] | undefined> => {
   try {
     const response = await fetch(api)
     if (response.status >= 400) {
-      throw new Error(`TW Server: ${response.status}`)
+      throw new Error(`TW Server ${response.status}`)
     }
     players = parseCsv(await response.text())
     if (!players || players.length == 0) {
-      throw new Error(`TW: Error loading world ${world} players`)
+      throw new Error(`Error loading world ${world} players`)
     }
   } catch (err) {
-    logAlert(err, 'TW Player Query')
+    logAlert(err, 'TW')
     return
   }
   logger({
@@ -93,10 +93,10 @@ const fetchOd = async (
     }
     od = parseCsv(await response.text())
     if (!od || od.length == 0) {
-      throw new Error(`TW: Error loading world ${world} opponents defeated`)
+      throw new Error(`Error loading world ${world} opponents defeated`)
     }
   } catch (err) {
-    logAlert(err, 'TW Player Query')
+    logAlert(err, 'TW')
     return
   }
   return od
