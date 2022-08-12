@@ -104,6 +104,7 @@ export const syncIncomingDashboard = async ({
   let description = ''
   messageAttacks
     .sort((a, b) => a.arrival.unix() - b.arrival.unix())
+    .slice(0, 10)
     .forEach(attack => {
       description += `${attack.target}\n${attack.origin}\n\n`
     })
