@@ -1,12 +1,17 @@
 import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
 import { VillageData, villages } from '../sheet/villages'
 import { worldPath } from './world'
 
 export const syncVillages = async (world: string) => {
   await villages.loadRows()
   const villageData = await fetchVillages(world)
+
+  if (!villageData) {
+    logAlert('Data issue, skipping Tribe sync', 'TW')
+    return
+  }
 
   for (const data of villageData) {
     if (data[0] === '' || data[0] === null) break
@@ -33,19 +38,26 @@ export const syncVillages = async (world: string) => {
   })
 }
 
-const fetchVillages = async (world: string): Promise<string[][]> => {
+const fetchVillages = async (
+  world: string
+): Promise<string[][] | undefined> => {
   let api = `${worldPath(world)}map/village.txt`
+  let villages: string[][] = []
   if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/village.txt'
   }
-
-  const response = await fetch(api)
-  if (response.status >= 400) {
-    throw new Error(`TW Server: ${response.status}`)
-  }
-  const villages = parseCsv(await response.text())
-  if (!villages || villages.length == 0) {
-    throw new Error(`TW: Error loading world ${world} villages`)
+  try {
+    const response = await fetch(api)
+    if (response.status >= 400) {
+      throw new Error(`TW Server: ${response.status}`)
+    }
+    villages = parseCsv(await response.text())
+    if (!villages || villages.length == 0) {
+      throw new Error(`TW: Error loading world ${world} villages`)
+    }
+  } catch (err) {
+    logAlert('TW Village Query')
+    return
   }
   logger({
     prefix: 'start',

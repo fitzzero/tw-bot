@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
-import { logger } from '../utility/logger'
+import { logAlert, logger } from '../utility/logger'
 import { PlayerData, players } from '../sheet/players'
 import { worldPath } from './world'
 
@@ -14,6 +14,11 @@ export const syncPlayers = async (world: string) => {
   const oda = await fetchOd(world, 'att')
   const odd = await fetchOd(world, 'def')
   const ods = await fetchOd(world, 'sup')
+
+  if (!playerData || !od || !oda || !odd || !ods) {
+    logAlert('Data issue, skipping Player sync', 'TW')
+    return
+  }
 
   for (const data of playerData) {
     if (data[0] === '' || data[0] === null) break
@@ -46,19 +51,24 @@ export const syncPlayers = async (world: string) => {
   return
 }
 
-const fetchPlayers = async (world: string): Promise<string[][]> => {
+const fetchPlayers = async (world: string): Promise<string[][] | undefined> => {
   let api = `${worldPath(world)}map/player.txt`
+  let players: string[][] = []
   if (world == 'dev') {
     api = 'https://fitzzero.sirv.com/tribalwars/example-data/player.txt'
   }
-
-  const response = await fetch(api)
-  if (response.status >= 400) {
-    throw new Error(`TW Server: ${response.status}`)
-  }
-  const players = parseCsv(await response.text())
-  if (!players || players.length == 0) {
-    throw new Error(`TW: Error loading world ${world} players`)
+  try {
+    const response = await fetch(api)
+    if (response.status >= 400) {
+      throw new Error(`TW Server: ${response.status}`)
+    }
+    players = parseCsv(await response.text())
+    if (!players || players.length == 0) {
+      throw new Error(`TW: Error loading world ${world} players`)
+    }
+  } catch (err) {
+    logAlert(err, 'TW Player Query')
+    return
   }
   logger({
     prefix: 'start',
@@ -70,19 +80,24 @@ const fetchPlayers = async (world: string): Promise<string[][]> => {
 const fetchOd = async (
   world: string,
   type: 'att' | 'def' | 'sup' | 'all'
-): Promise<string[][]> => {
+): Promise<string[][] | undefined> => {
   let api = `${worldPath(world)}map/kill_${type}.txt`
+  let od: string[][] = []
   if (world == 'dev') {
     api = `https://fitzzero.sirv.com/tribalwars/example-data/kill_${type}.txt`
   }
-
-  const response = await fetch(api)
-  if (response.status >= 400) {
-    throw new Error(`TW Server: ${response.status}`)
-  }
-  const od = parseCsv(await response.text())
-  if (!od || od.length == 0) {
-    throw new Error(`TW: Error loading world ${world} opponents defeated`)
+  try {
+    const response = await fetch(api)
+    if (response.status >= 400) {
+      throw new Error(`TW Server: ${response.status}`)
+    }
+    od = parseCsv(await response.text())
+    if (!od || od.length == 0) {
+      throw new Error(`TW: Error loading world ${world} opponents defeated`)
+    }
+  } catch (err) {
+    logAlert(err, 'TW Player Query')
+    return
   }
   return od
 }
