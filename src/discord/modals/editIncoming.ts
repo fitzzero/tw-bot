@@ -35,6 +35,7 @@ const controller = async (interaction: ModalSubmitInteraction) => {
   await syncIncomingDashboard({
     coords: targetId,
     villageIncomings,
+    changes: true,
   })
 
   await interaction.deleteReply()

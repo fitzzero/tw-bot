@@ -19,11 +19,13 @@ interface MessageAttacks {
 export interface IncomingDashboardProps {
   coords: string
   villageIncomings: IncomingData[]
+  changes?: boolean
 }
 
 export const syncIncomingDashboard = async ({
   coords,
   villageIncomings,
+  changes = false,
 }: IncomingDashboardProps) => {
   const targetVillage = villages.getByCoordString(coords)
   if (!targetVillage) return
@@ -32,7 +34,7 @@ export const syncIncomingDashboard = async ({
   const messageAttacks: MessageAttacks[] | undefined = []
 
   // Does the message need to be edited because of data changes?
-  let changes = isDev ? true : false
+  if (isDev) changes = true
   // Does the message need to be rebuild because of new incomings?
   let newIncomings = false
 
