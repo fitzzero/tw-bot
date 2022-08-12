@@ -34,7 +34,7 @@ export const getUnitByDistance = ({
 }: GetUnitByDistanceProps) => {
   const distance = getDistance(target, origin)
   const duration = targetLand.diff(originSend, 'minutes')
-  const errorAllowance = 2
+  const errorAllowance = 5
   const allUnits = units.getAll()?.sort((a, b) => {
     return parseInt(b.speed) - parseInt(a.speed)
   })
