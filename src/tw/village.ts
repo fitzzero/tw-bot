@@ -1,6 +1,9 @@
 import { settings } from '../sheet/settings'
 import { VillageData } from '../sheet/villages'
 import { worldPath } from './world'
+import { UnitData, units } from '../sheet/units'
+import { Moment } from 'moment'
+import { logDev } from '../utility/logger'
 
 export const getDistance = (village: VillageData, origin?: VillageData) => {
   const alertSettings = settings.getAlertSettings()
@@ -17,6 +20,39 @@ export const getDistance = (village: VillageData, origin?: VillageData) => {
   return distance
 }
 
+interface GetUnitByDistanceProps {
+  target: VillageData
+  targetLand: Moment
+  origin: VillageData
+  originSend: Moment
+}
+export const getUnitByDistance = ({
+  target,
+  targetLand,
+  origin,
+  originSend,
+}: GetUnitByDistanceProps) => {
+  const distance = getDistance(target, origin)
+  const duration = targetLand.diff(originSend, 'minutes')
+  const errorAllowance = 2
+  const allUnits = units.getAll()?.sort((a, b) => {
+    return parseInt(b.speed) - parseInt(a.speed)
+  })
+  if (!allUnits || !distance || !duration) return
+  let foundUnit: UnitData | undefined = undefined
+  for (const unit of allUnits) {
+    if (unit.id == 'spear') continue
+    const unitDuration = parseInt(unit.speed) * distance
+    if (duration + errorAllowance > unitDuration) {
+      foundUnit = unit
+      logDev(`Checking ${unit.id} speed (${unitDuration}) vs ${duration}`)
+      break
+    }
+  }
+  logDev(`Found unit: ${foundUnit?.id}`)
+  return foundUnit
+}
+
 export const inAlertRange = (village: VillageData) => {
   const alertSettings = settings.getAlertSettings()
   const distance = getDistance(village)
@@ -25,6 +61,7 @@ export const inAlertRange = (village: VillageData) => {
     return true
   }
   if (village.playerId != '0' && distance < alertSettings.playerRadius) {
+    logDev(`${village.id} is ${distance} away`)
     return true
   }
   return false

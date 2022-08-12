@@ -8,6 +8,7 @@ import {
 } from 'discord.js'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
+import { validateMoment } from '../../utility/time'
 import { closeCommand } from '../commands/canned'
 import { syncIncomingDashboard } from '../dashboardMessages/incoming'
 import { Modal } from '../modals'
@@ -44,10 +45,19 @@ export const modalBuilder = (interaction: ButtonInteraction) => {
   const targetId = message?.id?.split('-')[1]
   if (!targetId) return
 
-  const villageIncomings = incomings.filterByProperties([
-    { prop: 'target', value: targetId },
-    { prop: 'status', value: 'active' },
-  ])
+  const villageIncomings = incomings
+    .filterByProperties([
+      { prop: 'target', value: targetId },
+      { prop: 'status', value: 'active' },
+    ])
+    ?.sort((a, b) => {
+      const aTime = validateMoment(a.arrival)?.unix()
+      const bTime = validateMoment(b.arrival)?.unix()
+      if (!aTime || !bTime) {
+        return 0
+      }
+      return aTime - bTime
+    })
   if (!villageIncomings) return
   const modal = new ModalBuilder()
     .setCustomId(`edit-incoming-${targetId}`)

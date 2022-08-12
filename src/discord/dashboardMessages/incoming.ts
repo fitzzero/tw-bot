@@ -3,7 +3,9 @@ import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
-import { villages } from '../../sheet/villages'
+import { UnitData, units } from '../../sheet/units'
+import { VillageData, villages } from '../../sheet/villages'
+import { getUnitByDistance } from '../../tw/village'
 import { formatDate, getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { villageMessage } from '../messages/village'
@@ -38,6 +40,8 @@ export const syncIncomingDashboard = async ({
     // Meta data
     let sent: Moment | undefined = undefined
     let arrival: Moment | undefined = undefined
+    let originVillage: VillageData | undefined = undefined
+    let unit: UnitData | undefined = undefined
 
     if (incoming.status == 'new') {
       sent = moment(new Date(incoming.sent))
@@ -56,7 +60,7 @@ export const syncIncomingDashboard = async ({
       arrival = validateMoment(incoming.arrival)
     }
 
-    if (!arrival) continue
+    if (!arrival || !sent) continue
 
     // Remove old incomings and skip
     if (arrival.isBefore()) {
@@ -65,11 +69,34 @@ export const syncIncomingDashboard = async ({
       continue
     }
 
+    let originMessage = ''
+
+    if (incoming.origin)
+      originVillage = villages.getByCoordString(incoming.origin)
+    if (originVillage) {
+      unit = getUnitByDistance({
+        target: targetVillage,
+        targetLand: arrival,
+        origin: originVillage,
+        originSend: sent,
+      })
+    }
+    if (unit) {
+      const emoji = await units.getDiscordEmoji(unit.id)
+      originMessage = `:arrow_left: ${emoji} Sent by ${
+        originVillage?.name
+      } <t:${getUnix(sent)}:R>`
+    } else {
+      originMessage = `:arrow_left: Sent <t:${getUnix(sent)}:R>`
+    }
+
     // Add incoming target to message description
     messageAttacks.push({
       arrival,
-      target: `:arrow_right: Arrives <t:${getUnix(arrival)}:R>`,
-      origin: `:arrow_left: Sent <t:${getUnix(sent)}:R>`,
+      target: `:arrow_right: Lands ${arrival.format(
+        'HH:mm:ss:SS'
+      )} <t:${getUnix(arrival)}:R>`,
+      origin: originMessage,
     })
   }
 
@@ -97,26 +124,26 @@ export const syncIncomingDashboard = async ({
     village: targetVillage,
   })
 
-  // payload.components = [
-  //   {
-  //     type: 1,
-  //     components: [
-  //       {
-  //         style: 1,
-  //         label: `Update Origin`,
-  //         custom_id: `incoming-origin`,
-  //         type: 2,
-  //       },
-  //       {
-  //         style: 2,
-  //         label: `Set Reminder`,
-  //         custom_id: `incoming-reminder`,
-  //         disabled: false,
-  //         type: 2,
-  //       },
-  //     ],
-  //   },
-  // ]
+  payload.components = [
+    {
+      type: 1,
+      components: [
+        {
+          style: 1,
+          label: `Update Origin`,
+          custom_id: `incoming-origin`,
+          type: 2,
+        },
+        // {
+        //   style: 2,
+        //   label: `Set Reminder`,
+        //   custom_id: `incoming-reminder`,
+        //   disabled: false,
+        //   type: 2,
+        // },
+      ],
+    },
+  ]
 
   const handleFn = newIncomings ? messages.rebuildMessage : messages.syncMessage
 
