@@ -58,6 +58,7 @@ export const modalBuilder = (interaction: ButtonInteraction) => {
       }
       return aTime - bTime
     })
+    .slice(0, 10)
   if (!villageIncomings) return
   const modal = new ModalBuilder()
     .setCustomId(`edit-incoming-${targetId}`)
