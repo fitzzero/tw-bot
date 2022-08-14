@@ -1,7 +1,8 @@
 import { MessageOptions } from 'discord.js'
 import { accounts } from '../../sheet/accounts'
 import { WRChannels } from '../../sheet/channels'
-import { getUnix } from '../../utility/time'
+import { settings, WRSettings } from '../../sheet/settings'
+import { getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
@@ -10,17 +11,26 @@ const available = () => {
   const accountMobile = accounts.getByProperty('mobile', 'TRUE')
   if (!!accountMobile && !!accountBrowser) return
 
+  const browserSetting = settings.getById(WRSettings.browserId)
+  const mobileSetting = settings.getById(WRSettings.mobileId)
+
   let title = ''
+  let lastUpdate  = 0
   const components = []
   let oneOnline = true
 
   if (!accountBrowser && !accountMobile) {
     title = 'Browser and App Open'
     oneOnline = false
+    const lastBrowser = validateMoment(browserSetting?.lastUpdate)
+    const lastMobile = validateMoment(mobileSetting?.lastUpdate)
+    lastUpdate = getUnix(lastBrowser?.isBefore(lastMobile) ? lastMobile : lastBrowser)
   } else if (!accountBrowser && !!accountMobile) {
     title = 'Browser Open'
+    lastUpdate = getUnix(browserSetting?.lastUpdate)
   } else if (!!accountBrowser && !accountMobile) {
     title = 'App Open'
+    lastUpdate = getUnix(mobileSetting?.lastUpdate)
   }
 
   if (!accountBrowser) {
@@ -46,7 +56,7 @@ const available = () => {
     embeds: [
       {
         title,
-        description: `<t:${getUnix()}:R>`,
+        description: `<t:${lastUpdate}:R>`,
         color: oneOnline ? WRColors.warning : WRColors.error,
       },
     ],
