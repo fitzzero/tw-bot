@@ -52,6 +52,24 @@ export class SheetData<data extends RowStructure> {
   }
 
   /*
+   * Bump
+   */
+  bump = async (id: string) => {
+    const idx = this.rows.findIndex(row => row.id == id)
+    if (idx === -1) return false
+    try {
+      await limiter.removeTokens(1)
+      this.rows[idx].lastUpdate = nowString()
+      // @ts-ignore
+      await this.rows[idx].save({ raw: true })
+      return true
+    } catch (err) {
+      logAlert(err, 'Sheets update')
+      return true
+    }
+  }
+
+  /*
    * Get all
    */
   getAll = () => {

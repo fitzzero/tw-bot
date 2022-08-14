@@ -46,7 +46,7 @@ const loop = async () => {
 
   // Re-sync if it's been more than hour since last sync
   if (timeForLoop(world?.lastUpdate) && !syncTwInProgress()) {
-    await settings.updateOrAdd(world, true)
+    await settings.bump(world.id)
     syncTw(world.value)
     await syncDashboard()
   }

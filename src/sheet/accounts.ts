@@ -15,6 +15,11 @@ export interface AccountsData extends RowStructure {
   todos: string
 }
 
+const enum StatusRoles {
+  browser = 'browser',
+  mobile = 'mobile'
+}
+
 const headers = keys<AccountsData>().map(key => key.toString())
 
 class Accounts extends SheetData<AccountsData> {
@@ -22,7 +27,7 @@ class Accounts extends SheetData<AccountsData> {
     super(tabTitle, tabHeaders)
   }
 
-  addRole = async (id: string, property: 'browser' | 'mobile') => {
+  addRole = async (id: string, property: StatusRoles) => {
     let success = true
     const accountData = this.getById(id)
     if (accountData) {
@@ -49,7 +54,7 @@ class Accounts extends SheetData<AccountsData> {
     if (!success) return false
 
     // Update discord
-    const role = await this.getDiscordRole(property)
+    const role = await this.getDiscordStatusRole(property)
     const member = await this.getDiscordMember(id)
     if (!role || !member) return false
     try {
@@ -64,14 +69,14 @@ class Accounts extends SheetData<AccountsData> {
   clearAccount = async (id: string) => {
     const accountData = this.getById(id)
     if (accountData?.browser == 'TRUE') {
-      await this.clearRole('browser')
+      await this.clearRole(StatusRoles.browser)
     }
     if (accountData?.mobile == 'TRUE') {
-      await this.clearRole('mobile')
+      await this.clearRole(StatusRoles.mobile)
     }
   }
 
-  clearRole = async (property: 'browser' | 'mobile') => {
+  clearRole = async (property: StatusRoles) => {
     const accountData = this.getByProperty(property, 'TRUE')
     if (!accountData) return
 
@@ -84,8 +89,16 @@ class Accounts extends SheetData<AccountsData> {
     // Update data
     this.update(newData)
 
+    // Bump setting
+    await settings.bump(
+      property == StatusRoles.browser ? 
+        WRSettings.browserId : 
+        WRSettings.mobileId
+    )
+    
+
     // Update discord
-    const role = await this.getDiscordRole(property)
+    const role = await this.getDiscordStatusRole(property)
     const member = await this.getDiscordMember(accountData.id)
     if (!role || !member) return
     try {
@@ -106,7 +119,7 @@ class Accounts extends SheetData<AccountsData> {
     return
   }
 
-  getDiscordRole = async (property: 'browser' | 'mobile') => {
+  getDiscordStatusRole = async (property: StatusRoles) => {
     const roleId = settings.getValue(
       property == 'browser' ? WRSettings.browserId : WRSettings.mobileId
     )
@@ -125,13 +138,13 @@ class Accounts extends SheetData<AccountsData> {
   }
 
   setAccountBrowser = async (id: string) => {
-    await this.clearRole('browser')
-    await this.addRole(id, 'browser')
+    await this.clearRole(StatusRoles.browser)
+    await this.addRole(id, StatusRoles.browser)
   }
 
   setAccountMobile = async (id: string) => {
-    await this.clearRole('mobile')
-    await this.addRole(id, 'mobile')
+    await this.clearRole(StatusRoles.mobile)
+    await this.addRole(id, StatusRoles.mobile)
   }
 }
 
