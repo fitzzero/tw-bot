@@ -16,6 +16,7 @@ import { accounts } from './sheet/accounts'
 import { units } from './sheet/units'
 import { incomings } from './sheet/incomings'
 import moment from 'moment'
+import { registerCommands } from './discord/commands'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -76,6 +77,7 @@ const preLoadAndSyncData = async () => {
   // Discord Sync
   await channels.syncChannels()
   await syncDashboard()
+  await registerCommands()
 }
 
 export const timeForLoop = (date: string) => {

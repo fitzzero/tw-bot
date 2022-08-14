@@ -3,7 +3,6 @@ import { WRChannels } from '../sheet/channels'
 import { messages } from '../sheet/messages'
 import { logAlert, logger } from '../utility/logger'
 import { availableDashboard } from './dashboardMessages/available'
-import { commandInfoDashboard } from './dashboardMessages/commands'
 import { onlineDashboard } from './dashboardMessages/online'
 import { overviewDashboard } from './dashboardMessages/overview'
 
@@ -18,7 +17,6 @@ const activeDashboards: DashboardMessage[] = [
   overviewDashboard,
   onlineDashboard,
   availableDashboard,
-  commandInfoDashboard,
 ]
 
 export const syncDashboard = async (single?: DashboardMessage) => {
@@ -55,6 +53,8 @@ export const syncDashboard = async (single?: DashboardMessage) => {
     }
   }
   if (success) {
-    logger({ message: 'Discord: Synced dashboard messages', prefix: 'success' })
+    logger({ 
+    message: `Discord: Synced ${single ? single.id : 'all'} dashboard messages`,
+    prefix: 'success' })
   } else logAlert('Discord: Something went wrong syncing dashboard messages ')
 }
