@@ -59,7 +59,7 @@ export const getTodoPayload = async ({
   return options
 }
 
-export const syncTodoDashboard = async (item: Item) => {
+export const syncTodoDashboard = async (item: Item, rebuild = true) => {
   let success = true
   let village: (VillageData & BaseSheetModel) | undefined = undefined
 
@@ -80,6 +80,7 @@ export const syncTodoDashboard = async (item: Item) => {
 
   // If Due now
   if (!upcoming) {
+    rebuild = true
     const accountBrowser = accounts.getByProperty('browser', 'TRUE')
     if (accountBrowser) {
       content += `<@${accountBrowser.id}>`
@@ -114,7 +115,8 @@ export const syncTodoDashboard = async (item: Item) => {
       }),
     })
   } else {
-    success = await messages.rebuildMessage({
+    const handleFn = rebuild ? messages.rebuildMessage : messages.syncMessage
+    success = await handleFn({
       id: `todo-${item.id}`,
       channelId: upcoming ? WRChannels.todo : WRChannels.news,
       payload: await getTodoPayload({

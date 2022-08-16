@@ -6,7 +6,6 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js'
-import { Item } from 'todoist/dist/v8-types'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
@@ -23,15 +22,25 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     return
   }
   // Update values
-  data.item.content = interaction.fields.getTextInputValue('tood-content')
-  data.item.due.string = interaction.fields.getTextInputValue('todo-due')
+  data.item.content = interaction.fields.getTextInputValue('todo-content')
+  const newDueString = interaction.fields.getTextInputValue('todo-due')
+  if (newDueString != data.item.due.string) {
+    data.item.due.string = newDueString
+    data.item.due.date = ''
+  }
   // Update item and sync
-  const updatedItem = (await todoist.items.update({
+  await todoist.items.update({
     ...data.item,
     day_order: undefined,
-  })) as Item
+  })
 
-  syncTodoDashboard(updatedItem)
+  const updatedItem = getItemById(`${data.item.id}`)
+  if (!updatedItem) {
+    closeCommand(interaction)
+    return
+  }
+  console.log(updatedItem)
+  syncTodoDashboard(updatedItem, false)
   await interaction.deleteReply()
 }
 
@@ -43,7 +52,7 @@ export const modalBuilder = (interaction: ButtonInteraction) => {
   }
 
   const modal = new ModalBuilder()
-    .setCustomId(`edit-todo-${data.messageData.id}`)
+    .setCustomId(`edit-todo-${data.messageData.messageId}`)
     .setTitle('Manage Incoming Origins')
 
   const rows = [
