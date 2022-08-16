@@ -23,13 +23,14 @@ export interface BotConfig {
   client: string
   commands: Command[]
   coreDoc: string
+  coreGuild: string
   guild: string
   writeEnabled: boolean
   extraLogging: boolean
 }
 
 export const devDiscordConfig: BotConfig = {
-  category: '904962974635130880',
+  category: '1008956038411726909',
   client: '896860363541348413',
   commands: [
     ping,
@@ -46,7 +47,8 @@ export const devDiscordConfig: BotConfig = {
     tribeOdd,
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
-  guild: '620484161974566922',
+  coreGuild: '1008955953024077825',
+  guild: '1008955953024077825',
   writeEnabled: true,
   extraLogging: true,
 }
@@ -68,6 +70,7 @@ export const prodDiscordConfig: BotConfig = {
     tribeOdd,
   ],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
+  coreGuild: '1008955953024077825',
   guild: '855057085719642134',
   writeEnabled: true,
   extraLogging: false,

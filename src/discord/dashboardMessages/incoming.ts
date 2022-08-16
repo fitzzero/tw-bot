@@ -4,11 +4,12 @@ import { WRChannels } from '../../sheet/channels'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
 import { players } from '../../sheet/players'
-import { UnitData, units } from '../../sheet/units'
+import { UnitData } from '../../sheet/units'
 import { VillageData, villages } from '../../sheet/villages'
 import { getUnitByDistance } from '../../tw/village'
 import { formatDate, getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
+import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
 
 interface MessageAttacks {
@@ -85,7 +86,7 @@ export const syncIncomingDashboard = async ({
       })
     }
     if (unit && originVillage) {
-      const emoji = await units.getDiscordEmoji(unit.id)
+      const emoji = await getDiscordEmoji(unit.id)
       const player = players.getById(originVillage?.playerId)
       originMessage = `:arrow_left: ${emoji} Sent by ${
         player?.name + ' ' + originVillage.name
