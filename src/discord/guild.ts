@@ -1,4 +1,9 @@
-import { CategoryChannel, ChannelType, Guild } from 'discord.js'
+import {
+  APIMessageComponentEmoji,
+  CategoryChannel,
+  ChannelType,
+  Guild,
+} from 'discord.js'
 import { botConfig } from '../config'
 import { logAlert } from '../utility/logger'
 import { discordClient } from './connect'
@@ -6,6 +11,12 @@ import { discordClient } from './connect'
 let coreGuild: Guild | undefined = undefined
 let guild: Guild | undefined = undefined
 let category: CategoryChannel | undefined = undefined
+
+export const enum WREmojis {
+  complete = 'complete',
+  delete = 'delete',
+  edit = 'edit',
+}
 
 export const getActiveGuild = async () => {
   if (guild) return guild
@@ -44,10 +55,18 @@ export const getDiscordEmoji = async (id: string) => {
     logAlert(`Couldn't find ${id} Discord Emoji`, 'Units')
     return
   }
+  return emoji
 }
 
-export const GuildEmoji = {
-  complete: getDiscordEmoji('complete'),
-  delete: getDiscordEmoji('delete'),
-  edit: getDiscordEmoji('edit'),
+export const getDiscordComponentEmoji = async (id: string) => {
+  const emoji = await getDiscordEmoji(id)
+  if (!emoji) return
+
+  const componentEmoji: APIMessageComponentEmoji = {
+    id: emoji.id,
+    animated: emoji.animated || false,
+    name: emoji.name || '',
+  }
+
+  return componentEmoji
 }

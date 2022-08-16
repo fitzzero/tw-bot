@@ -13,6 +13,7 @@ import {
   withinLastMinute,
 } from '../../utility/time'
 import { WRColors } from '../colors'
+import { completeButton } from '../components/complete'
 import { villageMessage } from '../messages/village'
 
 interface TodoPayloadProps {
@@ -22,13 +23,14 @@ interface TodoPayloadProps {
   footer: string
   timestamp: string
 }
-export const getTodoPayload = ({
+export const getTodoPayload = async ({
   color,
   content,
   description,
   footer,
   timestamp,
 }: TodoPayloadProps) => {
+  const complete = await completeButton({ id: 'todo-complete' })
   const options: MessageOptions = {
     content,
     tts: false,
@@ -36,12 +38,7 @@ export const getTodoPayload = ({
       {
         type: 1,
         components: [
-          {
-            style: 3,
-            label: `Complete`,
-            custom_id: `todo-complete`,
-            type: 2,
-          },
+          complete,
           {
             style: 4,
             label: `Delete`,
@@ -114,7 +111,7 @@ export const syncTodoDashboard = async (item: Item) => {
     success = await messages.rebuildMessage({
       id: `todo-${item.id}`,
       channelId: upcoming ? WRChannels.todo : WRChannels.news,
-      payload: getTodoPayload({
+      payload: await getTodoPayload({
         color,
         content,
         description,
