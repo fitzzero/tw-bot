@@ -14,6 +14,7 @@ import {
 } from '../../utility/time'
 import { WRColors } from '../colors'
 import { completeButton } from '../components/complete'
+import { deleteButton } from '../components/delete'
 import { villageMessage } from '../messages/village'
 
 interface TodoPayloadProps {
@@ -30,22 +31,17 @@ export const getTodoPayload = async ({
   footer,
   timestamp,
 }: TodoPayloadProps) => {
-  const complete = await completeButton({ id: 'todo-complete' })
+  const components = [
+    await completeButton({ id: 'todo-complete' }),
+    await deleteButton({ id: 'todo-delete' }),
+  ]
   const options: MessageOptions = {
     content,
     tts: false,
     components: [
       {
         type: 1,
-        components: [
-          complete,
-          {
-            style: 4,
-            label: `Delete`,
-            custom_id: `todo-delete`,
-            type: 2,
-          },
-        ],
+        components,
       },
     ],
     embeds: [

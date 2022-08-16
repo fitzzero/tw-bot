@@ -1,7 +1,4 @@
-import { GuildEmoji } from 'discord.js'
 import { keys } from 'ts-transformer-keys'
-import { getCoreGuild } from '../discord/guild'
-import { logAlert } from '../utility/logger'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface UnitData extends RowStructure {
@@ -10,6 +7,7 @@ export interface UnitData extends RowStructure {
   basetime: string
   speed: string
   pop: string
+  emoji: string
 }
 
 const headers = keys<UnitData>().map(key => key.toString())
