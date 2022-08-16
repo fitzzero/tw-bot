@@ -5,7 +5,9 @@ import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
 import { Button } from '../buttons'
 import { WRColors } from '../colors'
+import { closeCommand } from '../commands/canned'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
+import { todoModal } from '../modals/editTodo'
 
 const handleClose = async (
   interaction: ButtonInteraction,
@@ -69,7 +71,12 @@ const handleDelete = async (interaction: ButtonInteraction) => {
 }
 
 const handleEdit = async (interaction: ButtonInteraction) => {
-  await interaction.deferUpdate()
+  const modal = todoModal.modalBuilder(interaction)
+  if (!modal) {
+    closeCommand(interaction)
+    return
+  }
+  await interaction.showModal(modal)
 }
 
 export const todoComplete: Button = {

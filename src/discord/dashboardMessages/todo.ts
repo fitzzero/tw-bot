@@ -71,7 +71,7 @@ export const syncTodoDashboard = async (item: Item) => {
   const color = upcoming ? WRColors.warning : WRColors.error
   const components = [
     await completeButton({ id: 'todo-complete' }),
-    await editButton({ id: 'todo-complete' }),
+    await editButton({ id: 'todo-edit' }),
     await deleteButton({ id: 'todo-delete' }),
   ]
   const description = `${item?.content} (due <t:${getUnix(date)}:R>)`
