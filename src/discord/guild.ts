@@ -16,6 +16,7 @@ export const enum WREmojis {
   complete = 'complete',
   delete = 'delete',
   edit = 'edit',
+  refresh = 'refresh',
 }
 
 export const getActiveGuild = async () => {
