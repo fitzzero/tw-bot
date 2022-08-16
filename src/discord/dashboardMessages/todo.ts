@@ -1,4 +1,4 @@
-import { MessageOptions } from 'discord.js'
+import { APIButtonComponentWithCustomId, MessageOptions } from 'discord.js'
 import moment from 'moment'
 import { Item } from 'todoist/dist/v8-types'
 import { accounts } from '../../sheet/accounts'
@@ -15,11 +15,14 @@ import {
 import { WRColors } from '../colors'
 import { completeButton } from '../components/complete'
 import { deleteButton } from '../components/delete'
+import { editButton } from '../components/edit'
+import { refreshButton } from '../components/refresh'
 import { villageMessage } from '../messages/village'
 
 interface TodoPayloadProps {
   color: WRColors
   content: string
+  components?: APIButtonComponentWithCustomId[]
   description: string
   footer: string
   timestamp: string
@@ -30,11 +33,8 @@ export const getTodoPayload = async ({
   description,
   footer,
   timestamp,
+  components = [],
 }: TodoPayloadProps) => {
-  const components = [
-    await completeButton({ id: 'todo-complete' }),
-    await deleteButton({ id: 'todo-delete' }),
-  ]
   const options: MessageOptions = {
     content,
     tts: false,
@@ -66,7 +66,19 @@ export const syncTodoDashboard = async (item: Item) => {
   const date = moment(item?.due?.date).utcOffset(momentUtcOffset, true)
   const upcoming = date.isAfter() && !withinLastMinute(date)
 
+  // Message Payload Data
   let content = ''
+  const color = upcoming ? WRColors.warning : WRColors.error
+  const components = [
+    await completeButton({ id: 'todo-complete' }),
+    await editButton({ id: 'todo-complete' }),
+    await deleteButton({ id: 'todo-delete' }),
+  ]
+  const description = `${item?.content} (due <t:${getUnix(date)}:R>)`
+  const footer = upcoming ? 'Upcoming Task' : 'Task Due'
+  const timestamp = getIso(date)
+
+  // If Due now
   if (!upcoming) {
     const accountBrowser = accounts.getByProperty('browser', 'TRUE')
     if (accountBrowser) {
@@ -76,11 +88,9 @@ export const syncTodoDashboard = async (item: Item) => {
     if (accountMobile) {
       content += `<@${accountMobile.id}>`
     }
+
+    components.push(await refreshButton({ id: 'todo-refresh' }))
   }
-  const color = upcoming ? WRColors.warning : WRColors.error
-  const description = `${item?.content} (due <t:${getUnix(date)}:R>)`
-  const footer = upcoming ? 'Upcoming Task' : 'Task Due'
-  const timestamp = getIso(date)
 
   if (item.content.includes('|')) {
     const idx = item.content.indexOf('|')
@@ -96,8 +106,8 @@ export const syncTodoDashboard = async (item: Item) => {
       payload: villageMessage({
         color,
         content,
+        components,
         description,
-        todo: true,
         village,
         footer,
         timestamp,
@@ -110,6 +120,7 @@ export const syncTodoDashboard = async (item: Item) => {
       payload: await getTodoPayload({
         color,
         content,
+        components,
         description,
         footer,
         timestamp,

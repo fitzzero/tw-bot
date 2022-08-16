@@ -1,4 +1,5 @@
-import { MessageOptions } from 'discord.js'
+import { APIButtonComponentWithCustomId, MessageOptions } from 'discord.js'
+import { isEmpty } from 'lodash'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
 import { TribeData, tribes } from '../../sheet/tribes'
@@ -10,12 +11,12 @@ import { WRColors } from '../colors'
 export interface VillageMessageProps {
   color?: WRColors
   content?: string
+  components?: APIButtonComponentWithCustomId[]
   description?: string
   extraContext?: boolean
   footer?: string
   player?: PlayerData
   timestamp?: string
-  todo?: boolean
   tribe?: TribeData
   village: VillageData
 }
@@ -23,12 +24,12 @@ export interface VillageMessageProps {
 export const villageMessage = ({
   color = WRColors.purple,
   content = '',
+  components = [],
   description = '',
   extraContext = true,
   footer,
   player,
   timestamp,
-  todo,
   tribe,
   village,
 }: VillageMessageProps) => {
@@ -90,24 +91,11 @@ export const villageMessage = ({
     ],
   }
 
-  if (todo) {
+  if (!isEmpty(components)) {
     options.components = [
       {
         type: 1,
-        components: [
-          {
-            style: 3,
-            label: `Complete`,
-            custom_id: `todo-complete`,
-            type: 2,
-          },
-          {
-            style: 4,
-            label: `Delete`,
-            custom_id: `todo-delete`,
-            type: 2,
-          },
-        ],
+        components,
       },
     ]
   }
