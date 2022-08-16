@@ -39,7 +39,6 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     closeCommand(interaction)
     return
   }
-  console.log(updatedItem)
   syncTodoDashboard(updatedItem, false)
   await interaction.deleteReply()
 }

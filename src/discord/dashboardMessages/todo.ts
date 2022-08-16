@@ -69,11 +69,8 @@ export const syncTodoDashboard = async (item: Item, rebuild = true) => {
   // Message Payload Data
   let content = ''
   const color = upcoming ? WRColors.warning : WRColors.error
-  const components = [
-    await completeButton({ id: 'todo-complete' }),
-    await editButton({ id: 'todo-edit' }),
-    await deleteButton({ id: 'todo-delete' }),
-  ]
+  const components = [await completeButton({ id: 'todo-complete' })]
+
   const description = `${item?.content} (due <t:${getUnix(date)}:R>)`
   const footer = upcoming ? 'Upcoming Task' : 'Task Due'
   const timestamp = getIso(date)
@@ -89,9 +86,13 @@ export const syncTodoDashboard = async (item: Item, rebuild = true) => {
     if (accountMobile) {
       content += `<@${accountMobile.id}>`
     }
-
+    // Add refresh
     components.push(await refreshButton({ id: 'todo-refresh' }))
   }
+
+  // Push end of button row
+  components.push(await editButton({ id: 'todo-edit' }))
+  components.push(await deleteButton({ id: 'todo-delete' }))
 
   if (item.content.includes('|')) {
     const idx = item.content.indexOf('|')
