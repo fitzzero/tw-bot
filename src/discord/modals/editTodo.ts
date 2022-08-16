@@ -45,7 +45,7 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     closeCommand(interaction)
     return
   }
-  syncTodoDashboard(updatedItem, false)
+  syncTodoDashboard(updatedItem, !upcoming)
   await interaction.deleteReply()
 }
 
@@ -58,7 +58,7 @@ export const modalBuilder = (interaction: ButtonInteraction) => {
 
   const modal = new ModalBuilder()
     .setCustomId(`edit-todo-${data.messageData.messageId}`)
-    .setTitle('Manage Incoming Origins')
+    .setTitle('Edit Todo')
 
   const rows = [
     textRow({ id: 'todo-content', label: 'What:', value: data.item.content }),
