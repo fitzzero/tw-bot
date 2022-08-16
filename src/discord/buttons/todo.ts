@@ -79,10 +79,6 @@ const handleEdit = async (interaction: ButtonInteraction) => {
   await interaction.showModal(modal)
 }
 
-const handleRefresh = async (interaction: ButtonInteraction) => {
-  handleClose(interaction, false)
-}
-
 export const todoComplete: Button = {
   customId: 'todo-complete',
   controller: handleComplete,
@@ -100,5 +96,5 @@ export const todoEdit: Button = {
 
 export const todoRefresh: Button = {
   customId: 'todo-refresh',
-  controller: handleRefresh,
+  controller: handleEdit,
 }

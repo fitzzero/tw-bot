@@ -88,10 +88,11 @@ export const syncTodoDashboard = async (item: Item, rebuild = true) => {
     }
     // Add refresh
     components.push(await refreshButton({ id: 'todo-refresh' }))
+  } else {
+    components.push(await editButton({ id: 'todo-edit' }))
   }
 
   // Push end of button row
-  components.push(await editButton({ id: 'todo-edit' }))
   components.push(await deleteButton({ id: 'todo-delete' }))
 
   if (item.content.includes('|')) {

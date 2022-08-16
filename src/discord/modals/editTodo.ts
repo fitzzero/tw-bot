@@ -6,9 +6,11 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js'
+import moment from 'moment'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
+import { momentUtcOffset, withinLastMinute } from '../../utility/time'
 import { closeCommand } from '../commands/canned'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
 import { Modal } from '../modals'
@@ -21,10 +23,14 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     closeCommand(interaction)
     return
   }
+
+  const date = moment(data.item?.due?.date).utcOffset(momentUtcOffset, true)
+  const upcoming = date.isAfter() && !withinLastMinute(date)
+
   // Update values
   data.item.content = interaction.fields.getTextInputValue('todo-content')
   const newDueString = interaction.fields.getTextInputValue('todo-due')
-  if (newDueString != data.item.due.string) {
+  if (newDueString != data.item.due.string || !upcoming) {
     data.item.due.string = newDueString
     data.item.due.date = ''
   }
