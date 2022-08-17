@@ -20,7 +20,7 @@ export const syncTribes = async (world: string) => {
   }
 
   for (const data of tribeData) {
-    if (data[0] === '' || data[0] === null) break
+    if (data[0] === '' || data[0] === null) continue
     const tribeId = data[0]
     const tribeOd = od.find(data => data[1] === tribeId)
     const tribeOda = oda.find(data => data[1] === tribeId)
@@ -38,6 +38,7 @@ export const syncTribes = async (world: string) => {
       od: tribeOd ? tribeOd[2] : '0',
       oda: tribeOda ? tribeOda[2] : '0',
       odd: tribeOdd ? tribeOdd[2] : '0',
+      tracking: '',
     }
     if (tribeData.id) {
       await tribes.updateOrAdd({ ...tribeData })

@@ -25,6 +25,12 @@ const settingsToSync: SettingField[] = [
     required: true,
   },
   {
+    id: WRSettings.mapconfig,
+    label: 'TW Map Config',
+    maxLength: 4,
+    required: true,
+  },
+  {
     id: WRSettings.account,
     label: 'Account name',
     maxLength: 20,
@@ -43,6 +49,11 @@ const settingsToSync: SettingField[] = [
   {
     id: WRSettings.barbR,
     label: 'Number of fields for barbarian alerts',
+    maxLength: 3,
+  },
+  {
+    id: WRSettings.odAlerts,
+    label: 'Minimum OD changes for news alerts',
     maxLength: 3,
   },
 ]

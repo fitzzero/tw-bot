@@ -21,7 +21,7 @@ export const syncPlayers = async (world: string) => {
   }
 
   for (const data of playerData) {
-    if (data[0] === '' || data[0] === null) break
+    if (data[0] === '' || data[0] === null) continue
     const playerId = data[0]
     const playerOd = od.find(data => data[1] === playerId)
     const playerOda = oda.find(data => data[1] === playerId)

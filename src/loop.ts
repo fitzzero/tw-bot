@@ -17,6 +17,7 @@ import { units } from './sheet/units'
 import { incomings } from './sheet/incomings'
 import moment from 'moment'
 import { registerCommands } from './discord/commands'
+import { conquers } from './sheet/conquers'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -66,6 +67,7 @@ const preLoadAndSyncData = async () => {
   await tribes.loadData()
   await players.loadData()
   await villages.loadData()
+  await conquers.loadData()
   await units.loadData()
   await incomings.loadData()
 

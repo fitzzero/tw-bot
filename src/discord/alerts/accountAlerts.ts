@@ -1,24 +1,54 @@
 import { APIEmbedField } from 'discord.js'
 import { channels, WRChannels } from '../../sheet/channels'
 import { PlayerData } from '../../sheet/players'
+import { settings, WRSettings } from '../../sheet/settings'
 import { stonksMessage } from '../messages/stonks'
 
-export const accountChangeAlerts = async (
-  newData: PlayerData,
+export interface AccountChangeProps {
+  newData: PlayerData
   oldData: PlayerData
-) => {
+  exclude?: string[]
+}
+
+export const accountChangeAlerts = async ({
+  newData,
+  oldData,
+  exclude,
+}: AccountChangeProps) => {
   let update = false
   let goodChanges = 0
   const fields: APIEmbedField[] = []
 
   const propsToCheck = [
-    { name: 'villages', increaseGood: true },
-    { name: 'rank', increaseGood: false },
-    { name: 'od', increaseGood: true },
+    { name: 'villages', increaseGood: true, limiter: undefined },
+    { name: 'rank', increaseGood: false, limiter: undefined },
+    {
+      name: 'oda',
+      increaseGood: true,
+      limiter: settings.getValue(WRSettings.odAlerts),
+    },
+    {
+      name: 'odd',
+      increaseGood: true,
+      limiter: settings.getValue(WRSettings.odAlerts),
+    },
+    {
+      name: 'ods',
+      increaseGood: true,
+      limiter: settings.getValue(WRSettings.odAlerts),
+    },
   ]
-  propsToCheck.forEach(prop => {
+  for (const prop of propsToCheck) {
+    if (exclude?.includes(prop.name)) continue
+
     const oldVal = parseInt(oldData[prop.name])
     const newVal = parseInt(newData[prop.name])
+
+    if (prop.limiter) {
+      const alertRange = parseInt(prop.limiter)
+      if (newVal - oldVal < alertRange) continue
+    }
+
     if (oldVal != newVal) {
       update = true
       fields.push({
@@ -32,7 +62,7 @@ export const accountChangeAlerts = async (
         newVal > oldVal ? --goodChanges : ++goodChanges
       }
     }
-  })
+  }
   if (!update) return
 
   const message = stonksMessage({

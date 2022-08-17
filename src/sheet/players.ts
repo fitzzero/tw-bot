@@ -24,8 +24,8 @@ class Players extends SheetData<PlayerData> {
   }
 
   auditAndUpdate = async (newData: PlayerData) => {
-    const existingData = this.getById(newData.id)
-    if (!existingData) {
+    const oldData = this.getById(newData.id)
+    if (!oldData) {
       await this.add(newData)
       return
     }
@@ -34,7 +34,7 @@ class Players extends SheetData<PlayerData> {
 
     // If account
     if (newData.name == settings.getValue(WRSettings.account)) {
-      accountChangeAlerts(newData, existingData)
+      accountChangeAlerts({ newData, oldData })
     }
   }
 }

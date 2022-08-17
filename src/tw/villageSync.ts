@@ -9,12 +9,12 @@ export const syncVillages = async (world: string) => {
   const villageData = await fetchVillages(world)
 
   if (!villageData) {
-    logAlert('Data issue, skipping Tribe sync', 'TW')
+    logAlert('Data issue, skipping Village sync', 'TW')
     return
   }
 
   for (const data of villageData) {
-    if (data[0] === '' || data[0] === null) break
+    if (data[0] === '' || data[0] === null) continue
     const x = parseInt(data[2])
     const y = parseInt(data[3])
 

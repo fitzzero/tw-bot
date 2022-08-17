@@ -10,15 +10,16 @@ export interface SettingsData extends RowStructure {
 const headers = keys<SettingsData>().map(key => key.toString())
 
 export const enum WRSettings {
-  world = 'world',
   account = 'account',
-  startCoords = 'startCoordinates',
-  playerR = 'playerRadius',
   barbR = 'barbRadius',
   browserId = 'browserRoleId',
-  mobileId = 'mobileRoleId',
   map = 'map',
   mapconfig = 'mapconfig',
+  mobileId = 'mobileRoleId',
+  odAlerts = 'odAlerts',
+  playerR = 'playerRadius',
+  startCoords = 'startCoordinates',
+  world = 'world',
 }
 
 class Settings extends SheetData<SettingsData> {

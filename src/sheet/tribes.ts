@@ -13,6 +13,7 @@ export interface TribeData extends RowStructure {
   od: string
   oda: string
   odd: string
+  tracking: string
 }
 
 const headers = keys<TribeData>().map(key => key.toString())
