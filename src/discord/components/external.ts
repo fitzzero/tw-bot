@@ -10,13 +10,11 @@ interface ExternalButtonProps extends ButtonComponentProps {
 export const externalButton = async ({
   disabled = false,
   emojiId,
-  id,
   label,
   url,
 }: ExternalButtonProps) => {
   const emoji = await getDiscordComponentEmoji(emojiId)
   const component: APIButtonComponent = {
-    custom_id: id,
     disabled,
     emoji,
     label,

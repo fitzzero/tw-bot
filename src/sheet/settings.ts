@@ -13,7 +13,6 @@ export const enum WRSettings {
   account = 'account',
   barbR = 'barbRadius',
   browserId = 'browserRoleId',
-  map = 'map',
   mapconfig = 'mapconfig',
   mobileId = 'mobileRoleId',
   odAlerts = 'odAlerts',

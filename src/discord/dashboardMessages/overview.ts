@@ -13,7 +13,7 @@ import { WREmojis } from '../guild'
 
 const overview = async () => {
   const world = settings.getById('world')
-  const map = settings.getValue(WRSettings.map)
+  const map = settings.getValue(WRSettings.mapconfig)
 
   let description = ''
   const alertSettings = settings.getAlertSettings()
