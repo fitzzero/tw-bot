@@ -9,52 +9,29 @@ import { settings, WRSettings } from '../../sheet/settings'
 import { syncDashboard } from '../dashboard'
 import { overviewDashboard } from '../dashboardMessages/overview'
 import { Modal } from '../modals'
-
-export interface SettingField {
-  id: WRSettings
-  label: string
-  maxLength?: number
-  required?: boolean
-}
+import { SettingField } from './editSettings'
 
 const settingsToSync: SettingField[] = [
   {
-    id: WRSettings.world,
-    label: 'World short identifier (ie us60)',
-    maxLength: 4,
-    required: true,
+    id: WRSettings.startCoords,
+    label: 'Starting coordinates x|y',
+    maxLength: 7,
   },
   {
-    id: WRSettings.mapconfig,
-    label: 'TW Map Config',
-    required: true,
+    id: WRSettings.playerR,
+    label: 'Number of fields for player alerts',
+    maxLength: 3,
   },
   {
-    id: WRSettings.account,
-    label: 'Account name',
-    maxLength: 20,
-    required: false,
+    id: WRSettings.barbR,
+    label: 'Number of fields for barbarian alerts',
+    maxLength: 3,
   },
-  // {
-  //   id: WRSettings.startCoords,
-  //   label: 'Starting coordinates x|y',
-  //   maxLength: 7,
-  // },
-  // {
-  //   id: WRSettings.playerR,
-  //   label: 'Number of fields for player alerts',
-  //   maxLength: 3,
-  // },
-  // {
-  //   id: WRSettings.barbR,
-  //   label: 'Number of fields for barbarian alerts',
-  //   maxLength: 3,
-  // },
-  // {
-  //   id: WRSettings.odAlerts,
-  //   label: 'Minimum OD changes for news alerts',
-  //   maxLength: 3,
-  // },
+  {
+    id: WRSettings.odAlerts,
+    label: 'Minimum OD changes for news alerts',
+    maxLength: 3,
+  },
 ]
 
 const controller = async (interaction: ModalSubmitInteraction) => {
@@ -76,7 +53,7 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 
 export const modalBuilder = () => {
   const modal = new ModalBuilder()
-    .setCustomId('dash-settings-modal')
+    .setCustomId('dash-alerts-modal')
     .setTitle('War Room Settings')
 
   const rows = []
@@ -102,8 +79,8 @@ const textRow = ({ id, label, maxLength, required = false }: SettingField) => {
   return new ActionRowBuilder<TextInputBuilder>().addComponents(input)
 }
 
-export const settingsModal: Modal = {
-  customId: 'dash-settings-modal',
+export const alertsModal: Modal = {
+  customId: 'dash-alerts-modal',
   modalBuilder,
   controller,
 }

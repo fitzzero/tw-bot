@@ -1,4 +1,5 @@
 import { ModalBuilder, ModalSubmitInteraction } from 'discord.js'
+import { alertsModal } from './modals/editAlerts'
 import { incomingModal } from './modals/editIncoming'
 import { settingsModal } from './modals/editSettings'
 import { todoModal } from './modals/editTodo'
@@ -9,4 +10,9 @@ export interface Modal {
   controller: (interaction: ModalSubmitInteraction) => Promise<void>
 }
 
-export const activeModals: Modal[] = [settingsModal, incomingModal, todoModal]
+export const activeModals: Modal[] = [
+  alertsModal,
+  settingsModal,
+  incomingModal,
+  todoModal,
+]

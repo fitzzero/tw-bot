@@ -1,4 +1,5 @@
 import { ButtonInteraction } from 'discord.js'
+import { alertsButton } from './buttons/alerts'
 import { incomingButton } from './buttons/incomingsButton'
 import { onlineBrowser, onlineMobile, onlineOffline } from './buttons/online'
 import { settingsButton } from './buttons/settings'
@@ -10,6 +11,7 @@ export interface Button {
 }
 
 export const activeButtons: Button[] = [
+  alertsButton,
   settingsButton,
   onlineBrowser,
   onlineMobile,
