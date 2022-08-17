@@ -47,8 +47,8 @@ export const getActiveCategory = async () => {
 export const getCoreGuild = async () => {
   if (coreGuild) return coreGuild
   else {
-    guild = await discordClient.guilds.fetch(botConfig.coreGuild)
-    return guild
+    coreGuild = await discordClient.guilds.fetch(botConfig.coreGuild)
+    return coreGuild
   }
 }
 

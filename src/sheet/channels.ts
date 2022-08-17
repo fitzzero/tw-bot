@@ -72,8 +72,18 @@ class Channels extends SheetData<ChannelData> {
       if (channel?.type == ChannelType.GuildText) {
         return channel
       }
-    } catch (err) {}
-    logAlert(`Failed to find channel ${id}`, 'Discord')
+    } catch (err) {
+      logAlert(
+        `Failed to fetch channel ${id}
+        ${err}`,
+        'Discord'
+      )
+      return
+    }
+    logAlert(
+      `Failed to find channel ${id} (${channelData.channelId})`,
+      'Discord'
+    )
     return
   }
 
