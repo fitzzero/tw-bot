@@ -4,8 +4,9 @@ import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
 import { TribeData, tribes } from '../../sheet/tribes'
 import { VillageData } from '../../sheet/villages'
+import { getPlayerUrl } from '../../tw/player'
+import { getTribeUrl } from '../../tw/tribe'
 import { getVillageSize, getVillageUrl } from '../../tw/village'
-import { worldPath } from '../../tw/world'
 import { WRColors } from '../colors'
 
 export interface VillageMessageProps {
@@ -56,14 +57,12 @@ export const villageMessage = ({
 
   // Append PlayerData to description
   if (player && extraContext) {
-    const playerUrl = `${worldPath()}game.php?screen=info_player&id=${
-      village.playerId
-    }#${village.x};${village.y}`
+    const playerUrl = getPlayerUrl(village.playerId, village)
     description += `\nOwned by [${player.name} (${player.points} pts)](${playerUrl})`
   }
   // Append TribeData to description
   if (tribe && extraContext) {
-    const tribeUrl = `${worldPath()}game.php?screen=info_ally&id=${tribe?.id}`
+    const tribeUrl = getTribeUrl(tribe.id)
     description += ` of [${tribe?.tag} (rank ${tribe?.rank})](${tribeUrl})`
   }
 
