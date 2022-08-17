@@ -27,11 +27,11 @@ export const conquerAlerts = async (conquer: ConquerData) => {
     if (oldPlayer) {
       const tribe = tribes.getById(oldPlayer.tribe)
       const playerUrl = getPlayerUrl(oldPlayer?.id, village)
-      conquered = `[${oldPlayer?.name}](${playerUrl})`
+      conquered = `[${oldPlayer?.name} (${oldPlayer.points} pts)](${playerUrl})`
 
       if (tribe) {
         const tribeUrl = getTribeUrl(tribe.id)
-        conquered += ` ([${tribe.tag}](${tribeUrl}))`
+        conquered += ` of [${tribe.tag}](${tribeUrl})`
       }
     }
     const payload = villageMessage({
