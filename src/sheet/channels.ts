@@ -19,8 +19,8 @@ const headers = keys<ChannelData>().map(key => key.toString())
 export const enum WRChannels {
   dash = 'dashboard',
   news = 'news-feed',
-  incoming = 'incoming',
   todo = 'todo',
+  incoming = 'incoming',
   help = 'help',
 }
 

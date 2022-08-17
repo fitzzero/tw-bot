@@ -54,7 +54,7 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 export const modalBuilder = () => {
   const modal = new ModalBuilder()
     .setCustomId('dash-alerts-modal')
-    .setTitle('War Room Settings')
+    .setTitle('War Room Notifications')
 
   const rows = []
 
