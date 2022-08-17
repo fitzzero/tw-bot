@@ -36,7 +36,7 @@ export const conquerAlerts = async (conquer: ConquerData) => {
     }
     const payload = villageMessage({
       color: WRColors.gray,
-      description: `Has been taken from: ${conquered}`,
+      description: `Has been taken from: ${conquered} <t:${conquer.unix}>`,
       village,
     })
     await channels.sendMessage(WRChannels.news, payload)
