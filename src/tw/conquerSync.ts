@@ -17,7 +17,8 @@ export const syncConquers = async (world: string) => {
     if (data[0] === '' || data[0] === null) continue
 
     const conquerData: ConquerData = {
-      id: data[0],
+      id: `${data[0]}-${data[1]}`,
+      villageId: data[0],
       unix: data[1],
       newPlayer: data[2],
       oldPlayer: data[3],

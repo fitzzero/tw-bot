@@ -4,6 +4,7 @@ import { RowStructure, SheetData } from './sheetData'
 
 export interface ConquerData extends RowStructure {
   id: string
+  villageId: string
   unix: string
   newPlayer: string
   oldPlayer: string

@@ -1,6 +1,6 @@
 import { channels, WRChannels } from '../../sheet/channels'
 import { ConquerData } from '../../sheet/conquers'
-import { PlayerData, players } from '../../sheet/players'
+import { players } from '../../sheet/players'
 import { settings, WRSettings } from '../../sheet/settings'
 import { tribes } from '../../sheet/tribes'
 import { villages } from '../../sheet/villages'
