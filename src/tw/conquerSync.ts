@@ -1,9 +1,8 @@
 import fetch from 'cross-fetch'
 import { parseCsv } from '../utility/data'
 import { logAlert, logger } from '../utility/logger'
-import { VillageData, villages } from '../sheet/villages'
 import { worldPath } from './world'
-import { conquers } from '../sheet/conquers'
+import { ConquerData, conquers } from '../sheet/conquers'
 
 export const syncConquers = async (world: string) => {
   await conquers.loadRows()
@@ -16,26 +15,20 @@ export const syncConquers = async (world: string) => {
 
   for (const data of conquerData) {
     if (data[0] === '' || data[0] === null) continue
-    const x = parseInt(data[2])
-    const y = parseInt(data[3])
 
-    const villageData: VillageData = {
+    const conquerData: ConquerData = {
       id: data[0],
-      name: decodeURIComponent(data[1]).replaceAll('+', ' '),
-      x: data[2],
-      y: data[3],
-      k: `${Math.floor(y / 100) * 10 + Math.floor(x / 100)}`,
-      playerId: data[4],
-      points: data[5],
-      rank: data[6] || '0',
+      unix: data[1],
+      newPlayer: data[2],
+      oldPlayer: data[3],
     }
-    if (villageData?.id) {
-      await villages.auditAndUpdate(villageData)
+    if (conquerData?.id) {
+      await conquers.auditAndUpdate(conquerData)
     }
   }
   logger({
     prefix: 'success',
-    message: `TW: Villages synced`,
+    message: `TW: Conquers synced`,
   })
 }
 

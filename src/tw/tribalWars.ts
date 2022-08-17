@@ -1,4 +1,5 @@
 import { logger } from '../utility/logger'
+import { syncConquers } from './conquerSync'
 import { syncPlayers } from './playerSync'
 import { syncTribes } from './tribeSync'
 import { syncVillages } from './villageSync'
@@ -13,6 +14,7 @@ export const syncTw = async (world: string) => {
   await syncTribes(world)
   await syncPlayers(world)
   await syncVillages(world)
+  await syncConquers(world)
   inProgress = false
   logger({ prefix: 'success', message: `TW: Sync completed` })
 }

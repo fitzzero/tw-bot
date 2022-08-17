@@ -14,6 +14,17 @@ class Conquers extends SheetData<ConquerData> {
   constructor(tabTitle: string, tabHeaders: string[]) {
     super(tabTitle, tabHeaders)
   }
+
+  auditAndUpdate = async (newData: ConquerData) => {
+    const existingData = this.getById(newData.id)
+    // If new
+    if (!existingData) {
+      await this.add(newData)
+      return
+    }
+    // Update data
+    await this.update(newData)
+  }
 }
 
 export const conquers = new Conquers('conquers', headers)
