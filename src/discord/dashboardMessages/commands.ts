@@ -4,7 +4,7 @@ import { WRChannels } from '../../sheet/channels'
 import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
-const commandInfo = () => {
+const commandInfo = async () => {
   let description = ''
 
   botConfig.commands.forEach(command => {
