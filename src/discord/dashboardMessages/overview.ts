@@ -5,9 +5,13 @@ import { WRChannels } from '../../sheet/channels'
 import { settings, WRSettings } from '../../sheet/settings'
 import { getUnix } from '../../utility/time'
 import { WRColors } from '../colors'
+import { bellButton } from '../components/bell'
+import { editButton } from '../components/edit'
+import { externalButton } from '../components/external'
 import { DashboardMessage } from '../dashboard'
+import { WREmojis } from '../guild'
 
-const overview = () => {
+const overview = async () => {
   const world = settings.getById('world')
   const map = settings.getValue(WRSettings.map)
 
@@ -17,35 +21,28 @@ const overview = () => {
     description = `Watching Players within __${alertSettings.playerRadius}__, Barbs within __${alertSettings.barbRadius}__ of **(${alertSettings.x}|${alertSettings.y})**`
   }
 
+  const components = [
+    await externalButton({
+      id: 'dash-doc',
+      url: `https://docs.google.com/spreadsheets/d/${botConfig.coreDoc}`,
+      emojiId: WREmojis.drive,
+    }),
+    await externalButton({
+      id: 'dash-map',
+      url: map || 'https://tribalwarsmap.com',
+      emojiId: WREmojis.map,
+    }),
+    await bellButton({ id: 'dash-alerts' }),
+    await editButton({ id: 'dash-settings' }),
+  ]
+
   const options: MessageOptions = {
     content: '',
     tts: false,
     components: [
       {
         type: 1,
-        components: [
-          {
-            style: 5,
-            label: `Google Doc`,
-            url: `https://docs.google.com/spreadsheets/d/${botConfig.coreDoc}`,
-            disabled: false,
-            type: 2,
-          },
-          {
-            style: 5,
-            label: `Map`,
-            url: map || 'https://tribalwarsmap.com',
-            disabled: false,
-            type: 2,
-          },
-          {
-            style: 2,
-            label: `Settings`,
-            custom_id: `dash-settings`,
-            disabled: false,
-            type: 2,
-          },
-        ],
+        components,
       },
     ],
     embeds: [

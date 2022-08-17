@@ -17,6 +17,6 @@ export const conquerAlerts = async (conquer: ConquerData) => {
     !!tribe?.tracking
 
   if (tracking) {
-    logDev(`Conquer for ${newPlayer.name} found`)
+    logDev(`${newPlayer.name} conquered ${oldPlayer}`)
   }
 }

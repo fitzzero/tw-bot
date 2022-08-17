@@ -13,9 +13,12 @@ let guild: Guild | undefined = undefined
 let category: CategoryChannel | undefined = undefined
 
 export const enum WREmojis {
+  bell = 'bell',
   complete = 'complete',
   delete = 'delete',
+  drive = 'drive',
   edit = 'edit',
+  map = 'map',
   refresh = 'refresh',
 }
 
@@ -59,7 +62,8 @@ export const getDiscordEmoji = async (id: string) => {
   return emoji
 }
 
-export const getDiscordComponentEmoji = async (id: string) => {
+export const getDiscordComponentEmoji = async (id?: string) => {
+  if (!id) return
   const emoji = await getDiscordEmoji(id)
   if (!emoji) return
 

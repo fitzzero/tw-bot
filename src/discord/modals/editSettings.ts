@@ -13,7 +13,7 @@ import { Modal } from '../modals'
 interface SettingField {
   id: WRSettings
   label: string
-  maxLength: number
+  maxLength?: number
   required?: boolean
 }
 
@@ -27,7 +27,6 @@ const settingsToSync: SettingField[] = [
   {
     id: WRSettings.mapconfig,
     label: 'TW Map Config',
-    maxLength: 4,
     required: true,
   },
   {
@@ -36,26 +35,26 @@ const settingsToSync: SettingField[] = [
     maxLength: 20,
     required: false,
   },
-  {
-    id: WRSettings.startCoords,
-    label: 'Starting coordinates x|y',
-    maxLength: 7,
-  },
-  {
-    id: WRSettings.playerR,
-    label: 'Number of fields for player alerts',
-    maxLength: 3,
-  },
-  {
-    id: WRSettings.barbR,
-    label: 'Number of fields for barbarian alerts',
-    maxLength: 3,
-  },
-  {
-    id: WRSettings.odAlerts,
-    label: 'Minimum OD changes for news alerts',
-    maxLength: 3,
-  },
+  // {
+  //   id: WRSettings.startCoords,
+  //   label: 'Starting coordinates x|y',
+  //   maxLength: 7,
+  // },
+  // {
+  //   id: WRSettings.playerR,
+  //   label: 'Number of fields for player alerts',
+  //   maxLength: 3,
+  // },
+  // {
+  //   id: WRSettings.barbR,
+  //   label: 'Number of fields for barbarian alerts',
+  //   maxLength: 3,
+  // },
+  // {
+  //   id: WRSettings.odAlerts,
+  //   label: 'Minimum OD changes for news alerts',
+  //   maxLength: 3,
+  // },
 ]
 
 const controller = async (interaction: ModalSubmitInteraction) => {
@@ -91,13 +90,14 @@ export const modalBuilder = () => {
 }
 
 const textRow = ({ id, label, maxLength, required = false }: SettingField) => {
+  const existingVal = settings.getValue(id)
   const input: TextInputBuilder = new TextInputBuilder()
     .setCustomId(id)
-    .setValue(settings.getValue(id) || '')
+    .setValue(existingVal || '')
     .setLabel(label)
     .setStyle(TextInputStyle.Short)
     .setRequired(required)
-    .setMaxLength(maxLength)
+    .setMaxLength(maxLength || 60)
 
   return new ActionRowBuilder<TextInputBuilder>().addComponents(input)
 }

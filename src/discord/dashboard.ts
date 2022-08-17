@@ -8,7 +8,7 @@ import { overviewDashboard } from './dashboardMessages/overview'
 
 export interface DashboardMessage {
   id: string
-  getPayload: () => MessageOptions | undefined
+  getPayload(): Promise<MessageOptions | undefined>
   channel: WRChannels
   rebuild?: boolean
 }
@@ -22,7 +22,7 @@ const activeDashboards: DashboardMessage[] = [
 export const syncDashboard = async (single?: DashboardMessage) => {
   let success = true
   if (single) {
-    const payload = single.getPayload()
+    const payload = await single.getPayload()
     if (!payload) {
       await messages.deleteMessage(single.id)
       return
@@ -37,7 +37,7 @@ export const syncDashboard = async (single?: DashboardMessage) => {
     })
   } else {
     for (const dashboard of activeDashboards) {
-      const payload = dashboard.getPayload()
+      const payload = await dashboard.getPayload()
       if (!payload) {
         await messages.deleteMessage(dashboard.id)
       } else {
@@ -53,8 +53,11 @@ export const syncDashboard = async (single?: DashboardMessage) => {
     }
   }
   if (success) {
-    logger({ 
-    message: `Discord: Synced ${single ? single.id : 'all'} dashboard messages`,
-    prefix: 'success' })
+    logger({
+      message: `Discord: Synced ${
+        single ? single.id : 'all'
+      } dashboard messages`,
+      prefix: 'success',
+    })
   } else logAlert('Discord: Something went wrong syncing dashboard messages ')
 }

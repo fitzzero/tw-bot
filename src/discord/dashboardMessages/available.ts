@@ -6,7 +6,7 @@ import { getUnix, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
-const available = () => {
+const available = async () => {
   const accountBrowser = accounts.getByProperty('browser', 'TRUE')
   const accountMobile = accounts.getByProperty('mobile', 'TRUE')
   if (!!accountMobile && !!accountBrowser) return
@@ -15,7 +15,7 @@ const available = () => {
   const mobileSetting = settings.getById(WRSettings.mobileId)
 
   let title = ''
-  let lastUpdate  = 0
+  let lastUpdate = 0
   const components = []
   let oneOnline = true
 
@@ -24,7 +24,9 @@ const available = () => {
     oneOnline = false
     const lastBrowser = validateMoment(browserSetting?.lastUpdate)
     const lastMobile = validateMoment(mobileSetting?.lastUpdate)
-    lastUpdate = getUnix(lastBrowser?.isBefore(lastMobile) ? lastMobile : lastBrowser)
+    lastUpdate = getUnix(
+      lastBrowser?.isBefore(lastMobile) ? lastMobile : lastBrowser
+    )
   } else if (!accountBrowser && !!accountMobile) {
     title = 'Browser Open'
     lastUpdate = getUnix(browserSetting?.lastUpdate)

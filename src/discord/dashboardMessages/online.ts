@@ -5,7 +5,7 @@ import { getUnix } from '../../utility/time'
 import { WRColors } from '../colors'
 import { DashboardMessage } from '../dashboard'
 
-const overview = () => {
+const overview = async () => {
   const accountBrowser = accounts.getByProperty('browser', 'TRUE')
   const accountMobile = accounts.getByProperty('mobile', 'TRUE')
   const browserUnix = getUnix(accountBrowser?.lastSignOn)
