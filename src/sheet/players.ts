@@ -32,10 +32,12 @@ class Players extends SheetData<PlayerData> {
     // Update data
     await this.update({ ...newData })
 
-    // If account
+    // If main account
     if (newData.name == settings.getValue(WRSettings.account)) {
       accountChangeAlerts({ newData, oldData })
     }
+
+    // If tribe is being tracked
   }
 }
 

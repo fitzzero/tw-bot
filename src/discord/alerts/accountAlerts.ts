@@ -8,9 +8,11 @@ export interface AccountChangeProps {
   newData: PlayerData
   oldData: PlayerData
   exclude?: string[]
+  channel?: WRChannels
 }
 
 export const accountChangeAlerts = async ({
+  channel = WRChannels.news,
   newData,
   oldData,
   exclude,
@@ -71,5 +73,5 @@ export const accountChangeAlerts = async ({
     fields,
     positive: goodChanges > 0,
   })
-  await channels.sendMessage(WRChannels.news, message)
+  await channels.sendMessage(channel, message)
 }

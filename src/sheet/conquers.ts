@@ -1,4 +1,5 @@
 import { keys } from 'ts-transformer-keys'
+import { conquerAlerts } from '../discord/alerts/conquerAlerts'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface ConquerData extends RowStructure {
@@ -20,6 +21,7 @@ class Conquers extends SheetData<ConquerData> {
     // If new
     if (!existingData) {
       await this.add(newData)
+      await conquerAlerts(newData)
       return
     }
     // Update data
