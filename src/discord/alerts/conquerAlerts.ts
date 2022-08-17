@@ -20,7 +20,7 @@ export const conquerAlerts = async (conquer: ConquerData) => {
   const tribe = tribes.getById(newPlayer.tribe)
   tracking =
     newPlayer.name === settings.getValue(WRSettings.account) ||
-    !!tribe?.tracking
+    tribe?.tracking === 'TRUE'
 
   if (tracking) {
     let conquered = 'Barbarians'
