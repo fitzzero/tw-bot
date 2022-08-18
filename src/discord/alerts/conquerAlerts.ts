@@ -34,10 +34,12 @@ export const conquerAlerts = async (conquer: ConquerData) => {
         conquered += ` of [${tribe.tag}](${tribeUrl})`
       }
     }
+
     const payload = villageMessage({
       color: WRColors.gray,
       description: `Has been taken from: ${conquered} <t:${conquer.unix}:R>`,
       village,
+      extraContext: false,
     })
     await channels.sendMessage(WRChannels.news, payload)
   }

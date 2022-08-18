@@ -2,12 +2,10 @@ import { APIButtonComponentWithCustomId, MessageOptions } from 'discord.js'
 import { isEmpty } from 'lodash'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
-import { TribeData, tribes } from '../../sheet/tribes'
 import { VillageData } from '../../sheet/villages'
-import { getPlayerUrl } from '../../tw/player'
-import { getTribeUrl } from '../../tw/tribe'
 import { getVillageSize, getVillageUrl } from '../../tw/village'
 import { WRColors } from '../colors'
+import { getPlayerMd } from './player'
 
 export interface VillageMessageProps {
   color?: WRColors
@@ -18,7 +16,6 @@ export interface VillageMessageProps {
   footer?: string
   player?: PlayerData
   timestamp?: string
-  tribe?: TribeData
   village: VillageData
 }
 
@@ -31,7 +28,6 @@ export const villageMessage = ({
   footer,
   player,
   timestamp,
-  tribe,
   village,
 }: VillageMessageProps) => {
   // Meta data
@@ -45,10 +41,6 @@ export const villageMessage = ({
   if (!player || !isBarb) {
     player = players.getById(village.playerId)
   }
-  // Get TribeData if Exists (and override not provided)
-  if (!tribe && player && player.tribe != '0') {
-    tribe = tribes.getById(player.tribe)
-  }
 
   // Set Default Color if not provided
   if (!color && isBarb) {
@@ -57,13 +49,8 @@ export const villageMessage = ({
 
   // Append PlayerData to description
   if (player && extraContext) {
-    const playerUrl = getPlayerUrl(village.playerId, village)
-    description += `\nOwned by [${player.name} (${player.points} pts)](${playerUrl})`
-  }
-  // Append TribeData to description
-  if (tribe && extraContext) {
-    const tribeUrl = getTribeUrl(tribe.id)
-    description += ` of [${tribe?.tag} (rank ${tribe?.rank})](${tribeUrl})`
+    const playerMd = getPlayerMd(player, village)
+    description += `\nOwned by ${playerMd}`
   }
 
   const options: MessageOptions = {
