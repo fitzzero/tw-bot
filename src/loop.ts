@@ -18,6 +18,7 @@ import { incomings } from './sheet/incomings'
 import moment from 'moment'
 import { registerCommands } from './discord/commands'
 import { conquers } from './sheet/conquers'
+import { syncConquers } from './tw/conquerSync'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -57,6 +58,8 @@ const loop = async () => {
   syncProject(world.value)
   // Sync incoming attacks
   incomings.syncIncomings()
+  // Sync recent conquers
+  await syncConquers(world.value, true)
 
   return
 }

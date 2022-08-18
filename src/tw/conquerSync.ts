@@ -3,13 +3,16 @@ import { parseCsv } from '../utility/data'
 import { logAlert, logger } from '../utility/logger'
 import { worldPath } from './world'
 import { ConquerData, conquers } from '../sheet/conquers'
+import moment from 'moment'
+import { momentTimeZone } from '../utility/time'
+import { isEmpty } from 'lodash'
 
-export const syncConquers = async (world: string) => {
+export const syncConquers = async (world: string, recent = false) => {
   await conquers.loadRows()
-  const conquerData = await fetchConquers(world)
-
+  const conquerData = recent
+    ? await fetchConquersRecent(world)
+    : await fetchConquers(world)
   if (!conquerData) {
-    logAlert('Data issue, skipping Conquer sync', 'TW')
     return
   }
 
@@ -58,6 +61,49 @@ const fetchConquers = async (
     prefix: 'start',
     message: `TW: Loading ${conquers?.length - 1} conquers...`,
   })
+
+  return conquers
+}
+
+export const fetchConquersRecent = async (world: string) => {
+  const unix = moment.tz(momentTimeZone).subtract(2, 'minutes').unix()
+  let api = `${worldPath(world)}interface.php?func=get_conquer&since=${unix}`
+  if (world == 'dev') {
+    api = 'https://fitzzero.sirv.com/tribalwars/example-data/conquerRecent.txt'
+  }
+
+  let conquers: string[][] = []
+
+  try {
+    const response = await fetch(api)
+    if (response.status >= 400) {
+      throw new Error(`TW Server ${response.status}`)
+    }
+    conquers = parseCsv(await response.text())
+    if (!conquers || conquers.length == 0) {
+      throw new Error(`Error loading world ${world} conquers`)
+    }
+  } catch (err) {
+    logAlert('TW')
+    return
+  }
+  if (isEmpty(conquers) || !conquers[0][1]) {
+    logger({
+      prefix: 'success',
+      message: `No recent conquers`,
+    })
+    return
+  }
+
+  logger({
+    prefix: 'start',
+    message: `TW: Loading ${conquers?.length} conquers...`,
+  })
+  if (world == 'dev') {
+    conquers.forEach((conquer, idx) => {
+      conquers[idx][3] = conquer[3].replace('\r', '')
+    })
+  }
 
   return conquers
 }

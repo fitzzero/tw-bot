@@ -4,9 +4,8 @@ import { players } from '../../sheet/players'
 import { settings, WRSettings } from '../../sheet/settings'
 import { tribes } from '../../sheet/tribes'
 import { villages } from '../../sheet/villages'
-import { getPlayerUrl } from '../../tw/player'
-import { getTribeUrl } from '../../tw/tribe'
 import { WRColors } from '../colors'
+import { getPlayerMd } from '../messages/player'
 import { villageMessage } from '../messages/village'
 
 export const conquerAlerts = async (conquer: ConquerData) => {
@@ -22,25 +21,17 @@ export const conquerAlerts = async (conquer: ConquerData) => {
     newPlayer.name === settings.getValue(WRSettings.account) ||
     tribe?.tracking === 'TRUE'
 
-  if (tracking) {
-    let conquered = 'Barbarians'
-    if (oldPlayer) {
-      const tribe = tribes.getById(oldPlayer.tribe)
-      const playerUrl = getPlayerUrl(oldPlayer?.id, village)
-      conquered = `[${oldPlayer?.name} (${oldPlayer.points} pts)](${playerUrl})`
+  if (!tracking) return
 
-      if (tribe) {
-        const tribeUrl = getTribeUrl(tribe.id)
-        conquered += ` of [${tribe.tag}](${tribeUrl})`
-      }
-    }
+  let newPlayerMd = getPlayerMd(newPlayer, village)
+  let oldPlayerMd = 'Barbarians'
+  if (oldPlayer) oldPlayerMd = getPlayerMd(oldPlayer, village)
 
-    const payload = villageMessage({
-      color: WRColors.gray,
-      description: `Has been taken from: ${conquered} <t:${conquer.unix}:R>`,
-      village,
-      extraContext: false,
-    })
-    await channels.sendMessage(WRChannels.news, payload)
-  }
+  const payload = villageMessage({
+    color: WRColors.gray,
+    description: `Village Conquered: <t:${conquer.unix}:t> (<t:${conquer.unix}:R>)\nBy: ${newPlayerMd}\nFrom: ${oldPlayerMd}`,
+    village,
+    extraContext: false,
+  })
+  await channels.sendMessage(WRChannels.news, payload)
 }
