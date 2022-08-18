@@ -13,6 +13,7 @@ import {
   tribeTop,
 } from './discord/commands/rankings'
 import { map } from './discord/commands/map'
+import { online } from './discord/commands/online'
 
 export const isDev = !!process.argv[2]
 
@@ -45,6 +46,7 @@ export const devDiscordConfig: BotConfig = {
     tribeOd,
     tribeOda,
     tribeOdd,
+    online,
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   coreGuild: '1008955953024077825',
@@ -68,6 +70,7 @@ export const prodDiscordConfig: BotConfig = {
     tribeOd,
     tribeOda,
     tribeOdd,
+    online,
   ],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   coreGuild: '1008955953024077825',
