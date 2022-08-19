@@ -2,6 +2,7 @@ import { AttachmentBuilder, EmbedBuilder, MessageOptions } from 'discord.js'
 import { isEmpty } from 'lodash'
 import { isDev } from '../../config'
 import { players } from '../../sheet/players'
+import { settings, WRSettings } from '../../sheet/settings'
 import { TribeData } from '../../sheet/tribes'
 import { getTribeUrl } from '../../tw/tribe'
 import { worldPath } from '../../tw/world'
@@ -22,19 +23,26 @@ export const tribeMessage = async ({
   description = '',
 }: TribeMessageProps) => {
   // Tribe Data
+  const world = isDev ? 'c1' : settings.getValue(WRSettings.world)
   const url = getTribeUrl(tribe.id)
   const tribePoints = nFormatter(parseInt(tribe.points))
   description += `Rank **${tribe.rank}** | **${tribePoints}** pts | **${tribe.villages}** villages`
 
   // Tribe Thumbnail
-  const filePath = await saveScreenshot({
-    id: 'tribe',
-    url: `${worldPath(isDev ? 'c1' : undefined)}guest.php?screen=info_ally&id=${
-      tribe.id
-    }`,
+  const tribeThumb = await saveScreenshot({
+    id: 'tribeThumb',
+    url: `${worldPath(world)}guest.php?screen=info_ally&id=${tribe.id}`,
     width: 1000,
     height: 500,
     clip: { x: 593, y: 108, width: 200, height: 200 },
+  })
+
+  // Tribe Graph
+  const tribeImage = await saveScreenshot({
+    id: 'tribeImage',
+    url: `http://us${world}.tribalwarsmap.com/us/graph/tribe/${tribe.id}`,
+    width: 561,
+    height: 319,
   })
 
   // Tribe Members
@@ -56,17 +64,19 @@ export const tribeMessage = async ({
   })
 
   // Message Object
-  const file = new AttachmentBuilder(filePath)
+  const thumbnail = new AttachmentBuilder(tribeThumb)
+  const image = new AttachmentBuilder(tribeImage)
   const embed = new EmbedBuilder()
     .setTitle(`${tribe.name} [${tribe.tag}]`)
     .setURL(url)
-    .setThumbnail(`attachment://tribe.png`)
+    .setImage(`attachment://tribeImage.png`)
+    .setThumbnail(`attachment://tribeThumb.png`)
     .setDescription(description)
     .setColor(color)
 
   const options: MessageOptions = {
     embeds: [embed],
-    files: [file],
+    files: [image, thumbnail],
   }
 
   // Message Buttons
