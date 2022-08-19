@@ -1,4 +1,4 @@
-import { AttachmentBuilder, MessageOptions } from 'discord.js'
+import { AttachmentBuilder, EmbedBuilder, MessageOptions } from 'discord.js'
 import { isEmpty } from 'lodash'
 import { isDev } from '../../config'
 import { players } from '../../sheet/players'
@@ -18,7 +18,6 @@ interface TribeMessageProps extends MessageProps {
 export const tribeMessage = async ({
   tribe,
   color = WRColors.purple,
-  content,
   components = [],
   description = '',
 }: TribeMessageProps) => {
@@ -28,7 +27,7 @@ export const tribeMessage = async ({
   description += `Rank **${tribe.rank}** | **${tribePoints}** pts | **${tribe.villages}** villages`
 
   // Tribe Thumbnail
-  const file = await saveScreenshot({
+  const filePath = await saveScreenshot({
     id: 'tribe',
     url: `${worldPath(isDev ? 'c1' : undefined)}guest.php?screen=info_ally&id=${
       tribe.id
@@ -38,14 +37,13 @@ export const tribeMessage = async ({
     clip: { x: 593, y: 108, width: 200, height: 200 },
   })
 
-  const attachment = new AttachmentBuilder(file)
   // Tribe Members
   const members = players
     .filterByProperties([{ prop: 'tribe', value: tribe.id }])
     ?.sort((a, b) => {
       const pointsA = parseInt(a.points)
       const pointsB = parseInt(b.points)
-      return pointsA - pointsB
+      return pointsB - pointsA
     })
 
   if (members) {
@@ -53,30 +51,25 @@ export const tribeMessage = async ({
   }
 
   members?.forEach(player => {
-    const playerMd = getPlayerMd({ player })
-    description += ` **${player.rank}.&& ${playerMd}`
+    const playerMd = getPlayerMd({ player, includeTribe: false })
+    description += `\ **${player.rank}.** ${playerMd}\n`
   })
 
   // Message Object
+  const file = new AttachmentBuilder(filePath)
+  const embed = new EmbedBuilder()
+    .setTitle(`${tribe.name} [${tribe.tag}]`)
+    .setURL(url)
+    .setThumbnail(`attachment://tribe.png`)
+    .setDescription(description)
+    .setColor(color)
+
   const options: MessageOptions = {
-    content,
-    tts: false,
-    files: [attachment],
-    embeds: [
-      {
-        title: `Noble All Players [NOBLE!]`,
-        description,
-        color,
-        thumbnail: {
-          url: `attachment://${file}`,
-          height: 64,
-          width: 64,
-        },
-        url,
-      },
-    ],
+    embeds: [embed],
+    files: [file],
   }
 
+  // Message Buttons
   if (!isEmpty(components)) {
     options.components = [
       {
