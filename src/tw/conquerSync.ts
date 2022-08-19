@@ -90,14 +90,14 @@ export const fetchConquersRecent = async (world: string) => {
   if (isEmpty(conquers) || !conquers[0][1]) {
     logger({
       prefix: 'success',
-      message: `No recent conquers`,
+      message: `TW: No recent conquers`,
     })
     return
   }
 
   logger({
     prefix: 'start',
-    message: `TW: Loading ${conquers?.length} conquers...`,
+    message: `TW: Loading ${conquers?.length} recent conquers...`,
   })
   if (world == 'dev') {
     conquers.forEach((conquer, idx) => {

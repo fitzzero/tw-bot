@@ -23,9 +23,9 @@ export const conquerAlerts = async (conquer: ConquerData) => {
 
   if (!tracking) return
 
-  let newPlayerMd = getPlayerMd(newPlayer, village)
+  let newPlayerMd = getPlayerMd({ player: newPlayer, village })
   let oldPlayerMd = 'Barbarians'
-  if (oldPlayer) oldPlayerMd = getPlayerMd(oldPlayer, village)
+  if (oldPlayer) oldPlayerMd = getPlayerMd({ player: oldPlayer, village })
 
   const payload = villageMessage({
     color: WRColors.gray,

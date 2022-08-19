@@ -1,21 +1,16 @@
-import { APIButtonComponentWithCustomId, MessageOptions } from 'discord.js'
+import { MessageOptions } from 'discord.js'
 import { isEmpty } from 'lodash'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
 import { VillageData } from '../../sheet/villages'
 import { getVillageSize, getVillageUrl } from '../../tw/village'
 import { WRColors } from '../colors'
+import { MessageProps } from './message'
 import { getPlayerMd } from './player'
 
-export interface VillageMessageProps {
-  color?: WRColors
-  content?: string
-  components?: APIButtonComponentWithCustomId[]
-  description?: string
+export interface VillageMessageProps extends MessageProps {
   extraContext?: boolean
-  footer?: string
   player?: PlayerData
-  timestamp?: string
   village: VillageData
 }
 
@@ -49,7 +44,7 @@ export const villageMessage = ({
 
   // Append PlayerData to description
   if (player && extraContext) {
-    const playerMd = getPlayerMd(player, village)
+    const playerMd = getPlayerMd({ player, village })
     description += `\nOwned by ${playerMd}`
   }
 
