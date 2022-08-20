@@ -49,7 +49,7 @@ const handleCommand = (interaction: CommandInteraction) => {
 
 const handleButton = (interaction: ButtonInteraction) => {
   activeButtons.forEach(button => {
-    if (interaction.customId === button.customId) {
+    if (interaction.customId.includes(button.customId)) {
       try {
         button.controller(interaction)
       } catch (err) {

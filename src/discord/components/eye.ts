@@ -4,12 +4,14 @@ import { ButtonComponentProps } from './component'
 
 interface EyeButtonProps extends ButtonComponentProps {
   open?: boolean
+  openLabel?: string
 }
 
 export const eyeButton = async ({
   id,
   label,
   open,
+  openLabel,
   disabled = false,
 }: EyeButtonProps) => {
   const emoji = await getDiscordComponentEmoji(
@@ -19,7 +21,7 @@ export const eyeButton = async ({
     custom_id: id,
     disabled,
     emoji,
-    label,
+    label: open ? openLabel : label,
     style: open ? 3 : 4,
     type: 2,
   }

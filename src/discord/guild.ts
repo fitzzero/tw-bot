@@ -18,8 +18,8 @@ export const enum WREmojis {
   delete = 'delete',
   drive = 'drive',
   edit = 'edit',
-  eyeOpen = 'eye-open',
-  eyeClose = 'eye-slash',
+  eyeOpen = 'eyeopen',
+  eyeClose = 'eyeslash',
   map = 'map',
   refresh = 'refresh',
 }

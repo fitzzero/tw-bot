@@ -9,6 +9,7 @@ import { worldPath } from '../../tw/world'
 import { nFormatter } from '../../utility/numbers'
 import { saveScreenshot } from '../../utility/screenshot'
 import { WRColors } from '../colors'
+import { eyeButton } from '../components/eye'
 import { MessageProps } from './message'
 import { getPlayerMd } from './player'
 
@@ -74,20 +75,29 @@ export const tribeMessage = async ({
     .setDescription(description)
     .setColor(color)
 
+  if (isEmpty(components)) components = await TribeDefaultButtons(tribe)
+
   const options: MessageOptions = {
     embeds: [embed],
     files: [image, thumbnail],
-  }
-
-  // Message Buttons
-  if (!isEmpty(components)) {
-    options.components = [
+    components: [
       {
         type: 1,
         components,
       },
-    ]
+    ],
   }
 
   return options
+}
+
+export const TribeDefaultButtons = async (tribe: TribeData) => {
+  return [
+    await eyeButton({
+      id: `tribe-track-${tribe.id}`,
+      open: tribe.tracking != 'TRUE',
+      openLabel: 'Watch',
+      label: 'Stop',
+    }),
+  ]
 }
