@@ -5,6 +5,7 @@ import {
 } from 'discord.js'
 import { villages } from '../../sheet/villages'
 import { splitCoords } from '../../tw/village'
+import { logAlert } from '../../utility/logger'
 import { wait } from '../../utility/wait'
 
 export const closeCommand = async (
@@ -14,9 +15,13 @@ export const closeCommand = async (
     | ModalSubmitInteraction,
   message = 'Something went wrong, closing command...'
 ) => {
-  await interaction.editReply(message)
-  await wait(7000)
-  await interaction.deleteReply()
+  try {
+    await interaction.editReply(message)
+    await wait(7000)
+    await interaction.deleteReply()
+  } catch (err) {
+    logAlert(err, 'Discord: Canned Close Command')
+  }
 }
 
 export const parseInteractionCoordinates = async (

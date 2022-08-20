@@ -10,6 +10,7 @@ import moment from 'moment'
 import { messages } from '../../sheet/messages'
 import { todoist } from '../../todoist/connect'
 import { getItemById } from '../../todoist/items'
+import { logAlert } from '../../utility/logger'
 import { momentUtcOffset, withinLastMinute } from '../../utility/time'
 import { closeCommand } from '../commands/canned'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
@@ -35,14 +36,19 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     data.item.due.date = ''
   }
   // Update item and sync
-  await todoist.items.update({
-    ...data.item,
-    day_order: undefined,
-  })
+  try {
+    await todoist.items.update({
+      ...data.item,
+      day_order: undefined,
+    })
+  } catch (err) {
+    logAlert(err, 'Todoist: Item Update')
+    closeCommand(interaction)
+    return
+  }
 
   const updatedItem = getItemById(`${data.item.id}`)
   if (!updatedItem) {
-    closeCommand(interaction)
     return
   }
   syncTodoDashboard(updatedItem, !upcoming)
