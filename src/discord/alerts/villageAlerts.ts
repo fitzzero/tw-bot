@@ -31,7 +31,7 @@ export const villageChangeAlerts = async (
   const hoursSince = getHoursSince(oldData.lastUpdate)
   if (
     newData.playerId != '0' &&
-    villages.hasChanges(newData) &&
+    !villages.hasChanges(newData) &&
     hoursSince &&
     hoursSince == 48
   ) {
