@@ -84,7 +84,7 @@ export const tribeMessage = async ({
     .setDescription(description)
     .setColor(color)
 
-  if (isEmpty(components)) components = await TribeDefaultButtons(tribe)
+  if (isEmpty(components)) components = await TribeDefaultButtons(tribe, od)
 
   const options: MessageOptions = {
     embeds: [embed],
@@ -132,7 +132,7 @@ export const TribeDefaultButtons = async (
   if (od != StatOdTypes.odd) {
     components.push({
       custom_id: `tribe-image-${tribe.id}-${StatOdTypes.odd}`,
-      label: 'ODA',
+      label: 'ODD',
       style: 2,
       type: 2,
     })
