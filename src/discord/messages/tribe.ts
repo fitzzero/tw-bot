@@ -1,10 +1,15 @@
-import { AttachmentBuilder, EmbedBuilder, MessageOptions } from 'discord.js'
+import {
+  APIButtonComponentWithCustomId,
+  AttachmentBuilder,
+  EmbedBuilder,
+  MessageOptions,
+} from 'discord.js'
 import { isEmpty } from 'lodash'
 import { isDev } from '../../config'
 import { players } from '../../sheet/players'
 import { settings, WRSettings } from '../../sheet/settings'
 import { TribeData } from '../../sheet/tribes'
-import { statsImage } from '../../tw/statsScreenshot'
+import { StatOdTypes, statsImage } from '../../tw/statsScreenshot'
 import { getTribeUrl } from '../../tw/tribe'
 import { worldPath } from '../../tw/world'
 import { nFormatter } from '../../utility/numbers'
@@ -16,6 +21,7 @@ import { getPlayerMd } from './player'
 
 interface TribeMessageProps extends MessageProps {
   tribe: TribeData
+  od?: StatOdTypes
 }
 
 export const tribeMessage = async ({
@@ -23,6 +29,7 @@ export const tribeMessage = async ({
   color = WRColors.purple,
   components = [],
   description = '',
+  od,
 }: TribeMessageProps) => {
   // Tribe Data
   const world = isDev ? 'c1' : settings.getValue(WRSettings.world) || 'c1'
@@ -40,11 +47,12 @@ export const tribeMessage = async ({
   })
 
   // Tribe Graph
-  const tribeImage = statsImage({
+  const tribeImage = await statsImage({
     fileId: 'tribeImage',
     entityId: tribe.id,
     type: 'tribe',
     world,
+    od,
   })
 
   // Tribe Members
@@ -92,13 +100,43 @@ export const tribeMessage = async ({
   return options
 }
 
-export const TribeDefaultButtons = async (tribe: TribeData) => {
-  return [
+export const TribeDefaultButtons = async (
+  tribe: TribeData,
+  od?: StatOdTypes
+) => {
+  const components: APIButtonComponentWithCustomId[] = []
+  components.push(
     await eyeButton({
       id: `tribe-track-${tribe.id}`,
       open: tribe.tracking != 'TRUE',
       openLabel: 'Watch',
       label: 'Stop',
-    }),
-  ]
+    })
+  )
+  if (!!od) {
+    components.push({
+      custom_id: `tribe-image-${tribe.id}-`,
+      label: 'Overview',
+      style: 2,
+      type: 2,
+    })
+  }
+  if (od != StatOdTypes.oda) {
+    components.push({
+      custom_id: `tribe-image-${tribe.id}-${StatOdTypes.oda}`,
+      label: 'ODA',
+      style: 2,
+      type: 2,
+    })
+  }
+  if (od != StatOdTypes.odd) {
+    components.push({
+      custom_id: `tribe-image-${tribe.id}-${StatOdTypes.odd}`,
+      label: 'ODA',
+      style: 2,
+      type: 2,
+    })
+  }
+
+  return components
 }

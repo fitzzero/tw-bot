@@ -1,11 +1,16 @@
 import { saveScreenshot } from '../utility/screenshot'
 
+export const enum StatOdTypes {
+  oda = 'oda',
+  odd = 'odd',
+}
+
 interface StatsImageProps {
   fileId: string
   entityId: string
   world: string
   type: 'tribe' | 'player'
-  od?: 'oda' | 'odd'
+  od?: StatOdTypes
 }
 
 export const statsImage = async ({

@@ -4,7 +4,7 @@ import { incomingButton } from './buttons/incomingsButton'
 import { onlineBrowser, onlineMobile, onlineOffline } from './buttons/online'
 import { settingsButton } from './buttons/settings'
 import { todoComplete, todoDelete, todoEdit, todoRefresh } from './buttons/todo'
-import { tribeTrack } from './buttons/tribe'
+import { tribeImage, tribeTrack } from './buttons/tribe'
 
 export interface Button {
   customId: string
@@ -23,4 +23,5 @@ export const activeButtons: Button[] = [
   todoRefresh,
   incomingButton,
   tribeTrack,
+  tribeImage,
 ]
