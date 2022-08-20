@@ -4,6 +4,7 @@ import { isDev } from '../../config'
 import { players } from '../../sheet/players'
 import { settings, WRSettings } from '../../sheet/settings'
 import { TribeData } from '../../sheet/tribes'
+import { statsImage } from '../../tw/statsScreenshot'
 import { getTribeUrl } from '../../tw/tribe'
 import { worldPath } from '../../tw/world'
 import { nFormatter } from '../../utility/numbers'
@@ -24,7 +25,7 @@ export const tribeMessage = async ({
   description = '',
 }: TribeMessageProps) => {
   // Tribe Data
-  const world = isDev ? 'c1' : settings.getValue(WRSettings.world)
+  const world = isDev ? 'c1' : settings.getValue(WRSettings.world) || 'c1'
   const url = getTribeUrl(tribe.id)
   const tribePoints = nFormatter(parseInt(tribe.points))
   description += `Rank **${tribe.rank}** | **${tribePoints}** pts | **${tribe.villages}** villages`
@@ -39,11 +40,11 @@ export const tribeMessage = async ({
   })
 
   // Tribe Graph
-  const tribeImage = await saveScreenshot({
-    id: 'tribeImage',
-    url: `http://us${world}.tribalwarsmap.com/us/graph/tribe/${tribe.id}`,
-    width: 561,
-    height: 319,
+  const tribeImage = statsImage({
+    fileId: 'tribeImage',
+    entityId: tribe.id,
+    type: 'tribe',
+    world,
   })
 
   // Tribe Members
