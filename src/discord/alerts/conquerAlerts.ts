@@ -5,6 +5,7 @@ import { settings, WRSettings } from '../../sheet/settings'
 import { tribes } from '../../sheet/tribes'
 import { villages } from '../../sheet/villages'
 import { WRColors } from '../colors'
+import { getDiscordEmoji } from '../guild'
 import { getPlayerMd } from '../messages/player'
 import { villageMessage } from '../messages/village'
 
@@ -25,11 +26,12 @@ export const conquerAlerts = async (conquer: ConquerData) => {
 
   let newPlayerMd = getPlayerMd({ player: newPlayer, village })
   let oldPlayerMd = 'Barbarians'
+  const emoji = await getDiscordEmoji('snob')
   if (oldPlayer) oldPlayerMd = getPlayerMd({ player: oldPlayer, village })
 
   const payload = villageMessage({
     color: WRColors.gray,
-    description: `Village Conquered: <t:${conquer.unix}:t> (<t:${conquer.unix}:R>)\nBy: ${newPlayerMd}\nFrom: ${oldPlayerMd}`,
+    description: `${emoji} Conquered: <t:${conquer.unix}:t> (<t:${conquer.unix}:R>)\nBy: ${newPlayerMd}\nFrom: ${oldPlayerMd}`,
     village,
     extraContext: false,
   })
