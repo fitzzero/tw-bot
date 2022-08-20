@@ -1,5 +1,6 @@
 import { ButtonInteraction, MessageOptions } from 'discord.js'
 import { tribes } from '../../sheet/tribes'
+import { logAlert } from '../../utility/logger'
 import { Button } from '../buttons'
 import { TribeDefaultButtons } from '../messages/tribe'
 
@@ -32,8 +33,11 @@ const handleTribeTrack = async (interaction: ButtonInteraction) => {
       },
     ],
   }
-
-  await interaction.editReply(options)
+  try {
+    await interaction.editReply(options)
+  } catch (err) {
+    logAlert(err, 'Discord: /tribe interaction update')
+  }
 }
 
 export const tribeTrack: Button = {
