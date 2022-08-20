@@ -33,7 +33,8 @@ export const villageChangeAlerts = async (
     newData.playerId != '0' &&
     !villages.hasChanges(newData) &&
     hoursSince &&
-    hoursSince == 48
+    hoursSince == 48 &&
+    newPoints < 8000
   ) {
     description = `Inactive for 48 hours`
     color = WRColors.gray
