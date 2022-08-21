@@ -1,16 +1,23 @@
 import moment, { Moment } from 'moment'
 import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
-import { IncomingData, incomings } from '../../sheet/incomings'
+import { incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
 import { players } from '../../sheet/players'
 import { UnitData } from '../../sheet/units'
 import { VillageData, villages } from '../../sheet/villages'
 import { getUnitByDistance } from '../../tw/village'
-import { formatDate, getUnix, validateMoment } from '../../utility/time'
+import {
+  formatDate,
+  getUnix,
+  momentStringFormat,
+  validateMoment,
+} from '../../utility/time'
 import { WRColors } from '../colors'
 import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
+
+export const IncomingMax = isDev ? 10 : 10
 
 interface MessageAttacks {
   arrival: Moment
@@ -20,15 +27,17 @@ interface MessageAttacks {
 
 export interface IncomingDashboardProps {
   coords: string
-  villageIncomings: IncomingData[]
   changes?: boolean
 }
 
 export const syncIncomingDashboard = async ({
   coords,
-  villageIncomings,
   changes = false,
 }: IncomingDashboardProps) => {
+  // Get incomings to display
+  const villageIncomings = incomings.getIncomingsByCoords(coords)
+  if (!villageIncomings) return
+  // Metadata
   const targetVillage = villages.getByCoordString(coords)
   if (!targetVillage) return
   const messageId = `incoming-${coords}`
@@ -55,6 +64,7 @@ export const syncIncomingDashboard = async ({
       incoming.sent = formatDate(sent)
       incoming.arrival = formatDate(arrival)
       incoming.status = 'active'
+      incoming.idx = '0'
 
       await incomings.update(incoming)
       newIncomings = true
@@ -99,7 +109,7 @@ export const syncIncomingDashboard = async ({
     messageAttacks.push({
       arrival,
       target: `:arrow_right: Lands ${arrival.format(
-        'HH:mm:ss:SS'
+        momentStringFormat
       )} <t:${getUnix(arrival)}:R>`,
       origin: originMessage,
     })
@@ -107,12 +117,9 @@ export const syncIncomingDashboard = async ({
 
   // Build message description
   let description = ''
-  messageAttacks
-    .sort((a, b) => a.arrival.unix() - b.arrival.unix())
-    .slice(0, 10)
-    .forEach(attack => {
-      description += `${attack.target}\n${attack.origin}\n\n`
-    })
+  messageAttacks.slice(0, IncomingMax).forEach(attack => {
+    description += `${attack.target}\n${attack.origin}\n\n`
+  })
 
   // If no incomings, remove dashboard
   if (description == '') {

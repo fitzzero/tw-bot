@@ -1,7 +1,8 @@
-import { chain, isEmpty } from 'lodash'
+import { isEmpty, uniq } from 'lodash'
 import { keys } from 'ts-transformer-keys'
 import { syncIncomingDashboard } from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
+import { validateMoment } from '../utility/time'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface IncomingData extends RowStructure {
@@ -15,6 +16,7 @@ export interface IncomingData extends RowStructure {
   unit: string
   tags: string
   status: string
+  idx: string
 }
 
 const headers = keys<IncomingData>().map(key => key.toString())
@@ -22,6 +24,22 @@ const headers = keys<IncomingData>().map(key => key.toString())
 class Incomings extends SheetData<IncomingData> {
   constructor(tabTitle: string, tabHeaders: string[]) {
     super(tabTitle, tabHeaders)
+  }
+
+  getIncomingsByCoords = (coordString: string) => {
+    const villageIncomings = this.filterByProperties([
+      { prop: 'target', value: coordString },
+      { prop: 'status', value: 'active' },
+    ])?.sort((a, b) => {
+      const aTime = validateMoment(a.arrival)?.unix()
+      const bTime = validateMoment(b.arrival)?.unix()
+      if (!aTime || !bTime) {
+        return 0
+      }
+      return aTime - bTime
+    })
+
+    return villageIncomings
   }
 
   syncIncomings = async () => {
@@ -35,15 +53,11 @@ class Incomings extends SheetData<IncomingData> {
       prefix: 'start',
     })
 
-    const groupedIncomings = chain(incomings)
-      .groupBy('target')
-      .map((value, key) => ({ target: key, incomings: value }))
-      .value()
+    const uniqueTargets = uniq(incomings.map(incoming => incoming.target))
 
-    for (const village of groupedIncomings) {
+    for (const target of uniqueTargets) {
       await syncIncomingDashboard({
-        coords: village.target,
-        villageIncomings: village.incomings,
+        coords: target,
       })
     }
     logger({

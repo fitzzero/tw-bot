@@ -8,18 +8,17 @@ import {
 } from 'discord.js'
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
-import { validateMoment } from '../../utility/time'
 import { closeCommand } from '../commands/canned'
-import { syncIncomingDashboard } from '../dashboardMessages/incoming'
+import {
+  IncomingMax,
+  syncIncomingDashboard,
+} from '../dashboardMessages/incoming'
 import { Modal } from '../modals'
 
 const controller = async (interaction: ModalSubmitInteraction) => {
   await interaction.deferReply()
   const targetId = interaction.customId.split('-')[2]
-  const villageIncomings = incomings.filterByProperties([
-    { prop: 'target', value: targetId },
-    { prop: 'status', value: 'active' },
-  ])
+  const villageIncomings = incomings.getIncomingsByCoords(targetId)
   if (!villageIncomings) {
     closeCommand(interaction)
     return
@@ -34,7 +33,6 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 
   await syncIncomingDashboard({
     coords: targetId,
-    villageIncomings,
     changes: true,
   })
 
@@ -47,19 +45,9 @@ export const modalBuilder = (interaction: ButtonInteraction) => {
   if (!targetId) return
 
   const villageIncomings = incomings
-    .filterByProperties([
-      { prop: 'target', value: targetId },
-      { prop: 'status', value: 'active' },
-    ])
-    ?.sort((a, b) => {
-      const aTime = validateMoment(a.arrival)?.unix()
-      const bTime = validateMoment(b.arrival)?.unix()
-      if (!aTime || !bTime) {
-        return 0
-      }
-      return aTime - bTime
-    })
-    .slice(0, 10)
+    .getIncomingsByCoords(targetId)
+    ?.slice(0, IncomingMax)
+
   if (!villageIncomings) return
   const modal = new ModalBuilder()
     .setCustomId(`edit-incoming-${targetId}`)
