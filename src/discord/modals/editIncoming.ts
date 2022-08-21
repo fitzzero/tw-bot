@@ -18,7 +18,9 @@ import { Modal } from '../modals'
 const controller = async (interaction: ModalSubmitInteraction) => {
   await interaction.deferReply()
   const targetId = interaction.customId.split('-')[2]
-  const villageIncomings = incomings.getIncomingsByCoords(targetId)
+  const villageIncomings = incomings
+    .getIncomingsByCoords(targetId)
+    ?.slice(0, IncomingMax)
   if (!villageIncomings) {
     closeCommand(interaction)
     return

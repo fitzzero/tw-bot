@@ -12,7 +12,7 @@ import { WRColors } from '../colors'
 import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
 
-export const IncomingMax = isDev ? 10 : 10
+export const IncomingMax = isDev ? 5 : 5
 
 interface MessageAttacks {
   arrival: Moment
