@@ -44,14 +44,16 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 export const modalBuilder = (interaction: ButtonInteraction) => {
   const message = messages.getByProperty('messageId', interaction.message.id)
   const targetId = message?.id?.split('-')[1]
-  const idx = message?.id?.split('-')[2]
-  if (!targetId || !idx) return
+  if (!targetId) return
 
-  const villageIncomings = incomings.getIncomingsByCoords(targetId, idx)
+  const villageIncomings = incomings.getIncomingsByCoords(
+    targetId,
+    message.options
+  )
 
   if (!villageIncomings) return
   const modal = new ModalBuilder()
-    .setCustomId(`edit-incoming-${targetId}-${idx}`)
+    .setCustomId(`edit-incoming-${targetId}-${message.options}`)
     .setTitle('Manage Incoming Origins')
 
   const rows = []

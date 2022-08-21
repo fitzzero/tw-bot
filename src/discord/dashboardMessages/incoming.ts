@@ -41,7 +41,7 @@ export const syncIncomingDashboard = async ({
   // Metadata
   const targetVillage = villages.getByCoordString(coords)
   if (!targetVillage) return
-  const messageId = `incoming-${coords}-${idx}`
+  const messageId = `incoming-${coords}`
   const totalIncomings =
     incomings.filterByProperties([
       { prop: 'target', value: coords },
@@ -151,7 +151,7 @@ export const syncIncomingDashboard = async ({
       style: 2,
       label: `Page ${page - 1}`,
       emoji: arrows.left,
-      custom_id: `incoming-idx-increase`,
+      custom_id: `incoming-idx-decrease`,
       type: 2,
     })
   }
@@ -178,6 +178,7 @@ export const syncIncomingDashboard = async ({
     id: messageId,
     channelId: WRChannels.incoming,
     payload,
+    options: idx,
   })
   return
 }

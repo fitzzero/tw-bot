@@ -8,12 +8,14 @@ export interface MessageData extends RowStructure {
   id: string
   channelId: string
   messageId: string
+  options: string
 }
 
 export interface CreateMessageProps {
   id: string
   channelId: string
   payload: MessageOptions
+  options?: string
 }
 
 const headers = keys<MessageData>().map(key => key.toString())
@@ -23,7 +25,12 @@ class Messages extends SheetData<MessageData> {
     super(tabTitle, tabHeaders)
   }
 
-  createMessage = async ({ id, channelId, payload }: CreateMessageProps) => {
+  createMessage = async ({
+    id,
+    channelId,
+    payload,
+    options = '',
+  }: CreateMessageProps) => {
     const channel = await channels.getDiscordChannelById(channelId)
     if (!channel) return
     try {
@@ -33,6 +40,7 @@ class Messages extends SheetData<MessageData> {
         id,
         channelId: channelId,
         messageId: message.id,
+        options,
       })
       // If successfully created and synced data
       if (added) return message
@@ -76,7 +84,12 @@ class Messages extends SheetData<MessageData> {
     return
   }
 
-  rebuildMessage = async ({ id, channelId, payload }: CreateMessageProps) => {
+  rebuildMessage = async ({
+    id,
+    channelId,
+    payload,
+    options = '',
+  }: CreateMessageProps) => {
     let success = true
     const existingMessage = await this.getDiscordMessage(id)
     if (existingMessage) {
@@ -87,23 +100,39 @@ class Messages extends SheetData<MessageData> {
         success = false
       }
     }
-    success = !!(await this.createMessage({ id, channelId, payload }))
+    success = !!(await this.createMessage({ id, channelId, payload, options }))
     return success
   }
 
-  syncMessage = async ({ id, channelId, payload }: CreateMessageProps) => {
+  syncMessage = async ({
+    id,
+    channelId,
+    payload,
+    options = '',
+  }: CreateMessageProps) => {
     let success = true
     const existingMessage = await this.getDiscordMessage(id)
     if (existingMessage) {
       try {
         const editPayload = new MessagePayload(existingMessage.channel, payload)
+        await this.update({
+          id,
+          channelId,
+          messageId: existingMessage.id,
+          options,
+        })
         success = !!(await existingMessage.edit(editPayload))
       } catch (err) {
         logAlert(err, 'Discord')
         success = false
       }
     } else {
-      success = !!(await this.createMessage({ id, channelId, payload }))
+      success = !!(await this.createMessage({
+        id,
+        channelId,
+        payload,
+        options,
+      }))
     }
     if (!success) logAlert(`Failed to sync message ${id}`, 'Discord')
     return success

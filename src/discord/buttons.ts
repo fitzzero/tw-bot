@@ -1,6 +1,9 @@
 import { ButtonInteraction } from 'discord.js'
 import { alertsButton } from './buttons/alerts'
-import { incomingButton } from './buttons/incomingsButton'
+import {
+  incomingButtonIdx,
+  incomingButtonOrigin,
+} from './buttons/incomingsButton'
 import { onlineBrowser, onlineMobile, onlineOffline } from './buttons/online'
 import { settingsButton } from './buttons/settings'
 import { todoComplete, todoDelete, todoEdit, todoRefresh } from './buttons/todo'
@@ -21,7 +24,8 @@ export const activeButtons: Button[] = [
   todoDelete,
   todoEdit,
   todoRefresh,
-  incomingButton,
+  incomingButtonOrigin,
+  incomingButtonIdx,
   tribeTrack,
   tribeImage,
 ]
