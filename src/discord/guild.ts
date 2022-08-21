@@ -20,8 +20,12 @@ export const enum WREmojis {
   edit = 'edit',
   eyeOpen = 'eyeopen',
   eyeClose = 'eyeslash',
+  left = 'arrowleft',
+  leftFrom = 'arrowleftfrom',
   map = 'map',
   refresh = 'refresh',
+  right = 'arrowright',
+  rightFrom = 'arrowrightfrom',
 }
 
 export const getActiveGuild = async () => {

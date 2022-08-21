@@ -1,3 +1,5 @@
+import { APIButtonComponentWithCustomId } from 'discord.js'
+import { isEmpty } from 'lodash'
 import { Moment } from 'moment'
 import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
@@ -9,7 +11,7 @@ import { VillageData, villages } from '../../sheet/villages'
 import { getUnitByDistance } from '../../tw/village'
 import { getUnix, momentStringFormat, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
-import { getDiscordEmoji } from '../guild'
+import { getDiscordComponentEmoji, getDiscordEmoji, WREmojis } from '../guild'
 import { villageMessage } from '../messages/village'
 
 export const IncomingMax = isDev ? 5 : 5
@@ -24,20 +26,36 @@ export interface IncomingDashboardProps {
   coords: string
   changes?: boolean
   newIncomings?: boolean
+  idx?: string
 }
 
 export const syncIncomingDashboard = async ({
   coords,
   changes = false,
   newIncomings = false,
+  idx = '0',
 }: IncomingDashboardProps) => {
   // Get incomings to display
-  const villageIncomings = incomings.getIncomingsByCoords(coords)
+  const villageIncomings = incomings.getIncomingsByCoords(coords, idx)
   if (!villageIncomings) return
   // Metadata
   const targetVillage = villages.getByCoordString(coords)
   if (!targetVillage) return
-  const messageId = `incoming-${coords}`
+  const messageId = `incoming-${coords}-${idx}`
+  const totalIncomings =
+    incomings.filterByProperties([
+      { prop: 'target', value: coords },
+      { prop: 'status', value: 'active' },
+    ])?.length || 0
+  const page = parseInt(idx) + 1
+  const totalPages = Math.ceil(totalIncomings / IncomingMax)
+
+  const arrows = {
+    left: await getDiscordComponentEmoji(WREmojis.left),
+    leftFrom: await getDiscordEmoji(WREmojis.leftFrom),
+    right: await getDiscordComponentEmoji(WREmojis.right),
+    rightFrom: await getDiscordEmoji(WREmojis.rightFrom),
+  }
 
   const messageAttacks: MessageAttacks[] | undefined = []
 
@@ -79,17 +97,17 @@ export const syncIncomingDashboard = async ({
     if (unit && originVillage) {
       const emoji = await getDiscordEmoji(unit.id)
       const player = players.getById(originVillage?.playerId)
-      originMessage = `:arrow_left: ${emoji} Sent by ${
+      originMessage = `${arrows.leftFrom} ${emoji} Sent by ${
         player?.name + ' ' + originVillage.name
       } <t:${getUnix(sent)}:R>`
     } else {
-      originMessage = `:arrow_left: Sent <t:${getUnix(sent)}:R>`
+      originMessage = `${arrows.leftFrom} Sent <t:${getUnix(sent)}:R>`
     }
 
     // Add incoming target to message description
     messageAttacks.push({
       arrival,
-      target: `:arrow_right: Lands ${arrival.format(
+      target: `${arrows.rightFrom} Lands ${arrival.format(
         momentStringFormat
       )} <t:${getUnix(arrival)}:R>`,
       origin: originMessage,
@@ -98,12 +116,14 @@ export const syncIncomingDashboard = async ({
 
   // Build message description
   let description = ''
-  messageAttacks.slice(0, IncomingMax).forEach(attack => {
+  messageAttacks.forEach(attack => {
     description += `${attack.target}\n${attack.origin}\n\n`
   })
 
+  description += `Page ${page} of ${totalPages} (${totalIncomings} attacks)`
+
   // If no incomings, remove dashboard
-  if (description == '') {
+  if (!villageIncomings || isEmpty(messageAttacks)) {
     await messages.deleteMessage(messageId)
     return
   }
@@ -118,24 +138,37 @@ export const syncIncomingDashboard = async ({
     village: targetVillage,
   })
 
+  const components: APIButtonComponentWithCustomId[] = [
+    {
+      style: 1,
+      label: `Update Origin`,
+      custom_id: `incoming-origin`,
+      type: 2,
+    },
+  ]
+  if (page > 1) {
+    components.push({
+      style: 2,
+      label: `Page ${page - 1}`,
+      emoji: arrows.left,
+      custom_id: `incoming-idx-increase`,
+      type: 2,
+    })
+  }
+  if (page < totalPages) {
+    components.push({
+      style: 2,
+      label: `Page ${page + 1}`,
+      emoji: arrows.right,
+      custom_id: `incoming-idx-increase`,
+      type: 2,
+    })
+  }
+
   payload.components = [
     {
       type: 1,
-      components: [
-        {
-          style: 1,
-          label: `Update Origin`,
-          custom_id: `incoming-origin`,
-          type: 2,
-        },
-        // {
-        //   style: 2,
-        //   label: `Set Reminder`,
-        //   custom_id: `incoming-reminder`,
-        //   disabled: false,
-        //   type: 2,
-        // },
-      ],
+      components,
     },
   ]
 

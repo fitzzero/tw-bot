@@ -9,18 +9,18 @@ import {
 import { IncomingData, incomings } from '../../sheet/incomings'
 import { messages } from '../../sheet/messages'
 import { closeCommand } from '../commands/canned'
-import {
-  IncomingMax,
-  syncIncomingDashboard,
-} from '../dashboardMessages/incoming'
+import { syncIncomingDashboard } from '../dashboardMessages/incoming'
 import { Modal } from '../modals'
 
 const controller = async (interaction: ModalSubmitInteraction) => {
   await interaction.deferReply()
   const targetId = interaction.customId.split('-')[2]
-  const villageIncomings = incomings
-    .getIncomingsByCoords(targetId)
-    ?.slice(0, IncomingMax)
+  const idx = interaction.customId.split('-')[3]
+  if (!targetId || !idx) {
+    closeCommand(interaction)
+    return
+  }
+  const villageIncomings = incomings.getIncomingsByCoords(targetId, idx)
   if (!villageIncomings) {
     closeCommand(interaction)
     return
@@ -44,15 +44,14 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 export const modalBuilder = (interaction: ButtonInteraction) => {
   const message = messages.getByProperty('messageId', interaction.message.id)
   const targetId = message?.id?.split('-')[1]
-  if (!targetId) return
+  const idx = message?.id?.split('-')[2]
+  if (!targetId || !idx) return
 
-  const villageIncomings = incomings
-    .getIncomingsByCoords(targetId)
-    ?.slice(0, IncomingMax)
+  const villageIncomings = incomings.getIncomingsByCoords(targetId, idx)
 
   if (!villageIncomings) return
   const modal = new ModalBuilder()
-    .setCustomId(`edit-incoming-${targetId}`)
+    .setCustomId(`edit-incoming-${targetId}-${idx}`)
     .setTitle('Manage Incoming Origins')
 
   const rows = []
@@ -73,7 +72,6 @@ const textRow = ({ id, arrival, origin }: IncomingData) => {
     .setStyle(TextInputStyle.Short)
     .setRequired(false)
     .setMaxLength(7)
-
   return new ActionRowBuilder<TextInputBuilder>().addComponents(input)
 }
 

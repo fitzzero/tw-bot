@@ -1,7 +1,10 @@
 import { isEmpty, uniq } from 'lodash'
 import moment, { Moment } from 'moment'
 import { keys } from 'ts-transformer-keys'
-import { syncIncomingDashboard } from '../discord/dashboardMessages/incoming'
+import {
+  IncomingMax,
+  syncIncomingDashboard,
+} from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
 import { formatDate, validateMoment } from '../utility/time'
 import { RowStructure, SheetData } from './sheetData'
@@ -26,8 +29,8 @@ class Incomings extends SheetData<IncomingData> {
     super(tabTitle, tabHeaders)
   }
 
-  getIncomingsByCoords = (coordString: string) => {
-    const villageIncomings = this.filterByProperties([
+  getIncomingsByCoords = (coordString: string, idx?: string) => {
+    let villageIncomings = this.filterByProperties([
       { prop: 'target', value: coordString },
       { prop: 'status', value: 'active' },
     ])?.sort((a, b) => {
@@ -38,6 +41,10 @@ class Incomings extends SheetData<IncomingData> {
       }
       return aTime - bTime
     })
+    if (idx) {
+      const start = parseInt(idx) * IncomingMax
+      villageIncomings = villageIncomings?.slice(start, start + IncomingMax)
+    }
 
     return villageIncomings
   }
@@ -56,6 +63,7 @@ class Incomings extends SheetData<IncomingData> {
     const newTargets = []
     // Validate new incomings
     for (const incoming of incomings) {
+      // Validate and update dates if new
       if (incoming.status == 'new') {
         const sent = moment(new Date(incoming.sent))
         const arrival = parseArrival(incoming.arrival, sent)
@@ -67,6 +75,12 @@ class Incomings extends SheetData<IncomingData> {
 
         await this.update(incoming)
         newTargets.push(incoming.target)
+      }
+      const arrival = validateMoment(incoming.arrival)
+      // Set status to Old if arrival is past and skip
+      if (arrival?.isBefore()) {
+        await this.update({ ...incoming, status: 'old' })
+        continue
       }
       targets.push(incoming.target)
     }
