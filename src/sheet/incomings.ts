@@ -1,8 +1,9 @@
 import { isEmpty, uniq } from 'lodash'
+import moment, { Moment } from 'moment'
 import { keys } from 'ts-transformer-keys'
 import { syncIncomingDashboard } from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
-import { validateMoment } from '../utility/time'
+import { formatDate, validateMoment } from '../utility/time'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface IncomingData extends RowStructure {
@@ -45,18 +46,37 @@ class Incomings extends SheetData<IncomingData> {
     await this.loadRows()
     let incomings = this.getAll()
     incomings = incomings?.filter(incoming => incoming.status != 'old')
-
     if (!incomings || isEmpty(incomings)) return
     logger({
       message: `Checking ${incomings.length} incomings`,
       prefix: 'start',
     })
 
-    const uniqueTargets = uniq(incomings.map(incoming => incoming.target))
+    const targets = []
+    const newTargets = []
+    // Validate new incomings
+    for (const incoming of incomings) {
+      if (incoming.status == 'new') {
+        const sent = moment(new Date(incoming.sent))
+        const arrival = parseArrival(incoming.arrival, sent)
+        if (!arrival) continue
+
+        incoming.sent = formatDate(sent)
+        incoming.arrival = formatDate(arrival)
+        incoming.status = 'active'
+
+        await this.update(incoming)
+        newTargets.push(incoming.target)
+      }
+      targets.push(incoming.target)
+    }
+
+    const uniqueTargets = uniq(targets)
 
     for (const target of uniqueTargets) {
       await syncIncomingDashboard({
         coords: target,
+        newIncomings: newTargets.includes(target),
       })
     }
     logger({
@@ -67,3 +87,16 @@ class Incomings extends SheetData<IncomingData> {
 }
 
 export const incomings = new Incomings('incomings', headers)
+
+const parseArrival = (dateGiven: string, sent: Moment) => {
+  const reference = moment(sent)
+  if (dateGiven.includes('today at')) {
+    const sentToday = reference.format('MMMM Do YYYY')
+    dateGiven = dateGiven.replace('today at', sentToday + ',')
+  }
+  if (dateGiven.includes('tomorrow at')) {
+    const sentTomorrow = reference.add(1, 'days').format('MMMM Do YYYY')
+    dateGiven = dateGiven.replace('tomorrow at', sentTomorrow + ',')
+  }
+  return validateMoment(dateGiven)
+}

@@ -1,4 +1,4 @@
-import moment, { Moment } from 'moment'
+import { Moment } from 'moment'
 import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
 import { incomings } from '../../sheet/incomings'
@@ -7,12 +7,7 @@ import { players } from '../../sheet/players'
 import { UnitData } from '../../sheet/units'
 import { VillageData, villages } from '../../sheet/villages'
 import { getUnitByDistance } from '../../tw/village'
-import {
-  formatDate,
-  getUnix,
-  momentStringFormat,
-  validateMoment,
-} from '../../utility/time'
+import { getUnix, momentStringFormat, validateMoment } from '../../utility/time'
 import { WRColors } from '../colors'
 import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
@@ -28,11 +23,13 @@ interface MessageAttacks {
 export interface IncomingDashboardProps {
   coords: string
   changes?: boolean
+  newIncomings?: boolean
 }
 
 export const syncIncomingDashboard = async ({
   coords,
   changes = false,
+  newIncomings = false,
 }: IncomingDashboardProps) => {
   // Get incomings to display
   const villageIncomings = incomings.getIncomingsByCoords(coords)
@@ -47,7 +44,6 @@ export const syncIncomingDashboard = async ({
   // Does the message need to be edited because of data changes?
   if (isDev) changes = true
   // Does the message need to be rebuild because of new incomings?
-  let newIncomings = false
 
   for (const incoming of villageIncomings) {
     // Meta data
@@ -56,23 +52,8 @@ export const syncIncomingDashboard = async ({
     let originVillage: VillageData | undefined = undefined
     let unit: UnitData | undefined = undefined
 
-    if (incoming.status == 'new') {
-      sent = moment(new Date(incoming.sent))
-      arrival = parseArrival(incoming.arrival, sent)
-      if (!arrival) continue
-
-      incoming.sent = formatDate(sent)
-      incoming.arrival = formatDate(arrival)
-      incoming.status = 'active'
-      incoming.idx = '0'
-
-      await incomings.update(incoming)
-      newIncomings = true
-      changes = true
-    } else {
-      sent = validateMoment(incoming.sent)
-      arrival = validateMoment(incoming.arrival)
-    }
+    sent = validateMoment(incoming.sent)
+    arrival = validateMoment(incoming.arrival)
 
     if (!arrival || !sent) continue
 
@@ -166,17 +147,4 @@ export const syncIncomingDashboard = async ({
     payload,
   })
   return
-}
-
-const parseArrival = (dateGiven: string, sent: Moment) => {
-  const reference = moment(sent)
-  if (dateGiven.includes('today at')) {
-    const sentToday = reference.format('MMMM Do YYYY')
-    dateGiven = dateGiven.replace('today at', sentToday + ',')
-  }
-  if (dateGiven.includes('tomorrow at')) {
-    const sentTomorrow = reference.add(1, 'days').format('MMMM Do YYYY')
-    dateGiven = dateGiven.replace('tomorrow at', sentTomorrow + ',')
-  }
-  return validateMoment(dateGiven)
 }
