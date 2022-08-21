@@ -11,7 +11,8 @@ export interface ChannelData extends RowStructure {
 
 export interface CreateChannelProps {
   id: string
-  topic: string
+  name?: string
+  topic?: string
 }
 
 const headers = keys<ChannelData>().map(key => key.toString())
@@ -37,12 +38,12 @@ class Channels extends SheetData<ChannelData> {
     super(tabTitle, tabHeaders)
   }
 
-  createChannel = async ({ id, topic }: CreateChannelProps) => {
+  createChannel = async ({ id, name, topic }: CreateChannelProps) => {
     const category = await getActiveCategory()
     if (!category) return
     try {
       const channel = await category.children.create({
-        name: id,
+        name: name ? name : id,
         topic,
       })
       if (!channel) return
@@ -60,6 +61,17 @@ class Channels extends SheetData<ChannelData> {
     } catch (err) {
       logAlert(err, 'Discord')
       return
+    }
+  }
+
+  editChannel = async ({ id, name, topic }: CreateChannelProps) => {
+    const existingChannel = await this.getDiscordChannelById(id)
+    if (!existingChannel) return
+    if (name && existingChannel.name != name) {
+      await existingChannel.setName(name)
+    }
+    if (topic && existingChannel.topic != topic) {
+      await existingChannel.setTopic(topic)
     }
   }
 

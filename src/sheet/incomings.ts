@@ -1,12 +1,14 @@
 import { isEmpty, uniq } from 'lodash'
 import moment, { Moment } from 'moment'
 import { keys } from 'ts-transformer-keys'
+import { isDev } from '../config'
 import {
   IncomingMax,
   syncIncomingDashboard,
 } from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
 import { formatDate, validateMoment } from '../utility/time'
+import { channels, WRChannels } from './channels'
 import { RowStructure, SheetData } from './sheetData'
 
 export interface IncomingData extends RowStructure {
@@ -25,6 +27,8 @@ export interface IncomingData extends RowStructure {
 const headers = keys<IncomingData>().map(key => key.toString())
 
 class Incomings extends SheetData<IncomingData> {
+  totalIncomings = 0
+
   constructor(tabTitle: string, tabHeaders: string[]) {
     super(tabTitle, tabHeaders)
   }
@@ -59,9 +63,18 @@ class Incomings extends SheetData<IncomingData> {
       prefix: 'start',
     })
 
+    // Update Total Incomings
+    if (this.totalIncomings != incomings.length) {
+      this.totalIncomings = incomings.length
+      channels.editChannel({
+        id: WRChannels.incoming,
+        name: `${WRChannels.incoming}-${incomings.length}`,
+      })
+    }
+
     const targets = []
-    const newTargets = []
-    // Validate new incomings
+    const targetNew = []
+    const targetChanges = []
     for (const incoming of incomings) {
       // Validate and update dates if new
       if (incoming.status == 'new') {
@@ -74,28 +87,36 @@ class Incomings extends SheetData<IncomingData> {
         incoming.status = 'active'
 
         await this.update(incoming)
-        newTargets.push(incoming.target)
+        targetNew.push(incoming.target)
       }
       const arrival = validateMoment(incoming.arrival)
       // Set status to Old if arrival is past and skip
       if (arrival?.isBefore()) {
         await this.update({ ...incoming, status: 'old' })
-        continue
+        targetChanges.push(incoming.target)
       }
       targets.push(incoming.target)
     }
 
     const uniqueTargets = uniq(targets)
+    let totalChanges = false
 
     for (const target of uniqueTargets) {
-      await syncIncomingDashboard({
-        coords: target,
-        newIncomings: newTargets.includes(target),
-        changes: newTargets.includes(target),
-      })
+      // Changes if any new or active->old
+      const changes =
+        targetChanges.includes(target) || targetNew.includes(target)
+      if (changes) totalChanges = true
+      // Sync if changes
+      if (changes || isDev) {
+        await syncIncomingDashboard({
+          coords: target,
+          newIncomings: targetNew.includes(target),
+        })
+      }
     }
+
     logger({
-      message: `Synced incomings`,
+      message: `Synced incomings - changes: ${totalChanges}`,
       prefix: 'success',
     })
   }

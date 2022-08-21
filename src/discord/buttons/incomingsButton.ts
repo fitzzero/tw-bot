@@ -32,7 +32,6 @@ const idxController = async (interaction: ButtonInteraction) => {
   }
   await syncIncomingDashboard({
     coords: targetId,
-    changes: true,
     idx: `${idx}`,
   })
   await interaction.deleteReply()

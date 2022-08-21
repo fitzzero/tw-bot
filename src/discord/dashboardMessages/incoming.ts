@@ -1,5 +1,4 @@
 import { APIButtonComponentWithCustomId } from 'discord.js'
-import { isEmpty } from 'lodash'
 import { Moment } from 'moment'
 import { isDev } from '../../config'
 import { WRChannels } from '../../sheet/channels'
@@ -24,29 +23,32 @@ interface MessageAttacks {
 
 export interface IncomingDashboardProps {
   coords: string
-  changes?: boolean
   newIncomings?: boolean
   idx?: string
 }
 
 export const syncIncomingDashboard = async ({
   coords,
-  changes = false,
   newIncomings = false,
   idx = '0',
 }: IncomingDashboardProps) => {
   // Get incomings to display
+  const messageId = `incoming-${coords}`
   const villageIncomings = incomings.getIncomingsByCoords(coords, idx)
-  if (!villageIncomings) return
+  // If no incomings, remove dashboard
+  if (!villageIncomings) {
+    await messages.deleteMessage(messageId)
+    return
+  }
   // Metadata
   const targetVillage = villages.getByCoordString(coords)
   if (!targetVillage) return
-  const messageId = `incoming-${coords}`
   const totalIncomings =
     incomings.filterByProperties([
       { prop: 'target', value: coords },
       { prop: 'status', value: 'active' },
     ])?.length || 0
+  const percent = Math.round((totalIncomings / incomings.totalIncomings) * 100)
   const page = parseInt(idx) + 1
   const totalPages = Math.ceil(totalIncomings / IncomingMax)
 
@@ -59,8 +61,6 @@ export const syncIncomingDashboard = async ({
 
   const messageAttacks: MessageAttacks[] | undefined = []
 
-  // Does the message need to be edited because of data changes?
-  if (isDev) changes = true
   // Does the message need to be rebuild because of new incomings?
 
   for (const incoming of villageIncomings) {
@@ -113,16 +113,7 @@ export const syncIncomingDashboard = async ({
     description += `${attack.target}\n${attack.origin}\n\n`
   })
 
-  description += `Page ${page} of ${totalPages} (${totalIncomings} attacks)`
-
-  // If no incomings, remove dashboard
-  if (!villageIncomings || isEmpty(messageAttacks)) {
-    await messages.deleteMessage(messageId)
-    return
-  }
-
-  // If no changes, do nothing
-  if (!changes) return
+  description += `Page **${page}** of **${totalPages}** (${totalIncomings} total - **${percent}**%)`
 
   const payload = villageMessage({
     color: WRColors.warning,
