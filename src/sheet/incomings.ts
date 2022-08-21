@@ -16,7 +16,6 @@ export interface IncomingData extends RowStructure {
   unit: string
   tags: string
   status: string
-  idx: string
 }
 
 const headers = keys<IncomingData>().map(key => key.toString())
