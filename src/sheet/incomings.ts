@@ -91,6 +91,7 @@ class Incomings extends SheetData<IncomingData> {
       await syncIncomingDashboard({
         coords: target,
         newIncomings: newTargets.includes(target),
+        changes: newTargets.includes(target),
       })
     }
     logger({

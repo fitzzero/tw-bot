@@ -75,13 +75,6 @@ export const syncIncomingDashboard = async ({
 
     if (!arrival || !sent) continue
 
-    // Remove old incomings and skip
-    if (arrival.isBefore()) {
-      await incomings.update({ ...incoming, status: 'old' })
-      changes = true
-      continue
-    }
-
     let originMessage = ''
 
     if (incoming.origin)
