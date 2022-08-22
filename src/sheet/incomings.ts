@@ -61,7 +61,7 @@ class Incomings extends SheetData<IncomingData> {
     // Update Total Incomings
     if (this.totalIncomings != incomings?.length) {
       this.totalIncomings = incomings?.length || 0
-      channels.editChannel({
+      await channels.editChannel({
         id: WRChannels.incoming,
         name: `${WRChannels.incoming}-${incomings?.length || 0}`,
       })
