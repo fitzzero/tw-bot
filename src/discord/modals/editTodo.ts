@@ -14,11 +14,13 @@ import { logAlert } from '../../utility/logger'
 import { momentUtcOffset, withinLastMinute } from '../../utility/time'
 import { closeCommand } from '../commands/canned'
 import { syncTodoDashboard } from '../dashboardMessages/todo'
+import { sendItemCompleteReceipt } from '../messages/todoComplete'
 import { Modal } from '../modals'
 
 const controller = async (interaction: ModalSubmitInteraction) => {
   await interaction.deferReply()
   const messageId = interaction.customId.split('-')[2]
+  const refresh = interaction.customId.split('-')[3]
   const data = getData(messageId)
   if (!data || !todoist) {
     closeCommand(interaction)
@@ -46,6 +48,10 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     closeCommand(interaction)
     return
   }
+  console.log(refresh)
+  if (refresh === 'true') {
+    await sendItemCompleteReceipt({ item: data.item, interaction })
+  }
 
   const updatedItem = getItemById(`${data.item.id}`)
   if (!updatedItem) {
@@ -57,13 +63,14 @@ const controller = async (interaction: ModalSubmitInteraction) => {
 
 export const modalBuilder = (interaction: ButtonInteraction) => {
   const data = getData(interaction.message.id)
+  const refresh = interaction.customId === 'todo-refresh'
   if (!data) {
     closeCommand(interaction)
     return
   }
 
   const modal = new ModalBuilder()
-    .setCustomId(`edit-todo-${data.messageData.messageId}`)
+    .setCustomId(`edit-todo-${data.messageData.messageId}-${refresh}`)
     .setTitle('Edit Todo')
 
   const rows = [

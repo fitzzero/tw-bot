@@ -8,11 +8,13 @@ import { splitCoords } from '../../tw/village'
 import { logAlert } from '../../utility/logger'
 import { wait } from '../../utility/wait'
 
+export type SupportedInteractions =
+  | ChatInputCommandInteraction
+  | ButtonInteraction
+  | ModalSubmitInteraction
+
 export const closeCommand = async (
-  interaction:
-    | ChatInputCommandInteraction
-    | ButtonInteraction
-    | ModalSubmitInteraction,
+  interaction: SupportedInteractions,
   message = 'Something went wrong, closing command...'
 ) => {
   try {
