@@ -57,20 +57,21 @@ class Incomings extends SheetData<IncomingData> {
     await this.loadRows()
     let incomings = this.getAll()
     incomings = incomings?.filter(incoming => incoming.status != 'old')
+
+    // Update Total Incomings
+    if (this.totalIncomings != incomings?.length) {
+      this.totalIncomings = incomings?.length || 0
+      channels.editChannel({
+        id: WRChannels.incoming,
+        name: `${WRChannels.incoming}-${incomings?.length || 0}`,
+      })
+    }
+
     if (!incomings || isEmpty(incomings)) return
     logger({
       message: `Checking ${incomings.length} incomings`,
       prefix: 'start',
     })
-
-    // Update Total Incomings
-    if (this.totalIncomings != incomings.length) {
-      this.totalIncomings = incomings.length
-      channels.editChannel({
-        id: WRChannels.incoming,
-        name: `${WRChannels.incoming}-${incomings.length}`,
-      })
-    }
 
     const targets = []
     const targetNew = []
