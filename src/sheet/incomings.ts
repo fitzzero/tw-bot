@@ -7,7 +7,7 @@ import {
   syncIncomingDashboard,
 } from '../discord/dashboardMessages/incoming'
 import { logger } from '../utility/logger'
-import { formatDate, validateMoment } from '../utility/time'
+import { formatDate, momentUtcOffset, validateMoment } from '../utility/time'
 import { channels, WRChannels } from './channels'
 import { RowStructure, SheetData } from './sheetData'
 
@@ -78,7 +78,7 @@ class Incomings extends SheetData<IncomingData> {
     for (const incoming of incomings) {
       // Validate and update dates if new
       if (incoming.status == 'new') {
-        const sent = moment(new Date(incoming.sent))
+        const sent = moment(new Date(incoming.sent)).utcOffset(momentUtcOffset)
         const arrival = parseArrival(incoming.arrival, sent)
         if (!arrival) continue
 
