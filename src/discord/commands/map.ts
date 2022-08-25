@@ -60,36 +60,6 @@ const controller = async (interaction: CommandInteraction) => {
   const message = villageMessage({ village, description })
 
   //Build File
-  const pageFn = async (page: Page) => {
-    await wait(300)
-    // @ts-ignore
-    await page.evaluate(() => display.panel('messages', 0, 1))
-    await wait(1000)
-    await page.evaluate(() => {
-      const queryString = window.location.search
-      const urlParams = new URLSearchParams(queryString)
-      const targetX = urlParams.get('tX')
-      const targetY = urlParams.get('tY')
-      const startX = urlParams.get('sX')
-      const startY = urlParams.get('sY')
-      const zoom = urlParams.get('zoom') || '0'
-      const editMap = async () => {
-        for (let i = 0; i < parseInt(zoom); i++) {
-          // @ts-ignore
-          zoom(0, -3)
-        }
-        // @ts-ignore
-        manual(parseInt(startX), parseInt(startY), 1)
-        // @ts-ignore
-        manual(parseInt(targetX), parseInt(targetY))
-      }
-      setTimeout(function () {
-        editMap()
-      }, 200)
-      editMap()
-    })
-    await wait(600)
-  }
   const alertSettings = settings.getAlertSettings()
   let url = `${mapConfig}?tX=${village.x}&tY=${village.y}`
   // Set map origin to url params
@@ -112,8 +82,36 @@ const controller = async (interaction: CommandInteraction) => {
   if (distance > 16) zoom = 2
   if (distance > 25) zoom = 3
   if (distance > 48) zoom = 4
-  url += `&x=${x}&y=${y}&zoom=${zoom}`
-  console.log(url)
+  url += `&x=${x}&y=${y}`
+
+  const pageFn = async (page: Page) => {
+    await wait(300)
+    // @ts-ignore
+    await page.evaluate(() => display.panel('messages', 0, 1))
+    await wait(1000)
+    for (let i = 0; i < zoom; i++) {
+      await page.keyboard.press('o')
+    }
+    await page.evaluate(() => {
+      const queryString = window.location.search
+      const urlParams = new URLSearchParams(queryString)
+      const targetX = urlParams.get('tX')
+      const targetY = urlParams.get('tY')
+      const startX = urlParams.get('sX')
+      const startY = urlParams.get('sY')
+      const editMap = async () => {
+        // @ts-ignore
+        manual(parseInt(startX), parseInt(startY), 1)
+        // @ts-ignore
+        manual(parseInt(targetX), parseInt(targetY))
+      }
+      setTimeout(function () {
+        editMap()
+      }, 200)
+      editMap()
+    })
+    await wait(600)
+  }
 
   const file = await saveScreenshot({
     clip: { x: 340, y: 259, width: 640, height: 360 },
