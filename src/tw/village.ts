@@ -1,7 +1,7 @@
 import { settings } from '../sheet/settings'
 import { VillageData } from '../sheet/villages'
 import { worldPath } from './world'
-import { UnitData, units } from '../sheet/units'
+import { TWUnits, UnitData, units } from '../sheet/units'
 import { Moment } from 'moment'
 import { logDev } from '../utility/logger'
 
@@ -41,7 +41,7 @@ export const getUnitByDistance = ({
   if (!allUnits || !distance || !duration) return
   let foundUnit: UnitData | undefined = undefined
   for (const unit of allUnits) {
-    if (unit.id == 'spear') continue
+    if (unit.id == TWUnits.spear) continue
     const unitDuration = parseInt(unit.speed) * distance
     if (duration + errorAllowance > unitDuration) {
       foundUnit = unit

@@ -2,13 +2,14 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { Page } from 'playwright'
 import { settings, WRSettings } from '../../sheet/settings'
-import { units } from '../../sheet/units'
+import { TWUnits, units } from '../../sheet/units'
 import { getDistance } from '../../tw/village'
 import { saveScreenshot } from '../../utility/screenshot'
 import { minToDuration } from '../../utility/time'
 import { wait } from '../../utility/wait'
 
 import { Command } from '../commands'
+import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
 import { closeCommand, parseInteractionCoordinates } from './canned'
 
@@ -37,25 +38,25 @@ const controller = async (interaction: CommandInteraction) => {
   // Meta data
   const mapConfig = settings.getValue(WRSettings.mapconfig)
   const distance = getDistance(village, origin)
-  const ram = units.getById('ram')
-  const axe = units.getById('axe')
-  const spy = units.getById('spy')
 
   // No context close (TODO) if missing metadata
-  if (!distance || !mapConfig || !ram || !axe || !spy) {
+  if (!distance || !mapConfig) {
     await closeCommand(interaction)
     return
   }
 
   // Build Message
   const fields = Math.round(distance)
-  const ramSpeed = Math.round(parseInt(ram.speed) * distance)
-  const axeSpeed = Math.round(parseInt(axe.speed) * distance)
-  const spySpeed = Math.round(parseInt(spy.speed) * distance)
+  const compareUnits = [TWUnits.snob, TWUnits.ram, TWUnits.axe, TWUnits.spy]
 
-  const description = `Distance: ${fields} fields | ram: ${minToDuration(
-    ramSpeed
-  )} | axe: ${minToDuration(axeSpeed)} | scout: ${minToDuration(spySpeed)}`
+  let description = `Distance: ${fields} fields`
+  for (const id of compareUnits) {
+    const unitSpeed = Math.round(
+      parseInt(units.getById(id)?.speed || '0') * distance
+    )
+    const emoji = await getDiscordEmoji(id)
+    description += ` | ${emoji} ${minToDuration(unitSpeed)}`
+  }
   const message = villageMessage({ village, description })
 
   //Build File
@@ -67,24 +68,41 @@ const controller = async (interaction: CommandInteraction) => {
     await page.evaluate(() => {
       const queryString = window.location.search
       const urlParams = new URLSearchParams(queryString)
-      const x = urlParams.get('x')
-      const y = urlParams.get('y')
+      const targetX = urlParams.get('tX')
+      const targetY = urlParams.get('tY')
       const startX = urlParams.get('sX')
       const startY = urlParams.get('sY')
+      const zoom = urlParams.get('zoom') || '0'
       if (startX && startY) {
         // @ts-ignore
         manual(parseInt(startX), parseInt(startY), 1)
       }
+      for (let i = 0; i < parseInt(zoom); i++) {
+        // @ts-ignore
+        zoom(0, -3)
+      }
       // @ts-ignore
-      manual(parseInt(x), parseInt(y))
+      manual(parseInt(targetX), parseInt(targetY))
     })
     await wait(600)
   }
-
-  let url = `${mapConfig}?x=${village.x}&y=${village.y}`
+  const alertSettings = settings.getAlertSettings()
+  let url = `${mapConfig}?tX=${village.x}&tY=${village.y}`
+  let originX = alertSettings?.x || 0
+  let originY = alertSettings?.y || 0
   if (origin) {
     url += `&sX=${origin.x}&sY=${origin.y}`
+    originX = parseInt(origin.x) || 0
+    originY = parseInt(origin.y) || 0
   }
+  const x = Math.abs(parseInt(village.x) - originX)
+  const y = Math.abs(parseInt(village.y) - originY)
+  let zoom = 0
+  if (distance > 12) zoom = 1
+  if (distance > 16) zoom = 2
+  if (distance > 25) zoom = 3
+  if (distance > 48) zoom = 4
+  url += `&x${x}&y=${y}&zoome=${zoom}`
 
   const file = await saveScreenshot({
     clip: { x: 340, y: 259, width: 640, height: 360 },
