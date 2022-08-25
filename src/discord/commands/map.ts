@@ -64,7 +64,7 @@ const controller = async (interaction: CommandInteraction) => {
     await wait(300)
     // @ts-ignore
     await page.evaluate(() => display.panel('messages', 0, 1))
-    await wait(100)
+    await wait(1000)
     await page.evaluate(() => {
       const queryString = window.location.search
       const urlParams = new URLSearchParams(queryString)
@@ -73,36 +73,47 @@ const controller = async (interaction: CommandInteraction) => {
       const startX = urlParams.get('sX')
       const startY = urlParams.get('sY')
       const zoom = urlParams.get('zoom') || '0'
-      if (startX && startY) {
+      const editMap = async () => {
+        for (let i = 0; i < parseInt(zoom); i++) {
+          // @ts-ignore
+          zoom(0, -3)
+        }
         // @ts-ignore
         manual(parseInt(startX), parseInt(startY), 1)
-      }
-      for (let i = 0; i < parseInt(zoom); i++) {
         // @ts-ignore
-        zoom(0, -3)
+        manual(parseInt(targetX), parseInt(targetY))
       }
-      // @ts-ignore
-      manual(parseInt(targetX), parseInt(targetY))
+      setTimeout(function () {
+        editMap()
+      }, 200)
+      editMap()
     })
     await wait(600)
   }
   const alertSettings = settings.getAlertSettings()
   let url = `${mapConfig}?tX=${village.x}&tY=${village.y}`
+  // Set map origin to url params
   let originX = alertSettings?.x || 0
   let originY = alertSettings?.y || 0
   if (origin) {
-    url += `&sX=${origin.x}&sY=${origin.y}`
     originX = parseInt(origin.x) || 0
     originY = parseInt(origin.y) || 0
   }
-  const x = Math.abs(parseInt(village.x) - originX)
-  const y = Math.abs(parseInt(village.y) - originY)
+  url += `&sX=${originX}&sY=${originY}`
+  // Set map center to url params
+  const x = Math.round(
+    parseInt(village.x) + (originX - parseInt(village.x)) * 0.5
+  )
+  const y = Math.round(
+    parseInt(village.y) + (originY - parseInt(village.y)) * 0.5
+  )
   let zoom = 0
   if (distance > 12) zoom = 1
   if (distance > 16) zoom = 2
   if (distance > 25) zoom = 3
   if (distance > 48) zoom = 4
-  url += `&x${x}&y=${y}&zoome=${zoom}`
+  url += `&x=${x}&y=${y}&zoom=${zoom}`
+  console.log(url)
 
   const file = await saveScreenshot({
     clip: { x: 340, y: 259, width: 640, height: 360 },
