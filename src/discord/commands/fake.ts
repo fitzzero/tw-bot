@@ -27,7 +27,7 @@ const controller = async (interaction: CommandInteraction) => {
   await interaction.deferReply()
   const tribe = interaction.options.getString('tribe')
   const player = interaction.options.getString('player')
-  if (!tribe && !!player) {
+  if (!tribe && !player) {
     closeCommand(interaction, 'Requires either a tribe or player')
     return
   }
