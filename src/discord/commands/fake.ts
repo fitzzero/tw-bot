@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { merge } from 'lodash'
+import { concat } from 'lodash'
 import { players } from '../../sheet/players'
 import { tribes } from '../../sheet/tribes'
 import { VillageData, villages } from '../../sheet/villages'
@@ -41,7 +41,7 @@ const controller = async (interaction: CommandInteraction) => {
       return
     }
     const newVillages = villages.getByTribeId(tribeData.id)
-    if (newVillages) villageList = merge(villageList, newVillages)
+    if (newVillages) villageList = concat(villageList, newVillages)
   }
   if (player) {
     const playerData = players.getByProperty('name', player)
@@ -52,7 +52,7 @@ const controller = async (interaction: CommandInteraction) => {
     const newVillages = villages.filterByProperties([
       { prop: 'playerId', value: playerData.id },
     ])
-    if (newVillages) villageList = merge(villageList, newVillages)
+    if (newVillages) villageList = concat(villageList, newVillages)
   }
 
   let coords = ''

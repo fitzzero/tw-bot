@@ -3,7 +3,7 @@ import { RowStructure, SheetData } from './sheetData'
 import { inAlertRange, splitCoords } from '../tw/village'
 import { villageChangeAlerts } from '../discord/alerts/villageAlerts'
 import { players } from './players'
-import { isEmpty, merge } from 'lodash'
+import { concat, isEmpty } from 'lodash'
 
 export interface VillageData extends RowStructure {
   id: string
@@ -52,7 +52,7 @@ class Villages extends SheetData<VillageData> {
       const newVillages = this.filterByProperties([
         { prop: 'playerId', value: player.id },
       ])
-      if (newVillages) villageList = merge(villageList, newVillages)
+      if (newVillages) villageList = concat(villageList, newVillages)
     }
     if (isEmpty(villageList)) return
     return villageList
