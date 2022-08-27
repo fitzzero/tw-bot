@@ -15,6 +15,7 @@ import {
 import { map } from './discord/commands/map'
 import { online } from './discord/commands/online'
 import { tribe } from './discord/commands/tribe'
+import { fake } from './discord/commands/fake'
 
 export const isDev = !!process.argv[2]
 
@@ -49,6 +50,7 @@ const devDiscordConfig: BotConfig = {
     tribeOdd,
     online,
     tribe,
+    fake,
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   coreGuild: '1008955953024077825',
@@ -74,6 +76,7 @@ const prodDiscordConfig: BotConfig = {
     tribeOdd,
     online,
     tribe,
+    fake,
   ],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   coreGuild: '1008955953024077825',
