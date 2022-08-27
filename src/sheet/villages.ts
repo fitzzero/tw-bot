@@ -47,12 +47,13 @@ class Villages extends SheetData<VillageData> {
     const playerData = players.filterByProperties([
       { prop: 'tribe', value: id },
     ])
-    playerData?.forEach(player => {
+    if (!playerData) return
+    for (const player of playerData) {
       const newVillages = this.filterByProperties([
         { prop: 'playerId', value: player.id },
       ])
       if (newVillages) villageList = merge(villageList, newVillages)
-    })
+    }
     if (isEmpty(villageList)) return
     return villageList
   }
