@@ -20,7 +20,7 @@ export const isDev = !!process.argv[2]
 
 export const storagePath = 'https://fitzzero.sirv.com/tribalwars/tw-bot/'
 
-export interface BotConfig {
+interface BotConfig {
   category: string
   client: string
   commands: Command[]
@@ -31,7 +31,7 @@ export interface BotConfig {
   extraLogging: boolean
 }
 
-export const devDiscordConfig: BotConfig = {
+const devDiscordConfig: BotConfig = {
   category: '1008956038411726909',
   client: '896860363541348413',
   commands: [
@@ -57,7 +57,7 @@ export const devDiscordConfig: BotConfig = {
   extraLogging: true,
 }
 
-export const prodDiscordConfig: BotConfig = {
+const prodDiscordConfig: BotConfig = {
   category: '904857595272114240',
   client: '896860363541348413',
   commands: [
@@ -83,3 +83,8 @@ export const prodDiscordConfig: BotConfig = {
 }
 
 export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig
+
+export const publicConfig = {
+  commands: [village],
+  guilds: ['620484161974566922'],
+}

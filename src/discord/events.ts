@@ -3,12 +3,14 @@ import {
   CommandInteraction,
   ModalSubmitInteraction,
 } from 'discord.js'
-import { botConfig } from '../config'
+import { botConfig, publicConfig } from '../config'
 import { logAlert, logger } from '../utility/logger'
 import { activeButtons } from './buttons'
-import { activeCommands } from './commands'
+import { activeCommands, publicCommands } from './commands'
 import { discordClient as discord } from './connect'
 import { activeModals } from './modals'
+
+const approvedGuilds = [botConfig.guild].concat(publicConfig.guilds)
 
 export const DiscordEvents = () => {
   discord.on('ready', () => {
@@ -20,9 +22,12 @@ export const DiscordEvents = () => {
 
   try {
     discord.on('interactionCreate', interaction => {
-      if (interaction.guildId != botConfig.guild) return
+      if (!interaction.guildId) return
+      if (!approvedGuilds.includes(interaction.guildId)) return
+      const isPublic = publicConfig.guilds.includes(interaction.guildId)
+
       if (interaction.isCommand()) {
-        handleCommand(interaction)
+        handleCommand(interaction, isPublic)
       }
       if (interaction.isButton()) {
         handleButton(interaction)
@@ -39,8 +44,9 @@ export const DiscordEvents = () => {
   }
 }
 
-const handleCommand = (interaction: CommandInteraction) => {
-  activeCommands().forEach(command => {
+const handleCommand = (interaction: CommandInteraction, isPublic: boolean) => {
+  const commands = isPublic ? publicCommands() : activeCommands()
+  commands.forEach(command => {
     if (interaction.commandName === command.documentation.name) {
       command.controller(interaction)
     }
