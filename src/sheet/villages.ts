@@ -3,7 +3,7 @@ import { RowStructure, SheetData } from './sheetData'
 import { inAlertRange, splitCoords } from '../tw/village'
 import { villageChangeAlerts } from '../discord/alerts/villageAlerts'
 import { players } from './players'
-import { isEmpty } from 'lodash'
+import { isEmpty, merge } from 'lodash'
 
 export interface VillageData extends RowStructure {
   id: string
@@ -43,7 +43,7 @@ class Villages extends SheetData<VillageData> {
   }
 
   getByTribeId = (id: string) => {
-    const villageList: VillageData[] = []
+    let villageList: VillageData[] = []
     const playerData = players.filterByProperties([
       { prop: 'tribe', value: id },
     ])
@@ -51,7 +51,7 @@ class Villages extends SheetData<VillageData> {
       const newVillages = this.filterByProperties([
         { prop: 'playerId', value: player.id },
       ])
-      if (newVillages) villageList.concat(newVillages)
+      if (newVillages) villageList = merge(villageList, newVillages)
     })
     if (isEmpty(villageList)) return
     return villageList

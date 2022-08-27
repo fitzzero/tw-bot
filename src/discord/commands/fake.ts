@@ -1,8 +1,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
+import { merge } from 'lodash'
 import { players } from '../../sheet/players'
 import { tribes } from '../../sheet/tribes'
 import { VillageData, villages } from '../../sheet/villages'
+import { logAlert } from '../../utility/logger'
 import { Command } from '../commands'
 import { closeCommand } from './canned'
 
@@ -39,7 +41,7 @@ const controller = async (interaction: CommandInteraction) => {
       return
     }
     const newVillages = villages.getByTribeId(tribeData.id)
-    if (newVillages) villageList.concat(newVillages)
+    if (newVillages) villageList = merge(villageList, newVillages)
   }
   if (player) {
     const playerData = players.getByProperty('name', player)
@@ -50,14 +52,22 @@ const controller = async (interaction: CommandInteraction) => {
     const newVillages = villages.filterByProperties([
       { prop: 'playerId', value: playerData.id },
     ])
-    if (newVillages) villageList.concat(newVillages)
+    if (newVillages) villageList = merge(villageList, newVillages)
   }
 
-  const message = `javascript:coords='${villageList.map(
-    village => `${village.x}|${village.y} `
-  )}'; var doc=document;if(window.frames.length>0 && window.main!=null)doc=window.main.document;url=doc.URL;if(url.indexOf('screen=place')==-1)alert('Use the script in the rally point page!');coords=coords.split(' ');index=Math.round(Math.random()*(coords.length-1));coords=coords[index];coords=coords.split('|');doc.forms[0].x.value=coords[0];doc.forms[0].y.value=coords[1];$('#place_target').find('input').val(coords[0]+'|'+coords[1]);doc.forms[0].ram.value=1;doc.forms[0].spy.value=0;end();`
+  let coords = ''
+  for (const village of villageList) {
+    coords += `${village.x}|${village.y} `
+  }
+  coords = coords.slice(0, -1)
+  const message = `\`\`\`javascript:coords='${coords}'; var doc=document;if(window.frames.length>0 && window.main!=null)doc=window.main.document;url=doc.URL;if(url.indexOf('screen=place')==-1)alert('Use the script in the rally point page!');coords=coords.split(' ');index=Math.round(Math.random()*(coords.length-1));coords=coords[index];coords=coords.split('|');doc.forms[0].x.value=coords[0];doc.forms[0].y.value=coords[1];$('#place_target').find('input').val(coords[0]+'|'+coords[1]);doc.forms[0].ram.value=1;doc.forms[0].spy.value=0;end();\`\`\``
 
-  await interaction.editReply(message)
+  try {
+    await interaction.editReply(message)
+  } catch (err) {
+    logAlert(err, 'Discord fake command')
+    closeCommand(interaction)
+  }
   return
 }
 

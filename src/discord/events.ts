@@ -1,6 +1,7 @@
 import {
   ButtonInteraction,
   CommandInteraction,
+  Message,
   ModalSubmitInteraction,
 } from 'discord.js'
 import { botConfig, publicConfig } from '../config'
@@ -8,6 +9,7 @@ import { logAlert, logger } from '../utility/logger'
 import { activeButtons } from './buttons'
 import { activeCommands, publicCommands } from './commands'
 import { discordClient as discord } from './connect'
+import { activeMessageTriggers } from './messageEvents'
 import { activeModals } from './modals'
 
 const approvedGuilds = [botConfig.guild].concat(publicConfig.guilds)
@@ -21,6 +23,12 @@ export const DiscordEvents = () => {
   })
 
   try {
+    discord.on('messageCreate', message => {
+      if (!message.guildId) return
+      if (!approvedGuilds.includes(message.guildId)) return
+      handleMessage(message)
+    })
+
     discord.on('interactionCreate', interaction => {
       if (!interaction.guildId) return
       if (!approvedGuilds.includes(interaction.guildId)) return
@@ -60,6 +68,18 @@ const handleButton = (interaction: ButtonInteraction) => {
         button.controller(interaction)
       } catch (err) {
         logAlert(err, 'Discord Button')
+      }
+    }
+  })
+}
+
+const handleMessage = (message: Message) => {
+  activeMessageTriggers.forEach(trigger => {
+    if (message.content.includes(trigger.customId)) {
+      try {
+        trigger.controller(message)
+      } catch (err) {
+        logAlert(err, 'Discord Message')
       }
     }
   })
