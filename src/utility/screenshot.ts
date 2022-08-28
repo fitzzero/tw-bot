@@ -1,4 +1,5 @@
 import { chromium, Page } from 'playwright'
+import { logAlert } from './logger'
 
 const basePath = `img/`
 
@@ -44,21 +45,30 @@ export const saveScreenshot = async ({
   await page.goto(url)
   if (pageFn) await pageFn(page)
   if (clipElement) {
-    const element = page.locator(clipElement)
-    const box = await element.boundingBox()
-    if (box) clip = box
-  }
-  let data: DataStructure = {}
-  if (dataRequest) {
-    for (const request of dataRequest) {
-      const innerText = await page.locator(request.locator).innerText()
-      data[request.id] = innerText
+    try {
+      const element = page.locator(clipElement)
+      const box = await element.boundingBox()
+      if (box) clip = box
+    } catch (err) {
+      logAlert(err)
     }
   }
+  let data: DataStructure = {}
   await page.screenshot({
     path,
     clip,
   })
+  if (dataRequest) {
+    page.setDefaultTimeout(100)
+    for (const request of dataRequest) {
+      try {
+        const innerText = await page.locator(request.locator).innerText()
+        data[request.id] = innerText
+      } catch (err) {
+        logAlert(err)
+      }
+    }
+  }
   await browser.close()
   return { path, data }
 }

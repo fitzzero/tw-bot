@@ -14,7 +14,7 @@ import { activeTriggers, publicTriggers } from './messageTrigger'
 import { activeModals } from './modals'
 
 let approvedGuilds = [botConfig.guild]
-if (!isDev) concat(approvedGuilds, publicConfig.guilds)
+if (!isDev) approvedGuilds = concat(approvedGuilds, publicConfig.guilds)
 
 export const DiscordEvents = () => {
   discord.on('ready', () => {
