@@ -2,6 +2,15 @@ import { chromium, Page } from 'playwright'
 
 const basePath = `img/`
 
+export interface DataStructure {
+  [propName: string]: string
+}
+
+export interface DataRequest {
+  id: string
+  locator: string
+}
+
 export interface SaveScreenshotProps {
   clip?: {
     x: number
@@ -10,6 +19,7 @@ export interface SaveScreenshotProps {
     height: number
   }
   clipElement?: string
+  dataRequest?: DataRequest[]
   height: number
   id: string
   pageFn?: (page: Page) => Promise<void>
@@ -19,6 +29,7 @@ export interface SaveScreenshotProps {
 export const saveScreenshot = async ({
   clip,
   clipElement,
+  dataRequest,
   height,
   id,
   pageFn,
@@ -33,7 +44,7 @@ export const saveScreenshot = async ({
   await page.goto(url)
   if (pageFn) await pageFn(page)
   if (clipElement) {
-    const element = await page.locator(clipElement)
+    const element = page.locator(clipElement)
     const box = await element.boundingBox()
     if (box) {
       clip = box
@@ -41,10 +52,17 @@ export const saveScreenshot = async ({
       console.log(box)
     }
   }
+  let data: DataStructure = {}
+  if (dataRequest) {
+    for (const request of dataRequest) {
+      const innerText = await page.locator(request.locator).innerText()
+      data[request.id] = innerText
+    }
+  }
   await page.screenshot({
     path,
     clip,
   })
   await browser.close()
-  return { path }
+  return { path, data }
 }

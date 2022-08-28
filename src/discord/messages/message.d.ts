@@ -5,4 +5,5 @@ export interface MessageProps {
   description?: string
   footer?: string
   timestamp?: string
+  image?: string
 }

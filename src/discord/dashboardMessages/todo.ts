@@ -5,7 +5,8 @@ import { accounts } from '../../sheet/accounts'
 import { WRChannels } from '../../sheet/channels'
 import { messages } from '../../sheet/messages'
 import { BaseSheetModel } from '../../sheet/sheetData'
-import { VillageData, villages } from '../../sheet/villages'
+import { VillageData } from '../../sheet/villages'
+import { parseVillageFromText } from '../../tw/village'
 import {
   getIso,
   getUnix,
@@ -95,12 +96,7 @@ export const syncTodoDashboard = async (item: Item, rebuild = true) => {
   // Push end of button row
   components.push(await deleteButton({ id: 'todo-delete' }))
 
-  if (item.content.includes('|')) {
-    const idx = item.content.indexOf('|')
-    const x = item.content.slice(idx - 3, idx)
-    const y = item.content.slice(idx + 1, idx + 4)
-    village = villages.getByCoords({ x, y })
-  }
+  village = parseVillageFromText(item.content)
 
   if (village) {
     success = await messages.rebuildMessage({

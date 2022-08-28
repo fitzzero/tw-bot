@@ -21,6 +21,7 @@ export const villageMessage = ({
   description = '',
   extraContext = true,
   footer,
+  image,
   player,
   timestamp,
   village,
@@ -29,7 +30,7 @@ export const villageMessage = ({
   const isBarb = village.playerId == '0'
   const imagePrefix = isBarb ? 'barb' : 'village'
   const imageSuffix = getVillageSize(village.points)
-  const image = `${storagePath}${imagePrefix}${imageSuffix}.png`
+  const thumbnail = `${storagePath}${imagePrefix}${imageSuffix}.png`
   const url = getVillageUrl(village)
 
   // Get PlayerData if exists (and override not provided)
@@ -57,10 +58,11 @@ export const villageMessage = ({
         description,
         color,
         thumbnail: {
-          url: image,
+          url: thumbnail,
           height: 0,
           width: 0,
         },
+        image: image ? { url: image } : undefined,
         url,
         footer: footer
           ? {

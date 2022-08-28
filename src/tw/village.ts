@@ -1,5 +1,5 @@
 import { settings } from '../sheet/settings'
-import { VillageData } from '../sheet/villages'
+import { VillageData, villages } from '../sheet/villages'
 import { worldPath } from './world'
 import { TWUnits, UnitData, units } from '../sheet/units'
 import { Moment } from 'moment'
@@ -88,4 +88,14 @@ export const splitCoords = (coords: string) => {
     x: coordsSplit[0],
     y: coordsSplit[1],
   }
+}
+
+export const parseVillageFromText = (text: string) => {
+  if (text.includes('|')) {
+    const idx = text.indexOf('|')
+    const x = text.slice(idx - 3, idx)
+    const y = text.slice(idx + 1, idx + 4)
+    return villages.getByCoords({ x, y })
+  }
+  return
 }
