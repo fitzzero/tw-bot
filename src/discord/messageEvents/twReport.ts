@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
 import { saveScreenshot } from '../../utility/screenshot'
-import { MessageTrigger } from '../messageEvents'
+import { MessageTrigger } from '../messageTrigger'
 
 const controller = async (message: Message) => {
   const file = await saveScreenshot({

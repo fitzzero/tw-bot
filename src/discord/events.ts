@@ -4,15 +4,17 @@ import {
   Message,
   ModalSubmitInteraction,
 } from 'discord.js'
-import { botConfig, publicConfig } from '../config'
+import { concat } from 'lodash'
+import { botConfig, isDev, publicConfig } from '../config'
 import { logAlert, logger } from '../utility/logger'
 import { activeButtons } from './buttons'
 import { activeCommands, publicCommands } from './commands'
 import { discordClient as discord } from './connect'
-import { activeMessageTriggers } from './messageEvents'
+import { activeTriggers, publicTriggers } from './messageTrigger'
 import { activeModals } from './modals'
 
-const approvedGuilds = [botConfig.guild].concat(publicConfig.guilds)
+let approvedGuilds = [botConfig.guild]
+if (!isDev) concat(approvedGuilds, publicConfig.guilds)
 
 export const DiscordEvents = () => {
   discord.on('ready', () => {
@@ -26,7 +28,8 @@ export const DiscordEvents = () => {
     discord.on('messageCreate', message => {
       if (!message.guildId) return
       if (!approvedGuilds.includes(message.guildId)) return
-      handleMessage(message)
+      const isPublic = publicConfig.guilds.includes(message.guildId)
+      handleMessage(message, isPublic)
     })
 
     discord.on('interactionCreate', interaction => {
@@ -73,8 +76,9 @@ const handleButton = (interaction: ButtonInteraction) => {
   })
 }
 
-const handleMessage = (message: Message) => {
-  activeMessageTriggers.forEach(trigger => {
+const handleMessage = (message: Message, isPublic: boolean) => {
+  const triggers = isPublic ? publicTriggers() : activeTriggers()
+  triggers.forEach(trigger => {
     if (message.content.includes(trigger.customId)) {
       try {
         trigger.controller(message)

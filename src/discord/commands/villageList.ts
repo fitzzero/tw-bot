@@ -9,7 +9,7 @@ import { Command } from '../commands'
 import { closeCommand } from './canned'
 
 const documentation = new SlashCommandBuilder()
-  .setName('fake')
+  .setName('villages')
   .addStringOption(option =>
     option
       .setName('tribe')
@@ -55,15 +55,20 @@ const controller = async (interaction: CommandInteraction) => {
     if (newVillages) villageList = concat(villageList, newVillages)
   }
 
-  let coords = ''
-  for (const village of villageList) {
-    coords += `${village.x}|${village.y} `
-  }
-  coords = coords.slice(0, -1)
-  const message = `\`\`\`javascript:coords='${coords}'; var doc=document;if(window.frames.length>0 && window.main!=null)doc=window.main.document;url=doc.URL;if(url.indexOf('screen=place')==-1)alert('Use the script in the rally point page!');coords=coords.split(' ');index=Math.round(Math.random()*(coords.length-1));coords=coords[index];coords=coords.split('|');doc.forms[0].x.value=coords[0];doc.forms[0].y.value=coords[1];$('#place_target').find('input').val(coords[0]+'|'+coords[1]);doc.forms[0].ram.value=1;doc.forms[0].spy.value=0;end();\`\`\``
+  let coordsPage: string[] = []
+  villageList.forEach((village, idx) => {
+    // Reply with 200 villages per message
+    const page = Math.ceil(idx + 1 / 200)
+    const coords = `${village.x}|${village.y}`
+    if (!coordsPage[page]) coordsPage[page] = coords
+    else coordsPage[page] += ` ${coords}`
+  })
 
   try {
-    await interaction.editReply(message)
+    await interaction.deleteReply()
+    for (const coords of coordsPage) {
+      await interaction.channel?.send(`\`\`\`${coords}\`\`\``)
+    }
   } catch (err) {
     logAlert(err, 'Discord fake command')
     closeCommand(interaction)
@@ -71,7 +76,7 @@ const controller = async (interaction: CommandInteraction) => {
   return
 }
 
-export const fake: Command = {
+export const villageList: Command = {
   documentation,
   controller,
 }

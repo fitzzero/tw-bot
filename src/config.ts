@@ -15,7 +15,9 @@ import {
 import { map } from './discord/commands/map'
 import { online } from './discord/commands/online'
 import { tribe } from './discord/commands/tribe'
-import { fake } from './discord/commands/fake'
+import { villageList } from './discord/commands/villageList'
+import { MessageTrigger } from './discord/messageTrigger'
+import { twReport } from './discord/messageEvents/twReport'
 
 export const isDev = !!process.argv[2]
 
@@ -28,6 +30,7 @@ interface BotConfig {
   coreDoc: string
   coreGuild: string
   guild: string
+  triggers: MessageTrigger[]
   writeEnabled: boolean
   extraLogging: boolean
 }
@@ -50,10 +53,11 @@ const devDiscordConfig: BotConfig = {
     tribeOdd,
     online,
     tribe,
-    fake,
+    villageList,
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   coreGuild: '1008955953024077825',
+  triggers: [twReport],
   guild: '1008955953024077825',
   writeEnabled: true,
   extraLogging: true,
@@ -76,10 +80,11 @@ const prodDiscordConfig: BotConfig = {
     tribeOdd,
     online,
     tribe,
-    fake,
+    villageList,
   ],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   coreGuild: '1008955953024077825',
+  triggers: [twReport],
   guild: '855057085719642134',
   writeEnabled: true,
   extraLogging: false,
@@ -89,5 +94,6 @@ export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig
 
 export const publicConfig = {
   commands: [village],
+  triggers: [twReport],
   guilds: ['620484161974566922'],
 }
