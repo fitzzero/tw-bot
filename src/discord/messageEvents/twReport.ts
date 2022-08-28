@@ -7,6 +7,7 @@ import {
   getVillageUrl,
   parseVillageFromText,
 } from '../../tw/village'
+import { logAlert } from '../../utility/logger'
 import { saveScreenshot } from '../../utility/screenshot'
 import { minToDuration } from '../../utility/time'
 import { getDiscordEmoji } from '../guild'
@@ -114,7 +115,11 @@ const controller = async (message: Message) => {
   }
 
   await message.channel.send(payload)
-  await message.delete()
+  try {
+    await message.delete()
+  } catch (err) {
+    logAlert(err)
+  }
 }
 
 export const twReport: MessageTrigger = {
