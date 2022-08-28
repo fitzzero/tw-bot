@@ -3,7 +3,6 @@ import { players } from '../../sheet/players'
 import { getPlayerUrl } from '../../tw/player'
 import { getVillageUrl, parseVillageFromText } from '../../tw/village'
 import { saveScreenshot } from '../../utility/screenshot'
-import { getPlayerMd } from '../messages/player'
 import { villageMessage } from '../messages/village'
 import { MessageTrigger } from '../messageTrigger'
 
