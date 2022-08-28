@@ -11,7 +11,7 @@ War Room Bot
 
 - [Discord Application Manager](https://discord.com/developers/applications)
 
-- [Invite Bot with scopes](https://discord.com/oauth2/authorize?client_id=896860363541348413&permissions=8&scope=bot%20applications.commands)
+- [Invite Bot with scopes](https://discord.com/oauth2/authorize?client_id=896860363541348413&permissions=2147806208&scope=bot%20applications.commands)
 
 - Add environment variables:  
   `WRTOKEN` : [Bot Token]  
