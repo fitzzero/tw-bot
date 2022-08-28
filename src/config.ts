@@ -18,6 +18,7 @@ import { tribe } from './discord/commands/tribe'
 import { villageList } from './discord/commands/villageList'
 import { MessageTrigger } from './discord/messageTrigger'
 import { twReport } from './discord/messageEvents/twReport'
+import { pingTrigger } from './discord/messageEvents/ping'
 
 export const isDev = !!process.argv[2]
 
@@ -57,7 +58,7 @@ const devDiscordConfig: BotConfig = {
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   coreGuild: '1008955953024077825',
-  triggers: [twReport],
+  triggers: [pingTrigger, twReport],
   guild: '1008955953024077825',
   writeEnabled: true,
   extraLogging: true,
