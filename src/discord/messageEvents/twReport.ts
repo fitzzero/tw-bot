@@ -43,6 +43,7 @@ const controller = async (message: Message) => {
       }
     }
     payload = villageMessage({
+      description,
       extraContext: false,
       village: targetVillage,
       image: 'attachment://report.png',
