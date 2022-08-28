@@ -46,11 +46,7 @@ export const saveScreenshot = async ({
   if (clipElement) {
     const element = page.locator(clipElement)
     const box = await element.boundingBox()
-    if (box) {
-      clip = box
-      console.log('element found')
-      console.log(box)
-    }
+    if (box) clip = box
   }
   let data: DataStructure = {}
   if (dataRequest) {

@@ -90,8 +90,8 @@ export const splitCoords = (coords: string) => {
   }
 }
 
-export const parseVillageFromText = (text: string) => {
-  if (text.includes('|')) {
+export const parseVillageFromText = (text?: string) => {
+  if (text?.includes('|')) {
     const idx = text.indexOf('|')
     const x = text.slice(idx - 3, idx)
     const y = text.slice(idx + 1, idx + 4)
