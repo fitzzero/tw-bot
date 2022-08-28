@@ -94,7 +94,18 @@ const prodDiscordConfig: BotConfig = {
 export const botConfig = isDev ? devDiscordConfig : prodDiscordConfig
 
 export const publicConfig = {
-  commands: [village],
+  commands: [
+    village,
+    villageList,
+    playerOd,
+    playerOda,
+    playerOdd,
+    playerTop,
+    tribeTop,
+    tribeOd,
+    tribeOdd,
+    tribeOda,
+  ],
   triggers: [twReport],
-  guilds: ['620484161974566922'],
+  guilds: ['620484161974566922', '1002182987112259666'],
 }
