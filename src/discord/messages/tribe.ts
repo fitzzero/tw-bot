@@ -74,8 +74,8 @@ export const tribeMessage = async ({
   })
 
   // Message Object
-  const thumbnail = new AttachmentBuilder(tribeThumb)
-  const image = new AttachmentBuilder(tribeImage)
+  const thumbnail = new AttachmentBuilder(tribeThumb.path)
+  const image = new AttachmentBuilder(tribeImage.path)
   const embed = new EmbedBuilder()
     .setTitle(`${tribe.name} [${tribe.tag}]`)
     .setURL(url)

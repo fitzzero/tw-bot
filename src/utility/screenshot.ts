@@ -9,6 +9,7 @@ export interface SaveScreenshotProps {
     width: number
     height: number
   }
+  clipElement?: string
   height: number
   id: string
   pageFn?: (page: Page) => Promise<void>
@@ -17,6 +18,7 @@ export interface SaveScreenshotProps {
 }
 export const saveScreenshot = async ({
   clip,
+  clipElement,
   height,
   id,
   pageFn,
@@ -30,10 +32,19 @@ export const saveScreenshot = async ({
   await page.setViewportSize({ width, height })
   await page.goto(url)
   if (pageFn) await pageFn(page)
+  if (clipElement) {
+    const element = await page.locator(clipElement)
+    const box = await element.boundingBox()
+    if (box) {
+      clip = box
+      console.log('element found')
+      console.log(box)
+    }
+  }
   await page.screenshot({
     path,
     clip,
   })
   await browser.close()
-  return path
+  return { path }
 }

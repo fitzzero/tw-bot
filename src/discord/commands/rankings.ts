@@ -25,7 +25,7 @@ const playerController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 284, width: 620, height: 280 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const playerTop: Command = {
@@ -53,7 +53,7 @@ const tribeController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 284, width: 620, height: 293 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const tribeTop: Command = {
@@ -81,7 +81,7 @@ const tribeOdController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const tribeOda: Command = {
@@ -109,7 +109,7 @@ const tribeOdaController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const tribeOd: Command = {
@@ -137,7 +137,7 @@ const tribeOddController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const tribeOdd: Command = {
@@ -165,7 +165,7 @@ const playerOdController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const playerOd: Command = {
@@ -192,7 +192,7 @@ const playerOdaController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const playerOda: Command = {
@@ -219,7 +219,7 @@ const playerOddController = async (interaction: CommandInteraction) => {
     clip: { x: 249, y: 163, width: 620, height: 414 },
   })
 
-  interaction.editReply({ files: [file] })
+  interaction.editReply({ files: [file.path] })
 }
 
 export const playerOdd: Command = {

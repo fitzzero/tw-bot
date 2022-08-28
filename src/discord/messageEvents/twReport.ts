@@ -3,14 +3,14 @@ import { saveScreenshot } from '../../utility/screenshot'
 import { MessageTrigger } from '../messageTrigger'
 
 const controller = async (message: Message) => {
-  const file = await saveScreenshot({
+  const { path } = await saveScreenshot({
     id: 'report',
     url: message.content,
     width: 980,
     height: 690,
-    clip: { x: 116, y: 221, width: 444, height: 313 },
+    clipElement: ':nth-match(tbody, 5)',
   })
-  await message.channel.send({ files: [file] })
+  await message.channel.send({ files: [path] })
   await message.delete()
 }
 
