@@ -122,7 +122,7 @@ const controller = async (interaction: CommandInteraction) => {
     width: 1280,
   })
 
-  await interaction.editReply({ ...message, files: [file] })
+  await interaction.editReply({ ...message, files: [file.path] })
   return
 }
 
