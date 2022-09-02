@@ -105,6 +105,7 @@ export const publicConfig = {
     tribeOd,
     tribeOdd,
     tribeOda,
+    map,
   ],
   triggers: [twReport],
   guilds: ['620484161974566922', '1002182987112259666'],
