@@ -19,6 +19,7 @@ import { villageList } from './discord/commands/villageList'
 import { MessageTrigger } from './discord/messageTrigger'
 import { twReport } from './discord/messageEvents/twReport'
 import { pingTrigger } from './discord/messageEvents/ping'
+import { reportsList } from './discord/commands/reports'
 
 export const isDev = !!process.argv[2]
 
@@ -55,6 +56,7 @@ const devDiscordConfig: BotConfig = {
     online,
     tribe,
     villageList,
+    reportsList,
   ],
   coreDoc: '1HyUhgkPs5SIRWQU4a2VrLjz9z8Uku437riwp-S0xS90',
   coreGuild: '1008955953024077825',
@@ -82,6 +84,7 @@ const prodDiscordConfig: BotConfig = {
     online,
     tribe,
     villageList,
+    reportsList,
   ],
   coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
   coreGuild: '1008955953024077825',

@@ -1,7 +1,11 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
+import { concat } from 'lodash'
+import { ReportData, reports } from '../../sheet/reports'
+import { villages } from '../../sheet/villages'
 
 import { Command } from '../commands'
+import { reportsMessage } from '../messages/reports'
 import { closeCommand, parseInteractionCoordinates } from './canned'
 
 const documentation = new SlashCommandBuilder()
@@ -35,11 +39,34 @@ const controller = async (interaction: CommandInteraction) => {
     closeCommand(interaction, 'Requires either a village or player')
     return
   }
-  await interaction.editReply('wip')
+  let reportData: ReportData[] = []
+  if (player) {
+    const villageList = villages.filterByProperties([
+      { prop: 'playerId', value: player.id },
+    ])
+    villageList?.forEach(village => {
+      const newReports = reports.filterByProperties([
+        { prop: 'villageId', value: village.id },
+      ])
+      if (newReports) {
+        reportData = concat(reportData, newReports)
+      }
+    })
+  }
+  if (village) {
+    const newReports = reports.filterByProperties([
+      { prop: 'villageId', value: village.id },
+    ])
+    if (newReports) {
+      reportData = concat(reportData, newReports)
+    }
+  }
+  const payload = reportsMessage({ reports: reportData, idx: 0 })
+  await interaction.editReply(payload)
   return
 }
 
-export const reports: Command = {
+export const reportsList: Command = {
   documentation,
   controller,
 }
