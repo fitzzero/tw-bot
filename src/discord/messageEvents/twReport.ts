@@ -124,8 +124,8 @@ const controller = async (message: Message) => {
       extraContext: false,
       village: targetVillage,
       image: `attachment://${id}.png`,
+      files: [image],
     })
-    payload.files = [image]
   }
 
   await message.channel.send(payload)

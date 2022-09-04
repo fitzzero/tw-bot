@@ -1,10 +1,11 @@
-import { MessageOptions } from 'discord.js'
+import { AttachmentBuilder, MessageOptions } from 'discord.js'
 import { isEmpty, last } from 'lodash'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
-import { reports } from '../../sheet/reports'
+import { ReportData, reports } from '../../sheet/reports'
 import { VillageData } from '../../sheet/villages'
 import { getVillageSize, getVillageUrl } from '../../tw/village'
+import { getUnix } from '../../utility/time'
 import { WRColors } from '../colors'
 import { MessageProps } from './message'
 import { getPlayerMd } from './player'
@@ -28,6 +29,7 @@ export const villageMessage = ({
   timestamp,
   village,
   showReports,
+  files = [],
 }: VillageMessageProps) => {
   // Meta data
   const isBarb = village.playerId == '0'
@@ -53,14 +55,18 @@ export const villageMessage = ({
   }
 
   // Append report info
+  let lastReport: ReportData | undefined = undefined
   if (showReports) {
     const villageReports = reports.filterByProperties([
       { prop: 'villageId', value: village.id },
     ])
-    const lastReport = last(villageReports)
-    if (lastReport) {
-      description += `\nLast report <${lastReport.url}>`
-    }
+    lastReport = last(villageReports)
+  }
+
+  if (lastReport) {
+    description += `\nLast report: <t:${getUnix(lastReport.lastUpdate)}:R>`
+    files.push(new AttachmentBuilder(lastReport.path))
+    image = `attachment://${lastReport.id}.png`
   }
 
   const options: MessageOptions = {
@@ -86,6 +92,7 @@ export const villageMessage = ({
         timestamp,
       },
     ],
+    files: files,
   }
 
   if (!isEmpty(components)) {

@@ -1,3 +1,5 @@
+import { AttachmentBuilder } from 'discord.js'
+
 export interface MessageProps {
   color?: WRColors
   content?: string
@@ -6,4 +8,5 @@ export interface MessageProps {
   footer?: string
   timestamp?: string
   image?: string
+  files?: AttachmentBuilder[]
 }

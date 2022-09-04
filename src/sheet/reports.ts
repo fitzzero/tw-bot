@@ -16,4 +16,4 @@ class Reports extends SheetData<ReportData> {
   }
 }
 
-export const reports = new Reports('units', headers)
+export const reports = new Reports('reports', headers)
