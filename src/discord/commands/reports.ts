@@ -6,7 +6,11 @@ import { villages } from '../../sheet/villages'
 
 import { Command } from '../commands'
 import { reportsMessage } from '../messages/reports'
-import { closeCommand, parseInteractionCoordinates } from './canned'
+import {
+  closeCommand,
+  parseInteractionCoordinates,
+  parseInteractionPlayer,
+} from './canned'
 
 const documentation = new SlashCommandBuilder()
   .setName('reports')
@@ -38,7 +42,7 @@ const controller = async (interaction: CommandInteraction) => {
     interaction,
     required: false,
   })
-  const player = await parseInteractionCoordinates({
+  const player = await parseInteractionPlayer({
     interaction,
     required: false,
   })
@@ -67,7 +71,7 @@ const controller = async (interaction: CommandInteraction) => {
       reportData = concat(reportData, newReports)
     }
   }
-  const payload = reportsMessage({ reports: reportData, idx: 0 })
+  const payload = await reportsMessage({ reports: reportData, idx: 0 })
   await interaction.editReply(payload)
   return
 }

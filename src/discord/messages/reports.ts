@@ -12,7 +12,7 @@ export interface ReportMessageProps extends MessageProps {
   reports: ReportData[]
 }
 
-export const reportsMessage = ({
+export const reportsMessage = async ({
   color = WRColors.purple,
   content = '',
   components = [],
@@ -25,7 +25,7 @@ export const reportsMessage = ({
   idx,
 }: ReportMessageProps) => {
   // Meta data
-  const currentEmoji = getDiscordEmoji(WREmojis.right)
+  const currentEmoji = await getDiscordEmoji(WREmojis.right)
   reports = reports.sort((a, b) => {
     const aTime = validateMoment(a.lastUpdate)?.unix()
     const bTime = validateMoment(b.lastUpdate)?.unix()
