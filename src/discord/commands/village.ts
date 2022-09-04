@@ -20,7 +20,7 @@ const controller = async (interaction: CommandInteraction) => {
   await interaction.deferReply()
   const village = await parseInteractionCoordinates(interaction)
   if (!village) return
-  const message = villageMessage({ village })
+  const message = villageMessage({ village, showReports: true })
   await interaction.editReply(message)
   return
 }

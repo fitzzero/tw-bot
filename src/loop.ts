@@ -19,6 +19,7 @@ import moment from 'moment'
 import { registerCommands } from './discord/commands'
 import { conquers } from './sheet/conquers'
 import { syncConquers } from './tw/conquerSync'
+import { reports } from './sheet/reports'
 
 export const startLoop = async () => {
   await loadDoc()
@@ -73,6 +74,7 @@ const preLoadAndSyncData = async () => {
   await conquers.loadData()
   await units.loadData()
   await incomings.loadData()
+  await reports.loadData()
 
   // Discord Data
   await accounts.loadData()

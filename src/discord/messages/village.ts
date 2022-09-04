@@ -1,7 +1,8 @@
 import { MessageOptions } from 'discord.js'
-import { isEmpty } from 'lodash'
+import { isEmpty, last } from 'lodash'
 import { storagePath } from '../../config'
 import { PlayerData, players } from '../../sheet/players'
+import { reports } from '../../sheet/reports'
 import { VillageData } from '../../sheet/villages'
 import { getVillageSize, getVillageUrl } from '../../tw/village'
 import { WRColors } from '../colors'
@@ -12,6 +13,7 @@ export interface VillageMessageProps extends MessageProps {
   extraContext?: boolean
   player?: PlayerData
   village: VillageData
+  showReports?: boolean
 }
 
 export const villageMessage = ({
@@ -25,6 +27,7 @@ export const villageMessage = ({
   player,
   timestamp,
   village,
+  showReports,
 }: VillageMessageProps) => {
   // Meta data
   const isBarb = village.playerId == '0'
@@ -47,6 +50,17 @@ export const villageMessage = ({
   if (player && extraContext) {
     const playerMd = getPlayerMd({ player, village })
     description += `\nOwned by ${playerMd}`
+  }
+
+  // Append report info
+  if (showReports) {
+    const villageReports = reports.filterByProperties([
+      { prop: 'villageId', value: village.id },
+    ])
+    const lastReport = last(villageReports)
+    if (lastReport) {
+      description += `\nLast report <${lastReport.url}>`
+    }
   }
 
   const options: MessageOptions = {

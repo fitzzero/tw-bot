@@ -1,5 +1,6 @@
 import { AttachmentBuilder, Message, MessageOptions } from 'discord.js'
 import { players } from '../../sheet/players'
+import { reports } from '../../sheet/reports'
 import { TWUnits, units } from '../../sheet/units'
 import { getPlayerUrl } from '../../tw/player'
 import {
@@ -14,9 +15,13 @@ import { getDiscordEmoji } from '../guild'
 import { villageMessage } from '../messages/village'
 import { MessageTrigger } from '../messageTrigger'
 
+export const reportsPath = 'reports/'
+
 const controller = async (message: Message) => {
+  const url = message.content
+  const id = message.content.split('/')[4]
   const { path, data } = await saveScreenshot({
-    id: 'report',
+    id: `${reportsPath}${id}`,
     url: message.content,
     width: 980,
     height: 1200,
@@ -50,12 +55,12 @@ const controller = async (message: Message) => {
       },
     ],
   })
+
+  // Build Message
   const image = new AttachmentBuilder(path)
   let payload: MessageOptions = {
     files: [image],
   }
-  console.log(data?.origin)
-  console.log(data?.target)
   const originVillage = parseVillageFromText(data?.origin)
   const targetVillage = parseVillageFromText(data?.target)
   if (targetVillage) {
@@ -67,6 +72,14 @@ const controller = async (message: Message) => {
       const playerUrl = getPlayerUrl(targetPlayer.id, targetVillage)
       description += `Owned by [${targetPlayer.name}](<${playerUrl}>)`
     }
+
+    // Save Report
+    reports.updateOrAdd({
+      id,
+      url,
+      path,
+      villageId: targetVillage.id,
+    })
 
     // Origin Info
     if (originVillage) {
@@ -85,6 +98,7 @@ const controller = async (message: Message) => {
       const compareUnits = [
         TWUnits.snob,
         TWUnits.ram,
+        TWUnits.catapult,
         TWUnits.sword,
         TWUnits.axe,
         TWUnits.light,
@@ -109,7 +123,7 @@ const controller = async (message: Message) => {
       description,
       extraContext: false,
       village: targetVillage,
-      image: 'attachment://report.png',
+      image: `attachment://${id}.png`,
     })
     payload.files = [image]
   }

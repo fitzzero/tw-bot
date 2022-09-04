@@ -48,7 +48,6 @@ const controller = async (interaction: ModalSubmitInteraction) => {
     closeCommand(interaction)
     return
   }
-  console.log(refresh)
   if (refresh === 'true') {
     await sendItemCompleteReceipt({ item: data.item, interaction })
   }
