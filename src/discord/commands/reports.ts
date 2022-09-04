@@ -6,7 +6,7 @@ import { villages } from '../../sheet/villages'
 
 import { Command } from '../commands'
 import { reportsMessage } from '../messages/reports'
-import { closeCommand, parseInteractionCoordinates } from './canned'
+import { parseInteractionCoordinates } from './canned'
 
 const documentation = new SlashCommandBuilder()
   .setName('reports')
@@ -36,7 +36,6 @@ const controller = async (interaction: CommandInteraction) => {
     required: false,
   })
   if (!village && !player) {
-    closeCommand(interaction, 'Requires either a village or player')
     return
   }
   let reportData: ReportData[] = []

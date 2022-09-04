@@ -30,10 +30,10 @@ const documentation = new SlashCommandBuilder()
 
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
+  await interaction.deferReply()
   const tribe = await parseInteractionTribe({ interaction, required: false })
   const player = await parseInteractionPlayer({ interaction, required: false })
   if (!tribe && !player) {
-    closeCommand(interaction, 'Requires either a tribe or player')
     return
   }
   let villageList: VillageData[] = []
@@ -71,7 +71,7 @@ const controller = async (interaction: CommandInteraction) => {
     if (tribe && player) content += ' + '
     if (player) content += `[${player.name}](<${getPlayerUrl(player.id)}>)`
     content += ' villages:'
-    await interaction.reply(content)
+    await interaction.editReply(content)
     for (const coords of coordsPage) {
       await interaction.channel?.send(`\`\`\`${coords}\`\`\``)
     }
