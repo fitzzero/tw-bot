@@ -18,7 +18,7 @@ const documentation = new SlashCommandBuilder()
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
-  const village = await parseInteractionCoordinates(interaction)
+  const village = await parseInteractionCoordinates({ interaction })
   if (!village) return
   const message = villageMessage({ village, showReports: true })
   await interaction.editReply(message)

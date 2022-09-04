@@ -1,14 +1,16 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { concat, isEmpty } from 'lodash'
-import { PlayerData, players } from '../../sheet/players'
-import { TribeData, tribes } from '../../sheet/tribes'
 import { VillageData, villages } from '../../sheet/villages'
 import { getPlayerUrl } from '../../tw/player'
 import { getTribeUrl } from '../../tw/tribe'
 import { logAlert } from '../../utility/logger'
 import { Command } from '../commands'
-import { closeCommand } from './canned'
+import {
+  closeCommand,
+  parseInteractionPlayer,
+  parseInteractionTribe,
+} from './canned'
 
 const documentation = new SlashCommandBuilder()
   .setName('villages')
@@ -28,32 +30,20 @@ const documentation = new SlashCommandBuilder()
 
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
-  const tribe = interaction.options.getString('tribe')
-  const player = interaction.options.getString('player')
+  const tribe = await parseInteractionTribe({ interaction, required: false })
+  const player = await parseInteractionPlayer({ interaction, required: false })
   if (!tribe && !player) {
     closeCommand(interaction, 'Requires either a tribe or player')
     return
   }
   let villageList: VillageData[] = []
-  let foundTribe: TribeData | undefined = undefined
-  let foundPlayer: PlayerData | undefined = undefined
   if (tribe) {
-    foundTribe = tribes.getByProperty('tag', tribe)
-    if (!foundTribe) {
-      closeCommand(interaction, `Tribe with tag '${tribe}' not found`)
-      return
-    }
-    const newVillages = villages.getByTribeId(foundTribe.id)
+    const newVillages = villages.getByTribeId(tribe.id)
     if (newVillages) villageList = concat(villageList, newVillages)
   }
   if (player) {
-    foundPlayer = players.getByProperty('name', player)
-    if (!foundPlayer) {
-      closeCommand(interaction, `Player with name '${player}' not found`)
-      return
-    }
     const newVillages = villages.filterByProperties([
-      { prop: 'playerId', value: foundPlayer.id },
+      { prop: 'playerId', value: player.id },
     ])
     if (newVillages) villageList = concat(villageList, newVillages)
   }
@@ -74,13 +64,12 @@ const controller = async (interaction: CommandInteraction) => {
 
   try {
     let content = ''
-    if (foundTribe) {
-      const url = getTribeUrl(foundTribe.id)
-      content += `[${foundTribe.name} [${foundTribe.tag}]](<${url}>)`
+    if (tribe) {
+      const url = getTribeUrl(tribe.id)
+      content += `[${tribe.name} [${tribe.tag}]](<${url}>)`
     }
-    if (foundTribe && foundPlayer) content += ' + '
-    if (foundPlayer)
-      content += `[${foundPlayer.name}](<${getPlayerUrl(foundPlayer.id)}>)`
+    if (tribe && player) content += ' + '
+    if (player) content += `[${player.name}](<${getPlayerUrl(player.id)}>)`
     content += ' villages:'
     await interaction.reply(content)
     for (const coords of coordsPage) {

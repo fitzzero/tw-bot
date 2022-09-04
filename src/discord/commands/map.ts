@@ -32,8 +32,14 @@ const documentation = new SlashCommandBuilder()
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
-  const village = await parseInteractionCoordinates(interaction, 'target')
-  const origin = await parseInteractionCoordinates(interaction, 'origin', false)
+  const village = await parseInteractionCoordinates({
+    interaction,
+    optionLabel: 'target',
+  })
+  const origin = await parseInteractionCoordinates({
+    interaction,
+    optionLabel: 'origin',
+  })
   if (!village) return
   // Meta data
   const mapConfig = settings.getValue(WRSettings.mapconfig)
