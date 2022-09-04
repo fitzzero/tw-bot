@@ -31,6 +31,13 @@ const documentation = new SlashCommandBuilder()
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
+  if (
+    !interaction.options.getString('tribe') &&
+    !interaction.options.getString('player')
+  ) {
+    closeCommand(interaction, 'Player or Tribe Tag required')
+    return
+  }
   const tribe = await parseInteractionTribe({ interaction, required: false })
   const player = await parseInteractionPlayer({ interaction, required: false })
   if (!tribe && !player) {

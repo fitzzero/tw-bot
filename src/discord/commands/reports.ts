@@ -6,7 +6,7 @@ import { villages } from '../../sheet/villages'
 
 import { Command } from '../commands'
 import { reportsMessage } from '../messages/reports'
-import { parseInteractionCoordinates } from './canned'
+import { closeCommand, parseInteractionCoordinates } from './canned'
 
 const documentation = new SlashCommandBuilder()
   .setName('reports')
@@ -27,6 +27,13 @@ const documentation = new SlashCommandBuilder()
 const controller = async (interaction: CommandInteraction) => {
   if (!interaction.isChatInputCommand()) return
   await interaction.deferReply()
+  if (
+    !interaction.options.getString('coordinates') &&
+    !interaction.options.getString('player')
+  ) {
+    closeCommand(interaction, 'Village Coordinates or Player required')
+    return
+  }
   const village = await parseInteractionCoordinates({
     interaction,
     required: false,
