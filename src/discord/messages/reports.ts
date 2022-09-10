@@ -32,7 +32,7 @@ export const reportsMessage = async ({
     if (!aTime || !bTime) {
       return 0
     }
-    return aTime - bTime
+    return bTime - aTime
   })
 
   reports.forEach((report, reportIdx) => {

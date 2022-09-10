@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { concat, isEmpty } from 'lodash'
+import { concat, isEmpty, last } from 'lodash'
 import { ReportData, reports } from '../../sheet/reports'
 import { villages } from '../../sheet/villages'
 
@@ -58,8 +58,9 @@ const controller = async (interaction: CommandInteraction) => {
       const newReports = reports.filterByProperties([
         { prop: 'villageId', value: village.id },
       ])
-      if (newReports) {
-        reportData = concat(reportData, newReports)
+      const latestReport = last(newReports)
+      if (latestReport) {
+        reportData = concat(reportData, latestReport)
       }
     })
   }
