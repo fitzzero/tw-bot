@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
-import { concat } from 'lodash'
+import { concat, isEmpty } from 'lodash'
 import { ReportData, reports } from '../../sheet/reports'
 import { villages } from '../../sheet/villages'
 
@@ -70,6 +70,9 @@ const controller = async (interaction: CommandInteraction) => {
     if (newReports) {
       reportData = concat(reportData, newReports)
     }
+  }
+  if (isEmpty(reportData)) {
+    closeCommand(interaction, 'No reports found')
   }
   const payload = await reportsMessage({ reports: reportData, idx: 0 })
   await interaction.editReply(payload)
