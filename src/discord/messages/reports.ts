@@ -1,4 +1,4 @@
-import { MessageOptions } from 'discord.js'
+import { AttachmentBuilder, MessageOptions } from 'discord.js'
 import { isEmpty } from 'lodash'
 import { ReportData } from '../../sheet/reports'
 import { villages } from '../../sheet/villages'
@@ -22,10 +22,10 @@ export const reportsMessage = async ({
   reports,
   timestamp,
   files = [],
-  idx,
+  idx = 0,
 }: ReportMessageProps) => {
   // Meta data
-  const currentEmoji = await getDiscordEmoji(WREmojis.right)
+  const currentEmoji = await getDiscordEmoji(WREmojis.left)
   reports = reports.sort((a, b) => {
     const aTime = validateMoment(a.lastUpdate)?.unix()
     const bTime = validateMoment(b.lastUpdate)?.unix()
@@ -38,10 +38,15 @@ export const reportsMessage = async ({
   reports.forEach((report, reportIdx) => {
     const village = villages.getById(report.villageId)
     description += '\n'
-    if (idx === reportIdx) description += `${currentEmoji} `
-    description += `[${village?.name}](<${report.url}>)`
+    description += `[${village?.name}](<${report.url}>) `
     description += `<t:${getUnix(report.lastUpdate)}:R>`
+    if (idx === reportIdx) description += ` ${currentEmoji} `
   })
+
+  const currentReport = reports[idx]
+  image = `attachment://${currentReport.id}.png`
+  const attachment = new AttachmentBuilder(currentReport.path)
+  files = [attachment]
 
   const options: MessageOptions = {
     content,
