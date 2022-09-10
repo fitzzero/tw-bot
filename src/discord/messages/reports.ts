@@ -1,5 +1,5 @@
 import { AttachmentBuilder, MessageOptions } from 'discord.js'
-import { isEmpty } from 'lodash'
+import { isEmpty, take } from 'lodash'
 import { ReportData } from '../../sheet/reports'
 import { villages } from '../../sheet/villages'
 import { getUnix, validateMoment } from '../../utility/time'
@@ -34,6 +34,8 @@ export const reportsMessage = async ({
     }
     return bTime - aTime
   })
+
+  reports = take(reports, 15)
 
   reports.forEach((report, reportIdx) => {
     const village = villages.getById(report.villageId)
