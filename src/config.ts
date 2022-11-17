@@ -89,7 +89,7 @@ const prodDiscordConfig: BotConfig = {
     reportsList,
     noble,
   ],
-  coreDoc: '11q2LsofJBmaP_PKJt8W5eHhY2MwT3hvylNvlvzPQgQI',
+  coreDoc: '1kwFQ6OvTc6zbPsMnCRMbFDUIlKUB7TigddCQDrQ7Qmg',
   coreGuild: '1008955953024077825',
   triggers: [twReport],
   guild: '855057085719642134',
