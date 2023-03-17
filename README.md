@@ -1,4 +1,5 @@
 # war-room bot
+Legacy Code for a Discord Bot to assist with TribalWars.us tracking and reporting. Designed to hook up to Todoist API for Notifications and Google Sheets for Data. 
 
 War Room Bot
 
